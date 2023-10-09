@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.secondary,
     borderRadius: SIZES.medium,
     marginVertical: SIZES.medium,
-    height: 50,
+    padding: 10,
   },
 
   searchIcon: {
@@ -20,6 +20,8 @@ const styles = StyleSheet.create({
   },
 
   searchWrapper: {
+    flexDirection: "row",
+    justifyContent: "space-between",
     flex: 1,
     backgroundColor: COLORS.secondary,
     marginRight: SIZES.small,
@@ -28,14 +30,12 @@ const styles = StyleSheet.create({
 
   searchInput: {
     fontFamily: "regular",
-    width: "100%",
     height: "100%",
     paddingHorizontal: SIZES.small,
   },
 
   searchBtn: {
     width: 50,
-    height: "100%",
     borderRadius: SIZES.medium,
     justifyContent: "center",
     alignItems: "center",

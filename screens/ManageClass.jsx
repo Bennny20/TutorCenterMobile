@@ -41,7 +41,12 @@ const ManageClass = () => {
                     borderColor: COLORS.main,
                   }}
                 >
-                  <Text style={styles.requestStatusBtn}>Điểm danh </Text>
+                  <Text
+                    style={styles.requestStatusBtn}
+                    onPress={() => navigation.navigate("AttendancePage")}
+                  >
+                    Điểm danh
+                  </Text>
                 </View>
               </TouchableOpacity>
             </View>

@@ -8,11 +8,12 @@ import {
   AttendancePage,
   Class,
   ClassDetail,
-  LoginPage,
+  Login,
   ManageClass,
   ManageRequest,
-  Notification,
   NotificationPage,
+  Register,
+  RegisterTutor,
   Tutor,
   TutorDetail,
   Wallet,
@@ -79,7 +80,7 @@ export default function App() {
         />
         <Stack.Screen
           name="Login"
-          component={LoginPage}
+          component={Login}
           options={{ headerShown: false }}
         />
 
@@ -88,19 +89,34 @@ export default function App() {
           component={Wallet}
           options={{ headerShown: false }}
         />
+
         <Stack.Screen
           name="ManageClass"
           component={ManageClass}
           options={{ headerShown: false }}
         />
+
         <Stack.Screen
           name="ManageRequest"
           component={ManageRequest}
           options={{ headerShown: false }}
         />
+
         <Stack.Screen
           name="AttendancePage"
           component={AttendancePage}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="Register"
+          component={Register}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="RegisterTutor"
+          component={RegisterTutor}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

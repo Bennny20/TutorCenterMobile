@@ -4,6 +4,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "@expo/vector-icons";
 import { Home, Search, Profile, CreateRequestPage } from "../screens";
 import { COLORS } from "../constants/index";
+import Search2 from "../screens/Search2";
 
 const Tab = createBottomTabNavigator();
 
@@ -42,7 +43,7 @@ const BottomTabNavigation = () => {
 
       <Tab.Screen
         name="Search"
-        component={Search}
+        component={Search2}
         options={{
           tabBarIcon: ({ focused }) => {
             return (

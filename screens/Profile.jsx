@@ -22,7 +22,7 @@ const Profile = () => {
   const navigation = useNavigation();
 
   const [userData, setUserData] = useState(null);
-  const [userLogin, setUserLogin] = useState(true);
+  const [userLogin, setUserLogin] = useState(false);
 
   const logout = () => {
     Alert.alert("logout", "Are you sure you want to logout", [
@@ -73,9 +73,7 @@ const Profile = () => {
                 : "Please login into your account"}
             </Text>
             {userLogin === false ? (
-              <TouchableOpacity
-                onPressIn={(navigation) => navigation.navigate("Login")}
-              >
+              <TouchableOpacity onPressIn={() => navigation.navigate("Login")}>
                 <View style={styles.loginBtn}>
                   <Text style={styles.menuText}>Đăng nhập </Text>
                 </View>
@@ -120,7 +118,7 @@ const Profile = () => {
                 </TouchableOpacity>
 
                 <TouchableOpacity
-                  onPressIn={() => navigation.navigate("AttendancePage")}
+                  onPressIn={() => navigation.navigate("ManageClass")}
                 >
                   <View style={styles.menuItem(0.5)}>
                     <MaterialCommunityIcons
@@ -128,20 +126,9 @@ const Profile = () => {
                       size={30}
                       color={COLORS.main}
                     />
-                    <Text style={styles.menuItemText}> Điêm danh </Text>
-                  </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPressIn={() => navigation.navigate("ManageClass")}
-                >
-                  <View style={styles.menuItem(0.5)}>
-                    <MaterialCommunityIcons
-                      name="school-outline"
-                      size={30}
-                      color={COLORS.main}
-                    />
-                    <Text style={styles.menuItemText}> Quản lý lớp </Text>
+                    <Text style={styles.menuItemText}>
+                      Quản lý lớp & Điêm danh
+                    </Text>
                   </View>
                 </TouchableOpacity>
 

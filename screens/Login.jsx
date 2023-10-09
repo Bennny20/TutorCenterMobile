@@ -1,20 +1,20 @@
 import {
-  SafeAreaView,
   StyleSheet,
+  ScrollView,
+  SafeAreaView,
   Text,
-  TextInput,
-  TouchableOpacity,
   View,
+  TouchableOpacity,
+  TextInput,
 } from "react-native";
 import React, { useState } from "react";
-import { ScrollView } from "react-native-gesture-handler";
-import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { COLORS, SIZES } from "../constants";
-import { Image } from "react-native";
 import Button from "../components/Button";
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { Alert } from "react-native";
 
 const validationSchema = Yup.object().shape({
   password: Yup.string()
@@ -25,13 +25,25 @@ const validationSchema = Yup.object().shape({
     .required("Required"),
 });
 
-const LoginPage = () => {
+const Login = () => {
   const navigation = useNavigation();
-
   const [loader, setLoader] = useState(false);
   const [responseData, setResponseData] = useState(null);
   const [obsecureText, setObsecureText] = useState(false);
 
+  const inValidForm = () => {
+    Alert.alert("Invalid form", "Please provide all require fields", [
+      {
+        text: "Cancel",
+        onPress: () => {},
+      },
+      {
+        text: "Continue",
+        onPress: () => {},
+      },
+      { defaultIndex: 1 },
+    ]);
+  };
   return (
     <ScrollView>
       <SafeAreaView style={{ marginHorizontal: 20 }}>
@@ -46,44 +58,41 @@ const LoginPage = () => {
               color={COLORS.primary}
             />
           </TouchableOpacity>
-          <Image
-            source={require("../assets/images/bk.png")}
-            style={styles.cover}
-          />
           <View style={{ alignItems: "center" }}>
             <Text style={styles.title}>TUTOR CENTER</Text>
           </View>
           <Formik
             initialValues={{ email: "", password: "" }}
             validationSchema={validationSchema}
-            onSubmit={(values) => console.log(values)}
+            onSubmit={(data) => console.log(data)}
           >
             {({
               handleChange,
               handleBlur,
-              handleSubmit,
               touched,
+              handleSubmit,
               values,
               errors,
               isValid,
               setFieldTouched,
             }) => (
               <View>
-                <View style={styles.wrapper}>
+                {/* Email */}
+                <View style={{ marginBottom: 20 }}>
                   <Text style={styles.label}>Email</Text>
                   <View
                     style={styles.inputWrapper(
-                      touched.email ? COLORS.secondary : COLORS.offwhite
+                      touched.email ? COLORS.main : COLORS.offwhite
                     )}
                   >
                     <MaterialCommunityIcons
                       name="email-outline"
                       size={20}
                       color={COLORS.gray}
-                      style={styles.iconStyle}
+                      style={{ marginRight: 10 }}
                     />
                     <TextInput
-                      placeholder="Enter email"
+                      placeholder="Enter your email"
                       onFocus={() => {
                         setFieldTouched("email");
                       }}
@@ -91,7 +100,7 @@ const LoginPage = () => {
                         setFieldTouched("email", "");
                       }}
                       value={values.email}
-                      onChange={handleChange("email")}
+                      onChangeText={handleChange("email")}
                       autoCapitalize="none"
                       autoCorrect={false}
                       style={{ flex: 1 }}
@@ -102,22 +111,23 @@ const LoginPage = () => {
                   )}
                 </View>
 
-                <View style={styles.wrapper}>
+                {/* Password */}
+                <View style={{ marginBottom: 20 }}>
                   <Text style={styles.label}>Password</Text>
                   <View
                     style={styles.inputWrapper(
-                      touched.password ? COLORS.secondary : COLORS.offwhite
+                      touched.password ? COLORS.main : COLORS.offwhite
                     )}
                   >
                     <MaterialCommunityIcons
                       name="lock-outline"
                       size={20}
                       color={COLORS.gray}
-                      style={styles.iconStyle}
+                      style={{ marginRight: 10 }}
                     />
                     <TextInput
                       secureTextEntry={obsecureText}
-                      placeholder="Password"
+                      placeholder="Enter your password"
                       onFocus={() => {
                         setFieldTouched("password");
                       }}
@@ -125,7 +135,7 @@ const LoginPage = () => {
                         setFieldTouched("password", "");
                       }}
                       value={values.password}
-                      onChange={handleChange("password")}
+                      onChangeText={handleChange("password")}
                       autoCapitalize="none"
                       autoCorrect={false}
                       style={{ flex: 1 }}
@@ -142,15 +152,42 @@ const LoginPage = () => {
                       />
                     </TouchableOpacity>
                   </View>
-                  {touched.email && errors.email && (
+                  {touched.password && errors.password && (
                     <Text style={styles.errorMessage}>{errors.password}</Text>
                   )}
                 </View>
+
                 <Button
                   title={"Dang nhap"}
-                  onPress={isValid ? handleSubmit : () => {}}
+                  onPress={isValid ? handleSubmit : inValidForm}
                   isValid={isValid}
                 />
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    marginTop: 20,
+                  }}
+                >
+                  <Text
+                    style={styles.registration}
+                    onPress={() => {
+                      navigation.navigate("Register");
+                    }}
+                  >
+                    Đăng kí tài khoản
+                  </Text>
+                  <Text style={styles.registration}> | </Text>
+                  <Text
+                    style={styles.registration}
+                    onPress={() => {
+                      navigation.navigate("RegisterTutor");
+                    }}
+                  >
+                    Đăng kí làm gia sư
+                  </Text>
+                </View>
               </View>
             )}
           </Formik>
@@ -160,9 +197,14 @@ const LoginPage = () => {
   );
 };
 
-export default LoginPage;
+export default Login;
 
 const styles = StyleSheet.create({
+  registration: {
+    fontFamily: "regular",
+    fontSize: SIZES.medium,
+    color: COLORS.main,
+  },
   errorMessage: {
     color: COLORS.red,
     fontFamily: "regular",
@@ -170,9 +212,7 @@ const styles = StyleSheet.create({
     marginLeft: 5,
     fontSize: SIZES.xSmall,
   },
-  iconStyle: {
-    marginRight: 10,
-  },
+
   inputWrapper: (color) => ({
     borderColor: color,
     backgroundColor: COLORS.lightWhite,
@@ -185,28 +225,19 @@ const styles = StyleSheet.create({
   }),
   label: {
     fontFamily: "regular",
-    fontSize: SIZES.xSmall,
+    fontSize: SIZES.Small,
+    color: COLORS.main,
     marginBottom: 5,
     marginEnd: 5,
     textAlign: "right",
   },
 
-  wrapper: {
-    marginBottom: 10,
-  },
-
   title: {
+    marginTop: 20,
     fontFamily: "bold",
-    fontSize: SIZES.xLarge,
-    color: COLORS.primary,
+    fontSize: SIZES.xxLarge,
+    color: COLORS.main,
     alignItems: "center",
-    marginBottom: SIZES.xxLarge,
-  },
-
-  cover: {
-    height: SIZES.height / 2.4,
-    width: SIZES.width,
-    resizeMode: "contain",
     marginBottom: SIZES.xxLarge,
   },
 });
