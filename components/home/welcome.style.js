@@ -3,15 +3,17 @@ import { COLORS, SIZES } from "../../constants";
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: "row",
     width: "100%",
+    marginHorizontal: 12,
   },
 
-  welcomeText: (color, top) => ({
+  welcomeText: (color, top, size) => ({
     fontFamily: "bold",
-    fontSize: SIZES.large,
+    fontSize: size,
     marginTop: top,
     color: color,
-    marginHorizontal: 12,
+    marginLeft: 5,
   }),
 
   searchContainer: {

@@ -22,7 +22,7 @@ const Profile = () => {
   const navigation = useNavigation();
 
   const [userData, setUserData] = useState(null);
-  const [userLogin, setUserLogin] = useState(false);
+  const [userLogin, setUserLogin] = useState(true);
 
   const logout = () => {
     Alert.alert("logout", "Are you sure you want to logout", [
@@ -53,14 +53,15 @@ const Profile = () => {
         <View style={styles.profile}>
           <View style={styles.edit}>
             <Text></Text>
-            <TouchableOpacity>
-              <Ionicons
-                name="create-outline"
-                size={40}
-                color={COLORS.main}
-                onPressIn={() => navigation.navigate("Search")}
-              />
-            </TouchableOpacity>
+            {userLogin === true ? (
+              <TouchableOpacity
+                onPressIn={() => navigation.navigate("EditProfile")}
+              >
+                <Ionicons name="create-outline" size={40} color={COLORS.main} />
+              </TouchableOpacity>
+            ) : (
+              <Text style={{ marginBottom: 30 }}></Text>
+            )}
           </View>
           <View style={styles.info}>
             <Image

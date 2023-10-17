@@ -1,4 +1,10 @@
-import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
+import {
+  StyleSheet,
+  Text,
+  View,
+  TouchableOpacity,
+  SafeAreaView,
+} from "react-native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -6,7 +12,6 @@ import { COLORS, SIZES } from "../constants";
 import { ScrollView } from "react-native";
 import TutorItem from "../components/Tutor/TutorItem";
 import { FlatList } from "react-native-gesture-handler";
-import { Pressable } from "react-native";
 import TutorItemApply from "../components/Tutor/TuorItemApply";
 
 const ClassDetail = () => {
@@ -14,7 +19,7 @@ const ClassDetail = () => {
   const tutorApplies = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
   return (
-    <View>
+    <SafeAreaView style={{ marginBottom: 100 }}>
       <View styles={styles.container}>
         <View style={styles.wrapper}>
           <View style={styles.upperRow}>
@@ -44,34 +49,61 @@ const ClassDetail = () => {
         </View>
       </View>
 
-      <View style={{ marginTop: 40 }}>
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          marginVertical: 10,
+        }}
+      >
+        <TouchableOpacity
+          style={styles.btnApply}
+          onPress={() => navigation.goBack()}
+        >
+          <Ionicons name="receipt-outline" size={30} color={COLORS.black} />
+          <Text
+            style={{ marginLeft: 5, fontFamily: "bold", fontSize: SIZES.large }}
+          >
+            Apply
+          </Text>
+        </TouchableOpacity>
+      </View>
+      <View>
         <View style={styles.title}>
           <Text style={styles.titleText}> Thong tin gia su</Text>
           <Text style={styles.titleText}>Trang thai</Text>
         </View>
-        <View>
-          {/* <FlatList
+        {/* <FlatList
             removeClippedSubviews={true}
             data={tutorApplies}
             renderItem={({ item }) => <TutorItem />}
             contentContainerStyle={{ columnGap: SIZES.medium }}
           /> */}
-          <ScrollView style={{ marginTop: 10 }}>
-            <View style={styles.tableBody}>
-              {tutorApplies.map((item) => (
-                <TutorItemApply />
-              ))}
-            </View>
-          </ScrollView>
-        </View>
       </View>
-    </View>
+      <ScrollView style={{ marginTop: 10 }}>
+        <View style={styles.tableBody}>
+          {tutorApplies.map((item) => (
+            <TutorItemApply />
+          ))}
+        </View>
+      </ScrollView>
+    </SafeAreaView>
   );
 };
 
 export default ClassDetail;
 
 const styles = StyleSheet.create({
+  btnApply: {
+    flexDirection: "row",
+    paddingHorizontal: 30,
+    padding: 4,
+    borderWidth: 2,
+    alignItems: "center",
+    backgroundColor: COLORS.secondMain,
+    borderRadius: 10,
+  },
+
   titleText: {
     fontFamily: "bold",
     fontSize: SIZES.large,
@@ -142,7 +174,7 @@ const styles = StyleSheet.create({
   },
 
   wrapper: {
-    marginTop: 30,
+    marginTop: -25,
     backgroundColor: COLORS.lightWhite,
   },
 

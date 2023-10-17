@@ -5,7 +5,9 @@ import { COLORS, SIZES } from "../../constants";
 import TutorItem from "./TutorItem";
 
 const TutorList = () => {
-  const tutors = [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13];
+  const tutors = [
+    1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20,
+  ];
 
   return (
     <View style={styles.container}>

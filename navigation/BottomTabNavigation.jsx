@@ -1,8 +1,8 @@
 import { View, Text } from "react-native";
 import React from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { Ionicons } from "@expo/vector-icons";
-import { Home, Search, Profile, CreateRequestPage } from "../screens";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { Home, Search, Profile, CreateRequestPage, BlogPage } from "../screens";
 import { COLORS } from "../constants/index";
 import Search2 from "../screens/Search2";
 
@@ -88,12 +88,12 @@ const BottomTabNavigation = () => {
 
       <Tab.Screen
         name="Blog"
-        component={Search}
+        component={BlogPage}
         options={{
           tabBarIcon: ({ focused }) => {
             return (
-              <Ionicons
-                name={"chatbox-ellipses-outline"}
+              <MaterialCommunityIcons
+                name={"newspaper-variant-multiple"}
                 size={24}
                 color={focused ? COLORS.primary : COLORS.gray2}
               />

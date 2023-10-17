@@ -6,8 +6,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import BottomTabNavigation from "./navigation/BottomTabNavigation";
 import {
   AttendancePage,
+  BlogDetail,
   Class,
   ClassDetail,
+  EditProfile,
   Login,
   ManageClass,
   ManageRequest,
@@ -117,6 +119,18 @@ export default function App() {
         <Stack.Screen
           name="RegisterTutor"
           component={RegisterTutor}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="BlogDetail"
+          component={BlogDetail}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="EditProfile"
+          component={EditProfile}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

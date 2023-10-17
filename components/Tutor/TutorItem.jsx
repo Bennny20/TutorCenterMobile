@@ -1,11 +1,17 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 import React from "react";
 import { SIZES, SHADOWS, COLORS } from "../../constants";
+import { useNavigation } from "@react-navigation/native";
 
 const TutorItem = () => {
+  const navigation = useNavigation();
+
   return (
     <View>
-      <TouchableOpacity style={styles.container}>
+      <TouchableOpacity
+        style={styles.container}
+        onPress={() => navigation.navigate("TutorDetail")}
+      >
         <View style={styles.image}>
           <Image
             source={{

@@ -1,4 +1,3 @@
-import Search from "./Search";
 import Home from "./Home";
 import Profile from "./Profile";
 import TutorDetail from "./TutorDetail";
@@ -14,9 +13,15 @@ import CreateRequestPage from "./CreateRequestPage";
 import Login from "./Login";
 import RegisterTutor from "./RegisterTutor";
 import Register from "./Register";
+import BlogPage from "./BlogPage";
+import BlogDetail from "./BlogDetail";
+import EditProfile from "./EditProfile";
+
 export {
+  EditProfile,
+  BlogDetail,
+  BlogPage,
   Home,
-  Search,
   Profile,
   TutorDetail,
   ClassDetail,

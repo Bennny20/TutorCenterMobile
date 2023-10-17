@@ -11,16 +11,23 @@ const Welcome = () => {
   return (
     <View>
       <View style={styles.container}>
-        <Text style={styles.welcomeText(COLORS.black, SIZES.xSmall)}>
+        <Text
+          style={styles.welcomeText(COLORS.black, SIZES.xSmall, SIZES.xLarge)}
+        >
           Find the best
+        </Text>
+        <Text
+          style={styles.welcomeText(COLORS.main, SIZES.xSmall, SIZES.xLarge)}
+        >
+          for your children
         </Text>
       </View>
 
       <View style={styles.searchContainer}>
         <View style={styles.searchWrapper}>
           <TextInput
+            editable={false}
             style={styles.searchInput}
-            value=""
             onPressIn={() => navigation.navigate("Search")}
             placeholder="What are you looking for "
           />

@@ -29,15 +29,14 @@ const Tutor = () => {
           <Text style={styles.heading}>Best Tutors</Text>
         </View>
       </View>
-      <ScrollView style={{ marginTop: 80 }}>
+      <ScrollView
+        style={{ marginTop: 80, marginHorizontal: 15, marginBottom: 60 }}
+      >
         <View>
           {tutors.map((item) => (
             <TutorItem />
           ))}
         </View>
-        <Text></Text>
-        <Text></Text>
-        <Text></Text>
       </ScrollView>
     </View>
   );
