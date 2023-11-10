@@ -134,6 +134,7 @@ const Register = () => {
                       style={{ marginRight: 10 }}
                     />
                     <TextInput
+                      keyboardType="phone-pad"
                       placeholder="Enter your phone"
                       onFocus={() => {
                         setFieldTouched("phone");

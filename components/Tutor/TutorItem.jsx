@@ -1,16 +1,36 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
-import React from "react";
+import React, { useEffect } from "react";
 import { SIZES, SHADOWS, COLORS } from "../../constants";
 import { useNavigation } from "@react-navigation/native";
+import { useState } from "react";
+import axios from "axios";
 
-const TutorItem = () => {
+const TutorItem = ({ item }) => {
   const navigation = useNavigation();
+  const userId = item.user;
+  const [user, setUser] = useState();
 
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await axios.get(
+          `https://tutor-center.onrender.com/user/${userId}`
+        );
+        setUser(response.data);
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
+  const subjects = item.subject.join(" - ");
   return (
     <View>
       <TouchableOpacity
         style={styles.container}
-        onPress={() => navigation.navigate("TutorDetail")}
+        onPress={() => navigation.navigate("TutorDetail", { item, user })}
       >
         <View style={styles.image}>
           <Image
@@ -21,10 +41,10 @@ const TutorItem = () => {
           />
         </View>
         <View style={styles.textContent}>
-          <Text style={styles.name}>Truong Quang Phiên</Text>
-          <Text style={styles.supplier}>Sinh viên</Text>
-          <Text style={styles.supplier}>Đại học FPT</Text>
-          <Text style={styles.supplier}>Toan - Lý - Hóa</Text>
+          <Text style={styles.name}>{user?.profile.name} </Text>
+          <Text style={styles.supplier}>{subjects}</Text>
+          <Text style={styles.supplier}>{item.university}</Text>
+          <Text style={styles.supplier}>{item.address}</Text>
         </View>
       </TouchableOpacity>
     </View>

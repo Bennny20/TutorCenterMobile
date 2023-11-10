@@ -1,10 +1,20 @@
 import { View, Text } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { Home, Search, Profile, CreateRequestPage, BlogPage } from "../screens";
+import {
+  Home,
+  Search,
+  Profile,
+  CreateRequestPage,
+  BlogPage,
+  SearchForTutor,
+} from "../screens";
 import { COLORS } from "../constants/index";
 import Search2 from "../screens/Search2";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
+import { useNavigation } from "@react-navigation/native";
 
 const Tab = createBottomTabNavigator();
 
@@ -23,6 +33,30 @@ const screenOptions = {
 };
 
 const BottomTabNavigation = () => {
+  const navigation = useNavigation();
+  const [userData, setUserData] = useState(null);
+  const [userLogin, setUserLogin] = useState(false);
+
+  useEffect(() => {
+    checkExitingUser();
+  }, []);
+
+  const checkExitingUser = async () => {
+    const id = await AsyncStorage.getItem("id");
+    const userId = `user${JSON.parse(id)}`;
+
+    try {
+      const currentUser = await AsyncStorage.getItem(userId);
+      if (currentUser !== null) {
+        const parsedData = JSON.parse(currentUser);
+        setUserData(parsedData);
+        setUserLogin(true);
+      }
+    } catch (error) {
+      console.log("Error retrieving the data: ", error);
+    }
+  };
+
   return (
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
@@ -40,22 +74,39 @@ const BottomTabNavigation = () => {
           },
         }}
       />
-
-      <Tab.Screen
-        name="Search"
-        component={Search2}
-        options={{
-          tabBarIcon: ({ focused }) => {
-            return (
-              <Ionicons
-                name={"search-sharp"}
-                size={24}
-                color={focused ? COLORS.primary : COLORS.gray2}
-              />
-            );
-          },
-        }}
-      />
+      {userLogin === true && userData.user.role === "USER_TUTOR" ? (
+        <Tab.Screen
+          name="Search"
+          component={SearchForTutor}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <Ionicons
+                  name={"search-sharp"}
+                  size={24}
+                  color={focused ? COLORS.primary : COLORS.gray2}
+                />
+              );
+            },
+          }}
+        />
+      ) : (
+        <Tab.Screen
+          name="Search"
+          component={Search2}
+          options={{
+            tabBarIcon: ({ focused }) => {
+              return (
+                <Ionicons
+                  name={"search-sharp"}
+                  size={24}
+                  color={focused ? COLORS.primary : COLORS.gray2}
+                />
+              );
+            },
+          }}
+        />
+      )}
 
       <Tab.Screen
         name="Create"

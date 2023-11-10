@@ -4,16 +4,19 @@ import {
   Text,
   View,
   ScrollView,
+  ActivityIndicator,
 } from "react-native";
 import React from "react";
 import { COLORS, SIZES } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import TutorItem from "../components/Tutor/TutorItem";
+import useFetch from "../hook/Tutor/useFetch";
 
 const Tutor = () => {
   const navigation = useNavigation();
   const tutors = [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13];
+  const { data, isLoading, error } = useFetch();
 
   return (
     <View styles={styles.container}>
@@ -33,9 +36,13 @@ const Tutor = () => {
         style={{ marginTop: 80, marginHorizontal: 15, marginBottom: 60 }}
       >
         <View>
-          {tutors.map((item) => (
-            <TutorItem />
-          ))}
+          {isLoading ? (
+            <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primarys} />
+          ) : error ? (
+            <Text>Something went wrong </Text>
+          ) : (
+            data.map((item) => <TutorItem item={item} />)
+          )}
         </View>
       </ScrollView>
     </View>

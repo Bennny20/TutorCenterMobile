@@ -1,14 +1,18 @@
 import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { COLORS, SIZES } from "../constants";
 import { ScrollView } from "react-native";
 import { TextInput } from "react-native";
 
 const TutorDetail = () => {
   const navigation = useNavigation();
-
+  const route = useRoute();
+  const { item, user } = route.params;
+  // console.log("Tutor: ", item);
+  // console.log("User: ", user);
+  const subjects = item.subject.join(" - ");
   return (
     <View>
       <View styles={styles.container}>
@@ -24,7 +28,7 @@ const TutorDetail = () => {
             <Text style={styles.heading}>Thông tin của gia su </Text>
           </View>
         </View>
-        <ScrollView style={{ marginTop: 70 }}>
+        <ScrollView style={{ marginTop: 60 }}>
           <View style={styles.tutorInfo}>
             <View style={styles.info}>
               <View style={{ alignItems: "center" }}>
@@ -34,13 +38,15 @@ const TutorDetail = () => {
                 />
               </View>
               <View style={{ marginHorizontal: 20, marginVertical: 10 }}>
-                <Text style={styles.name}> Truong Quang Phien</Text>
-                <Text style={styles.sup}> Giới tính: Nam </Text>
-                <Text style={styles.sup}> Địa chỉ: TP Thủ Đức, TP HCM </Text>
-                <Text style={styles.sup}> Sinh viên </Text>
-                <Text style={styles.sup}> Trường đại học: Đại học FPT</Text>
-                <Text style={styles.sup}> Chuyên môn: Toán - Lý - Hóa</Text>
-                <Text style={styles.sup}> Kinh nghiệm: </Text>
+                <Text style={styles.name}>{user?.profile.name} </Text>
+                <Text style={styles.sup}>Giới tính: Nam </Text>
+                <Text style={styles.sup}>Địa chỉ: {item.address} </Text>
+                <Text style={styles.sup}>Sinh viên </Text>
+                <Text style={styles.sup}>
+                  Trường đại học: {item.university}
+                </Text>
+                <Text style={styles.sup}>Chuyên môn: {subjects}</Text>
+                <Text style={styles.sup}>Kinh nghiệm: {item.major}</Text>
               </View>
             </View>
           </View>
@@ -54,11 +60,11 @@ const TutorDetail = () => {
               }}
             >
               <Image
-                source={require("../assets/images/profile.jpeg")}
+                source={{ uri: item.certificate[0] }}
                 style={styles.certificate}
               />
               <Image
-                source={require("../assets/images/profile.jpeg")}
+                source={{ uri: item.certificate[1] }}
                 style={styles.certificate}
               />
             </View>

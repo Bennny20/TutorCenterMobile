@@ -16,8 +16,12 @@ import Register from "./Register";
 import BlogPage from "./BlogPage";
 import BlogDetail from "./BlogDetail";
 import EditProfile from "./EditProfile";
+import SearchForTutor from "./SearchForTutor";
+import ManageApply from "./ManageApply";
 
 export {
+  ManageApply,
+  SearchForTutor,
   EditProfile,
   BlogDetail,
   BlogPage,

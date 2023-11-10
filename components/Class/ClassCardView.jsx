@@ -3,34 +3,68 @@ import React from "react";
 import { COLORS, SIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-const ClassCardView = () => {
+import { useEffect } from "react";
+import { useState } from "react";
+import axios from "axios";
+import { ActivityIndicator } from "react-native";
+const ClassCardView = ({ item }) => {
   const navigation = useNavigation();
+  const [loader, setLoader] = useState(false);
+  const [error, setError] = useState();
+  const majors = item.request.major.join(", ");
 
   return (
-    <TouchableOpacity onPress={() => navigation.navigate("ClassDetail")}>
+    <TouchableOpacity
+      onPress={() => navigation.navigate("ClassDetail", { item })}
+    >
       <View style={styles.container}>
         <View style={styles.heading}>
-          <Text style={styles.headingText}> Ten class</Text>
+          <Text style={styles.headingText}>
+            {majors} - Lớp {item.request.classNo}
+          </Text>
         </View>
 
         <View style={styles.details}>
           <Text style={styles.supplier} numberOfLines={1}>
+            Trinh do: {item.request.level}
+          </Text>
+          <Text style={styles.supplier} numberOfLines={1}>
+            Lop: {item.request.classNo}
+          </Text>
+          <Text style={styles.supplier} numberOfLines={1}>
+            Mon hoc: {majors}
+            {/* {item.request.major.map((majors) => {
+              majors + " ";
+            })} */}
+            {/* {item.request.major[0]}, {request.major[1]} */}
+          </Text>
+          <Text style={styles.supplier} numberOfLines={1}>
+            Địa điểm: {item.request.address}
+          </Text>
+          <Text style={styles.supplier} numberOfLines={1}>
+            Giới tính: {item.request.gender}
+          </Text>
+          <Text style={styles.price}>{item.request.price} VND</Text>
+        </View>
+
+        {/* <View style={styles.details}>
+          <Text style={styles.supplier} numberOfLines={1}>
             Trinh do:
           </Text>
           <Text style={styles.supplier} numberOfLines={1}>
-            Lop
+            Lop:
           </Text>
           <Text style={styles.supplier} numberOfLines={1}>
-            Mon hoc
+            Mon hoc:
           </Text>
           <Text style={styles.supplier} numberOfLines={1}>
-            dia diem
+            Địa điểm:
           </Text>
           <Text style={styles.supplier} numberOfLines={1}>
-            Gioi tinh
+            Giới tính:
           </Text>
-          <Text style={styles.price}>$123</Text>
-        </View>
+          <Text style={styles.price}> VND</Text>
+        </View> */}
         <TouchableOpacity style={styles.addBtn}>
           <Text style={styles.detailText}>xem chi tiet</Text>
           <Ionicons

@@ -6,7 +6,7 @@ import { StyleSheet } from "react-native";
 
 const Carousel = () => {
   const slides = [
-    require("../../assets/images/fn1.jpg"),
+    require("../../assets/images/pin1.png"),
     require("../../assets/images/fn2.jpg"),
     require("../../assets/images/fn3.jpg"),
   ];

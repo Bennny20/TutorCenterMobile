@@ -3,11 +3,36 @@ import React from "react";
 import { COLORS, SIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useEffect } from "react";
+import axios from "axios";
+import { useState } from "react";
 
-const TutorCartView = () => {
+const TutorCartView = ({ item }) => {
   const navigation = useNavigation();
+  const userId = item.user;
+  const [user, setUser] = useState();
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      try {
+        const response = await axios.get(
+          `https://tutor-center.onrender.com/user/${userId}`
+        );
+        setUser(response.data);
+      } catch (error) {
+        console.log("error", error);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
+  const subjects = item.subject.join(" - ");
   return (
-    <TouchableOpacity onPress={() => navigation.navigate("TutorDetail")}>
+    <TouchableOpacity
+      // onPress={() => navigation.navigate("TutorDetail", { item, user })}
+      onPress={() => navigation.navigate("TutorDetail", { item, user })}
+    >
       <View style={styles.container}>
         <View style={styles.imageContainer}>
           <Image
@@ -20,12 +45,12 @@ const TutorCartView = () => {
 
         <View style={styles.details}>
           <Text style={styles.title} numberOfLines={1}>
-            Truong Quang Phien
+            {user?.profile.name}
           </Text>
           <Text style={styles.supplier} numberOfLines={1}>
-            Sinh viên
+            {subjects}
           </Text>
-          <Text style={styles.univetsity}>Dại học FPT</Text>
+          <Text style={styles.univetsity}>{item.university}</Text>
         </View>
         <TouchableOpacity style={styles.addBtn}>
           <Ionicons
@@ -43,7 +68,7 @@ export default TutorCartView;
 
 const styles = StyleSheet.create({
   container: {
-    width: "100%",
+    width: 250,
     height: 240,
     marginEnd: 22,
     borderRadius: SIZES.medium,
@@ -60,7 +85,6 @@ const styles = StyleSheet.create({
     marginTop: SIZES.small / 2,
     borderRadius: "50%",
     overflow: "hidden",
-    justifyContent: "center",
     alignItems: "center",
   },
 
@@ -73,6 +97,7 @@ const styles = StyleSheet.create({
 
   details: {
     padding: SIZES.small,
+    alignItems: "center",
   },
 
   title: {
@@ -93,7 +118,7 @@ const styles = StyleSheet.create({
   },
 
   addBtn: {
-    position: "absolute",
+    marginLeft: 30,
     bottom: SIZES.xSmall,
     right: SIZES.xSmall,
   },

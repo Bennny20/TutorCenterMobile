@@ -1,15 +1,19 @@
-import { StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
 import React from "react";
 import { COLORS } from "../constants";
 import { TouchableOpacity } from "react-native";
 
-const Button = ({ title, onPress, isValid }) => {
+const Button = ({ title, onPress, isValid, loader }) => {
   return (
     <TouchableOpacity
       onPress={onPress}
       style={styles.btnStyle(isValid === false ? COLORS.gray : COLORS.primary)}
     >
-      <Text style={styles.btnText}>{title}</Text>
+      {loader === false ? (
+        <Text style={styles.btnText}>{title}</Text>
+      ) : (
+        <ActivityIndicator />
+      )}
     </TouchableOpacity>
   );
 };

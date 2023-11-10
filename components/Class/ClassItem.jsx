@@ -1,10 +1,14 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
-import { COLORS } from "../../constants";
+import { COLORS, SIZES } from "../../constants";
 import { useNavigation } from "@react-navigation/native";
-
-const ClassItem = () => {
+import axios from "axios";
+const ClassItem = ({ item }) => {
   const navigation = useNavigation();
+  console.log(item);
+
+  const majors = item.request.major.join(" - ");
+  console.log(majors);
   return (
     <View style={styles.card_container}>
       <View
@@ -18,25 +22,19 @@ const ClassItem = () => {
       </View>
       <TouchableOpacity
         style={styles.content}
-        onPress={() => navigation.navigate("ClassDetail")}
+        onPress={() => navigation.navigate("ClassDetail", { item })}
       >
-        <View>
-          <Text style={styles.text}>Hello</Text>
-          <Text
-            style={[
-              styles.text,
-              {
-                fontFamily: "bold",
-                fontSize: 14,
-                maxWidth: "100%",
-              },
-            ]}
-          >
-            Ten khoa hoc
-          </Text>
-          <Text style={[styles.text, { fontSize: 13, marginBottom: 6 }]}>
-            Ten khoa hoc
-          </Text>
+        <View style={styles.title}>
+          <Text style={styles.titleText}>{majors}</Text>
+        </View>
+        <View style={styles.info}>
+          <Text style={styles.text}>Trình đồ: {item.request.level}</Text>
+          <Text style={styles.text}>Lớp: {item.request.classNo}</Text>
+          <Text style={styles.text}>Địa chỉ: {item.request.address}</Text>
+          <Text style={styles.text}>Giới tính: {item.request.gender}</Text>
+        </View>
+        <View style={styles.price}>
+          <Text style={styles.priceText}>{item.request.price} VNĐ</Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -46,11 +44,37 @@ const ClassItem = () => {
 export default ClassItem;
 
 const styles = StyleSheet.create({
-  text: {
-    color: "#000",
-    fontSize: 12,
+  priceText: {
+    color: COLORS.red,
+    fontSize: SIZES.medium,
     fontFamily: "bold",
     marginVertical: 3,
+  },
+  price: {
+    padding: 2,
+    alignItems: "center",
+    borderTopWidth: 2,
+    borderTopColor: COLORS.main,
+    borderRadius: 10,
+  },
+  info: {
+    marginHorizontal: 20,
+  },
+  title: {
+    borderRadius: 10,
+    alignItems: "center",
+    borderBottomWidth: 2,
+    borderBottomColor: COLORS.main,
+  },
+  titleText: {
+    color: COLORS.main,
+    fontSize: SIZES.large,
+    fontFamily: "bold",
+    marginVertical: 3,
+  },
+  text: {
+    fontSize: SIZES.medium,
+    fontFamily: "regular",
   },
   card_container: {
     borderColor: COLORS.main,
@@ -61,7 +85,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 12,
     backgroundColor: COLORS.main,
     borderRadius: 15,
-    marginVertical: 5,
+    marginVertical: 10,
     backgroundColorL: "",
   },
   circle: {

@@ -1,8 +1,57 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 import React from "react";
 import { SIZES, SHADOWS, COLORS } from "../../constants";
+import { useEffect } from "react";
+import axios from "axios";
+import { useState } from "react";
+import { Alert } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 
-const TutorItemApply = () => {
+const TutorItemApply = ({ item, profile, classInfo }) => {
+  const navigation = useNavigation();
+
+  const profileId = classInfo.parent;
+  const handleChoose = () => {
+    const tutor = {
+      id: item.idTutor,
+      name: item.nameTutor,
+    };
+
+    axios
+      .put(`https://tutor-center.onrender.com/class/${classInfo._id}`, tutor)
+      .then((response) => {
+        console.log(response.data);
+        Alert.alert("Chọn gia sư thành công", "Quản lý lớp", [
+          {
+            text: "Cancel",
+            onPress: () => navigation.navigate("ManageClass", { profileId }),
+          },
+          {
+            text: "Continue",
+            onPress: () => {
+              navigation.navigate("ManageClass", { profileId });
+            },
+          },
+          { defaultIndex: 1 },
+        ]);
+      })
+      .catch((error) => {
+        Alert.alert("Chọn gia sư thành công", "Quản lý lớp", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {
+              navigation.navigate("ManageClass", { profileId });
+            },
+          },
+          { defaultIndex: 1 },
+        ]);
+        console.log("Create failed", error);
+      });
+  };
   return (
     <View
       style={{
@@ -21,33 +70,32 @@ const TutorItemApply = () => {
           />
         </View>
         <View style={styles.textContent}>
-          <Text style={styles.name}>Truong Quang Phiên</Text>
-          <Text style={styles.supplier}>Sinh viên</Text>
-          <Text style={styles.supplier}>Đại học FPT</Text>
-          <Text style={styles.supplier}>Toan - Lý - Hóa</Text>
+          <Text style={styles.name}>{item.nameTutor}</Text>
+          {/* <Text style={styles.supplier}>{item.major}</Text> */}
+          <Text style={styles.supplier}>{item.university}</Text>
+          <Text style={styles.supplier}>{item.subject}</Text>
+          <Text style={styles.supplier}>{item.address}</Text>
         </View>
       </TouchableOpacity>
-      <View style={{ justifyContent: "center", alignItems: "center" }}>
-        <TouchableOpacity
-          style={{
-            borderWidth: 2,
-            borderColor: COLORS.black,
-            borderRadius: SIZES.small,
-            backgroundColor: COLORS.secondMain,
-            marginRight: 6,
-          }}
-        >
-          <Text
-            style={{
-              padding: 5,
-              fontSize: SIZES.small,
-              fontFamily: "regular",
-              color: COLORS.primary,
-            }}
-          >
-            Chờ xác nhận
-          </Text>
-        </TouchableOpacity>
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          width: "30%",
+        }}
+      >
+        {classInfo.parent == profile?.user.profile.id ? (
+          <TouchableOpacity style={styles.btnStatus} onPress={handleChoose}>
+            <Text style={styles.txtStatus}>Chọn gia sư</Text>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity style={styles.btnStatus}>
+            <Text style={styles.txtStatus}>
+              Đợi xác nhận
+              {/* {idParent} */}
+            </Text>
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   );
@@ -56,6 +104,21 @@ const TutorItemApply = () => {
 export default TutorItemApply;
 
 const styles = StyleSheet.create({
+  txtStatus: {
+    padding: 5,
+    fontSize: SIZES.small,
+    fontFamily: "regular",
+    color: COLORS.primary,
+  },
+  btnStatus: {
+    width: "80%",
+    borderWidth: 2,
+    borderColor: COLORS.black,
+    borderRadius: SIZES.small,
+    backgroundColor: COLORS.secondMain,
+    marginRight: 6,
+    alignItems: "center",
+  },
   supplier: {
     fontSize: SIZES.small,
     fontFamily: "bold",
@@ -87,7 +150,6 @@ const styles = StyleSheet.create({
     alignContent: "center",
   },
   container: {
-    marginRight: 10,
     flex: 1,
     borderWidth: 2,
     borderColor: COLORS.main,

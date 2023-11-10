@@ -5,8 +5,9 @@ import {
   View,
   ScrollView,
   Image,
+  Alert,
 } from "react-native";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
 import {
   Ionicons,
@@ -16,13 +17,43 @@ import {
 } from "@expo/vector-icons";
 import { COLORS, SIZES } from "../constants";
 import { useNavigation } from "@react-navigation/native";
-import { Alert } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Profile = () => {
   const navigation = useNavigation();
-
   const [userData, setUserData] = useState(null);
-  const [userLogin, setUserLogin] = useState(true);
+  const [userLogin, setUserLogin] = useState(false);
+
+  useEffect(() => {
+    checkExitingUser();
+  }, []);
+
+  const checkExitingUser = async () => {
+    const id = await AsyncStorage.getItem("id");
+    const userId = `user${JSON.parse(id)}`;
+
+    try {
+      const currentUser = await AsyncStorage.getItem(userId);
+      if (currentUser !== null) {
+        const parsedData = JSON.parse(currentUser);
+        setUserData(parsedData);
+        setUserLogin(true);
+      }
+    } catch (error) {
+      console.log("Error retrieving the data: ", error);
+    }
+  };
+  const userLogout = async () => {
+    const id = await AsyncStorage.getItem("id");
+    const userId = `user${JSON.parse(id)}`;
+
+    try {
+      await AsyncStorage.multiRemove([userId, "id"]);
+      navigation.replace("Bottom Navigation");
+    } catch (error) {
+      console.log("Error retrieving the data: ", error);
+    }
+  };
 
   const logout = () => {
     Alert.alert("logout", "Are you sure you want to logout", [
@@ -32,10 +63,11 @@ const Profile = () => {
       },
       {
         text: "Continue",
-        onPress: () => console.log("logout pressed"),
+        onPress: () => userLogout(),
       },
     ]);
   };
+  const profileId = userData?.user.profile.id;
   return (
     <SafeAreaView>
       <View style={styles.heading}>
@@ -70,7 +102,7 @@ const Profile = () => {
             />
             <Text style={styles.name}>
               {userLogin === true
-                ? "Truong Quang Phien"
+                ? userData.user?.name
                 : "Please login into your account"}
             </Text>
             {userLogin === false ? (
@@ -81,11 +113,10 @@ const Profile = () => {
               </TouchableOpacity>
             ) : (
               <View style={styles.loginBtn}>
-                <Text style={styles.email}>Phientruong20@gmail.com</Text>
-                <Text style={styles.supplier}>0838228607</Text>
+                <Text style={styles.email}>{userData.user?.email}</Text>
+                <Text style={styles.supplier}>{userData.user?.role}</Text>
               </View>
             )}
-
             {userLogin === false ? (
               <View></View>
             ) : (
@@ -102,24 +133,46 @@ const Profile = () => {
                     <Text style={styles.menuItemText}> Ví của bạn </Text>
                   </View>
                 </TouchableOpacity>
+                {userData.user.role === "USER_TUTOR" ? (
+                  <TouchableOpacity
+                    onPressIn={() =>
+                      navigation.navigate("ManageApply", { profileId })
+                    }
+                  >
+                    <View style={styles.menuItem(0.5)}>
+                      <MaterialCommunityIcons
+                        name="frequently-asked-questions"
+                        size={30}
+                        color={COLORS.main}
+                      />
+                      <Text style={styles.menuItemText}>
+                        Danh sách lớp apply
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                ) : (
+                  <TouchableOpacity
+                    onPressIn={() =>
+                      navigation.navigate("ManageRequest", { profileId })
+                    }
+                  >
+                    <View style={styles.menuItem(0.5)}>
+                      <MaterialCommunityIcons
+                        name="frequently-asked-questions"
+                        size={30}
+                        color={COLORS.main}
+                      />
+                      <Text style={styles.menuItemText}>
+                        Quản lý yêu cầu tạo lớp
+                      </Text>
+                    </View>
+                  </TouchableOpacity>
+                )}
 
                 <TouchableOpacity
-                  onPressIn={() => navigation.navigate("ManageRequest")}
-                >
-                  <View style={styles.menuItem(0.5)}>
-                    <MaterialCommunityIcons
-                      name="frequently-asked-questions"
-                      size={30}
-                      color={COLORS.main}
-                    />
-                    <Text style={styles.menuItemText}>
-                      Quản lý yêu cầu tạo lớp
-                    </Text>
-                  </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity
-                  onPressIn={() => navigation.navigate("ManageClass")}
+                  onPressIn={() =>
+                    navigation.navigate("ManageClass", { profileId })
+                  }
                 >
                   <View style={styles.menuItem(0.5)}>
                     <MaterialCommunityIcons

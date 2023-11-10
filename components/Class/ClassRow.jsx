@@ -4,16 +4,19 @@ import {
   StyleSheet,
   Text,
   View,
+  ActivityIndicator,
 } from "react-native";
 import React from "react";
 import { COLORS, SIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import ClassCardView from "./ClassCardView";
+import useFetch from "../../hook/Class/useFetch";
 
 const ClassRow = () => {
   const classes = [1, 2, 3, 4];
   const navigation = useNavigation();
+  const { data, isLoading, error } = useFetch();
 
   return (
     <View style={styles.container}>
@@ -29,12 +32,25 @@ const ClassRow = () => {
       </View>
 
       <View style={styles.containerRow}>
-        <FlatList
+        {isLoading ? (
+          <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primarys} />
+        ) : error ? (
+          <Text>Something went wrong </Text>
+        ) : (
+          <FlatList
+            data={data}
+            keyExtractor={(item) => item.id}
+            renderItem={({ item }) => <ClassCardView item={item} />}
+            horizontal
+            contentContainerStyle={{ columnGap: SIZES.medium }}
+          />
+        )}
+        {/* <FlatList
           data={classes}
           renderItem={({ item }) => <ClassCardView />}
           horizontal
           contentContainerStyle={{ columnGap: SIZES.medium }}
-        />
+        /> */}
       </View>
     </View>
   );
@@ -42,7 +58,7 @@ const ClassRow = () => {
 
 export default ClassRow;
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   containerRow: {
     marginTop: SIZES.medium,
     marginTop: 12,

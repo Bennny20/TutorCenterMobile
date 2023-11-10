@@ -19,6 +19,7 @@ import {
   Tutor,
   TutorDetail,
   Wallet,
+  ManageApply,
 } from "./screens";
 
 const Stack = createNativeStackNavigator();
@@ -131,6 +132,12 @@ export default function App() {
         <Stack.Screen
           name="EditProfile"
           component={EditProfile}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="ManageApply"
+          component={ManageApply}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

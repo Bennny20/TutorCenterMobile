@@ -15,6 +15,8 @@ import Button from "../components/Button";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Alert } from "react-native";
+import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const validationSchema = Yup.object().shape({
   password: Yup.string()
@@ -44,6 +46,89 @@ const Login = () => {
       { defaultIndex: 1 },
     ]);
   };
+
+  // const login = async (values) => {
+  //   const user = {
+  //     email: "phientruong20@gmail.com",
+  //     password: "12345678",
+  //   };
+  //   console.log(values);
+  //   console.log(user);
+  //   axios
+  //     .post("https://tutor-center.onrender.com/login", user)
+  //     .then((response) => {
+  //       console.log(response);
+  //       // const token = response.data.token;
+  //       // AsyncStorage.setItem("authToken", token);
+  //       // navigation.replace("Main");
+  //     })
+  //     .catch((error) => {
+  //       Alert.alert("Login Error", "Invalid Email");
+  //       console.log(error);
+  //     });
+  // };
+
+  const login = async (values) => {
+    console.log("Value: ", values);
+    const user = {
+      email: "phientruong20@gmail.com",
+      password: "12345678",
+    };
+    setLoader(true);
+    try {
+      const endpoint = "https://tutor-center.onrender.com/login";
+      const data = values;
+      console.log("Data: ", data);
+
+      const response = await axios.post(endpoint, data);
+
+      if (response.status === 200) {
+        console.log(response.data);
+        setResponseData(response.data);
+        // console.log(`user${responseData.user._id}`);
+        await AsyncStorage.setItem(
+          `user${responseData.user?._id}`,
+          JSON.stringify(responseData)
+        );
+
+        await AsyncStorage.setItem(
+          "id",
+          JSON.stringify(responseData.user?._id)
+        );
+
+        navigation.replace("Bottom Navigation");
+        setLoader(false);
+      } else {
+        Alert.alert("Error Logging im", "Please provide all require fields", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {},
+          },
+          { defaultIndex: 1 },
+        ]);
+      }
+    } catch (error) {
+      console.log(error.message);
+      Alert.alert("Error", "error", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+        },
+        {
+          text: "Continue",
+          onPress: () => {},
+        },
+        { defaultIndex: 1 },
+      ]);
+    } finally {
+      setLoader(false);
+    }
+  };
+
   return (
     <ScrollView>
       <SafeAreaView style={{ marginHorizontal: 20 }}>
@@ -64,7 +149,7 @@ const Login = () => {
           <Formik
             initialValues={{ email: "", password: "" }}
             validationSchema={validationSchema}
-            onSubmit={(data) => console.log(data)}
+            onSubmit={(values) => login(values)}
           >
             {({
               handleChange,
@@ -158,6 +243,7 @@ const Login = () => {
                 </View>
 
                 <Button
+                  loader={loader}
                   title={"Dang nhap"}
                   onPress={isValid ? handleSubmit : inValidForm}
                   isValid={isValid}

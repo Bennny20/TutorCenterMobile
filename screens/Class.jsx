@@ -7,18 +7,23 @@ import {
   SafeAreaView,
   ScrollView,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { COLORS, SIZES } from "../constants";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import ClassItem from "../components/Class/ClassItem";
-import ClassList from "../components/Class/ClassList";
+import axios from "axios";
+import useFetch from "../hook/Class/useFetch";
+import { ActivityIndicator } from "react-native";
 
 const Class = () => {
   const navigation = useNavigation();
   const classes = [
-    1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 20,
+    1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21,
   ];
+
+  const { data, isLoading, error } = useFetch();
+  // console.log(data);
   return (
     <SafeAreaView>
       <View style={styles.wrapper}>
@@ -46,9 +51,13 @@ const Class = () => {
       </View>
       <ScrollView style={{ marginHorizontal: 5, marginBottom: 40 }}>
         <View>
-          {classes.map((item) => (
-            <ClassItem />
-          ))}
+          {isLoading ? (
+            <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primarys} />
+          ) : error ? (
+            <Text>Something went wrong </Text>
+          ) : (
+            data.map((item) => <ClassItem item={item} />)
+          )}
         </View>
       </ScrollView>
     </SafeAreaView>
