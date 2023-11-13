@@ -16,7 +16,14 @@ import axios from "axios";
 
 const ManageClass = () => {
   const navigation = useNavigation();
-  const classes = [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13];
+
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
   const route = useRoute();
   const { profileId } = route.params;
   const [loader, setLoader] = useState(false);
@@ -43,7 +50,12 @@ const ManageClass = () => {
   return (
     <SafeAreaView>
       <Heading title={"Danh sách lớp "} />
-      <ScrollView style={{ marginTop: 40, marginBottom: 40 }}>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+        style={{ marginTop: 40, marginBottom: 40 }}
+      >
         <View>
           {data.map((item) => (
             <View style={styles.requestItem}>
@@ -55,7 +67,6 @@ const ManageClass = () => {
                 <Text style={styles.requestSup}>Lớp: {item.class.classNo}</Text>
                 <Text style={styles.requestSup}>{item.class.address} </Text>
                 <Text style={styles.requestSup}>{item.class.price} </Text>
-                <Text style={styles.requestSup}>{item.status} </Text>
               </View>
               <TouchableOpacity
                 onPress={() => navigation.navigate("AttendancePage")}
@@ -63,17 +74,19 @@ const ManageClass = () => {
               >
                 <View
                   style={{
+                    width: "100%",
                     backgroundColor: COLORS.lightWhite,
                     borderRadius: 20,
                     borderWidth: 2,
                     borderColor: COLORS.main,
+                    alignItems: "center",
                   }}
                 >
                   <Text
                     style={styles.requestStatusBtn}
                     onPress={() => navigation.navigate("AttendancePage")}
                   >
-                    Điểm danh
+                    {item.status}
                   </Text>
                 </View>
               </TouchableOpacity>
@@ -90,13 +103,13 @@ export default ManageClass;
 const styles = StyleSheet.create({
   requestStatusBtn: {
     padding: 8,
-
     fontFamily: "bold",
     fontSize: SIZES.small,
     color: COLORS.gray,
   },
 
   requestStatus: {
+    width: "40%",
     alignItems: "center",
     justifyContent: "center",
     paddingLeft: 10,

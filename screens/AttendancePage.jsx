@@ -11,22 +11,27 @@ import { ScrollView } from "react-native";
 import axios from "axios";
 import { Alert } from "react-native";
 import { useState } from "react";
+import { RefreshControl } from "react-native";
 
 const AttendancePage = () => {
   const navigation = useNavigation();
-  var date = new Date();
-  var createDate =
-    date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear();
-  var createTime =
-    date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   const route = useRoute();
   const { item } = route.params;
+  let temp = 0;
   const profileId = item.parent;
-  const [checkFinish, setCheckFinish] = useState(false);
+  let length = item.attendance.length;
 
-  if (item.attendance.length == item.request.slot) {
-    setCheckFinish(true);
-  }
+  var date = new Date();
+  var month = new Date().getMonth() + 1;
   const createAttendance = (attendance) => {
     axios
       .post(`https://tutor-center.onrender.com/attendance`, attendance)
@@ -69,60 +74,20 @@ const AttendancePage = () => {
       classId: item._id,
       tutor: item.tutor.id,
       parent: item.parent,
-      createDate:
-        date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear(),
+      createDate: date.getDate() + "/" + month + "/" + date.getFullYear(),
       createTime:
         date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds(),
     };
 
     Alert.alert(
       "Bạn có muốn điểm danh",
-      "Thời gian: " + createDate + " " + createTime,
+      "Thời gian: " + attendance.createDate + " " + attendance.createTime,
       [
-        {
-          text: "Cancel",
-          onPress: () => {},
-        },
         {
           text: "Continue",
           onPress: () => {
-            // axios
-            //   .post(`https://tutor-center.onrender.com/attendance`, attendance)
-            //   .then((response) => {
-            //     console.log(response.data);
-            //     Alert.alert("Tạo điểm danh thành công", "Quản lý lớp", [
-            //       {
-            //         text: "Cancel",
-            //         onPress: () =>
-            //           navigation.navigate("ManageClass", { profileId }),
-            //       },
-            //       {
-            //         text: "Continue",
-            //         onPress: () => {
-            //           navigation.navigate("ManageClass", { profileId });
-            //         },
-            //       },
-            //       { defaultIndex: 1 },
-            //     ]);
-            //   })
-            //   .catch((error) => {
-            //     Alert.alert("Tạo điểm danh không thành công", "Quản lý lớp", [
-            //       {
-            //         text: "Cancel",
-            //         onPress: () => {},
-            //       },
-            //       {
-            //         text: "Continue",
-            //         onPress: () => {
-            //           navigation.navigate("ManageClass", { profileId });
-            //         },
-            //       },
-            //       { defaultIndex: 1 },
-            //     ]);
-            //     console.log("Create failed", error);
-            //   });
             createAttendance(attendance);
-            navigation.navigate("ManageClass", { profileId });
+            navigation.replace("ManageClass", { profileId });
           },
         },
         { defaultIndex: 1 },
@@ -131,7 +96,7 @@ const AttendancePage = () => {
   };
 
   return (
-    <SafeAreaView style={{ marginBottom: 400 }}>
+    <SafeAreaView style={{ marginTop: -20 }}>
       <Heading title={"Điểm danh"} />
       <View style={styles.class}>
         <View style={styles.classHeading}>
@@ -170,7 +135,10 @@ const AttendancePage = () => {
               Số buổi: {item.attendance.length}/ {item.request.slot}
             </Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.createAttendance}>
+          <TouchableOpacity
+            style={styles.createAttendance}
+            onPressIn={() => navigation.navigate("FeedbackClass", { item })}
+          >
             <Ionicons name="add-circle" size={20} color={COLORS.main} />
             <Text style={styles.titleText}>Đánh giá chất lượng </Text>
           </TouchableOpacity>
@@ -188,10 +156,10 @@ const AttendancePage = () => {
         <View style={styles.title}>
           <Text style={styles.titleText}>Danh sách điểm danh</Text>
 
-          {checkFinish ? (
+          {length.toString() === item.request.slot ? (
             <TouchableOpacity
               style={styles.createAttendance}
-              onPress={handleCreateAttendance}
+              onPressIn={() => navigation.navigate("FeedbackClass", { item })}
             >
               <Ionicons name="add-circle" size={20} color={COLORS.main} />
               <Text style={styles.titleText}>Kết thúc lớp học</Text>
@@ -207,31 +175,22 @@ const AttendancePage = () => {
           )}
         </View>
       </View>
-      <ScrollView style={{ marginTop: 10 }}>
-        {item.attendance.map((item, stt = 0) => (
+      <View style={{ marginTop: 10 }}>
+        {/* {item.attendance.map((item, stt = 0) => (
           <AttendanceItem item={item} stt={stt + 1} />
-        ))}
-      </ScrollView>
-      {/* <View
-        style={{
-          justifyContent: "space-between",
-          flexDirection: "row",
-          alignItems: "center",
-          marginTop: 10,
-          marginBottom: -10,
-          marginHorizontal: 10,
-        }}
-      >
-        <TouchableOpacity style={styles.createAttendance}>
-          <Text style={styles.titleText}>
-            Số buổi: {item.attendance.length}/ {item.request.slot}
-          </Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.createAttendance}>
-          <Ionicons name="add-circle" size={20} color={COLORS.main} />
-          <Text style={styles.titleText}>Đánh giá chất lượng </Text>
-        </TouchableOpacity>
-      </View> */}
+        ))} */}
+
+        <FlatList
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          data={item.attendance}
+          style={{ marginBottom: 750 }}
+          renderItem={({ item, stt = temp++ }) => (
+            <AttendanceItem item={item} stt={stt} />
+          )}
+          keyExtractor={(item) => item.id}
+        />
+      </View>
     </SafeAreaView>
   );
 };

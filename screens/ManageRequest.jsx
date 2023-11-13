@@ -16,15 +16,27 @@ import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
 import { ActivityIndicator } from "react-native";
+import { RefreshControl } from "react-native";
+import { FlatList } from "react-native";
 
 const ManageRequest = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { profileId } = route.params;
+  const { profileId, userData } = route.params;
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState([]);
+
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   useEffect(() => {
     const fetchUserProfile = async () => {
+      onRefresh();
       setLoader(true);
       try {
         const response = await axios.get(
@@ -40,40 +52,96 @@ const ManageRequest = () => {
 
     fetchUserProfile();
   }, []);
-  var majors = "";
-  // console.log(data);
+
+  const [wallet, setWallet] = useState();
+
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      setLoader(true);
+      try {
+        const response = await axios.get(
+          `https://tutor-center.onrender.com/wallet/${userData?.user._id}`
+        );
+        setWallet(response.data);
+      } catch (error) {
+        console.log("error", error);
+      } finally {
+        setLoader(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
+  const Item = ({ item }) => (
+    <View>
+      <View style={styles.requestItem}>
+        <View style={styles.requestInfo}>
+          <Text style={styles.requestTitle}>
+            {(majors = item.major.join(" - "))}
+          </Text>
+          <Text style={styles.requestSup}>Giới tính: {item.gender} </Text>
+          <Text style={styles.requestSup}>Lớp: {item.classNo} </Text>
+          <Text style={styles.requestSup}>{item.level} </Text>
+          <Text style={styles.requestSup}>{item.address} </Text>
+          <Text style={styles.requestSup}>{item.academicAbility} </Text>
+        </View>
+        <View style={styles.requestStatus}>
+          <View
+            style={{
+              backgroundColor: COLORS.secondMain,
+              borderRadius: 20,
+              borderWidth: 2,
+            }}
+          >
+            <Text style={styles.requestStatusBtn}>{item.status}</Text>
+          </View>
+          {item.status === "Đã duyệt" && (
+            <TouchableOpacity
+              onPressIn={() =>
+                navigation.navigate("TransferMoney", {
+                  item,
+                  userData,
+                  wallet,
+                })
+              }
+            >
+              <View
+                style={{
+                  marginTop: 10,
+                  backgroundColor: COLORS.main,
+                  borderRadius: 20,
+                  borderWidth: 2,
+                  borderColor: COLORS.white,
+                }}
+              >
+                <Text
+                  style={[styles.requestStatusBtn, { color: COLORS.white }]}
+                >
+                  Thanh toán
+                </Text>
+              </View>
+            </TouchableOpacity>
+          )}
+        </View>
+      </View>
+    </View>
+  );
+
   return (
     <SafeAreaView>
       <Heading title={"Danh sách yêu cầu tạo lớp "} />
-      <ScrollView style={{ marginTop: 40, marginBottom: 40 }}>
-        <View>
-          {loader ? (
-            <ActivityIndicator size={500} color={COLORS.main} />
-          ) : (
-            data.map((item) => (
-              <View style={styles.requestItem}>
-                <View style={styles.requestInfo}>
-                  <Text style={styles.requestTitle}>
-                    {(majors = item.major.join(" - "))}
-                  </Text>
-                  <Text style={styles.requestSup}>
-                    Giới tính: {item.gender}{" "}
-                  </Text>
-                  <Text style={styles.requestSup}>Lớp: {item.classNo} </Text>
-                  <Text style={styles.requestSup}>{item.level} </Text>
-                  <Text style={styles.requestSup}>{item.address} </Text>
-                  <Text style={styles.requestSup}>{item.academicAbility} </Text>
-                </View>
-                <View style={styles.requestStatus}>
-                  <View>
-                    <Text style={styles.requestStatusBtn}>{item.status}</Text>
-                  </View>
-                </View>
-              </View>
-            ))
-          )}
-        </View>
-      </ScrollView>
+      {loader ? (
+        <ActivityIndicator size={500} color={COLORS.main} />
+      ) : (
+        <FlatList
+          refreshing={loader}
+          style={{ marginTop: 40, marginBottom: 40 }}
+          data={data}
+          renderItem={({ item }) => <Item item={item} />}
+          keyExtractor={(item) => item.id}
+        />
+      )}
     </SafeAreaView>
   );
 };
@@ -82,16 +150,16 @@ export default ManageRequest;
 
 const styles = StyleSheet.create({
   requestStatusBtn: {
+    width: "95%",
     padding: 8,
-    borderRadius: 20,
-    borderWidth: 2,
+
     fontFamily: "bold",
     fontSize: SIZES.small,
-    color: COLORS.gray,
+    color: COLORS.black,
   },
 
   requestStatus: {
-    width: "30%",
+    width: "35%",
     alignItems: "center",
     justifyContent: "center",
     // paddingLeft: 10,

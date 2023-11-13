@@ -122,7 +122,7 @@ const Profile = () => {
             ) : (
               <View style={styles.menuWrapper}>
                 <TouchableOpacity
-                  onPressIn={() => navigation.navigate("Wallet")}
+                  onPressIn={() => navigation.navigate("Wallet", { userData })}
                 >
                   <View style={styles.menuItem(0.5)}>
                     <MaterialCommunityIcons
@@ -153,7 +153,10 @@ const Profile = () => {
                 ) : (
                   <TouchableOpacity
                     onPressIn={() =>
-                      navigation.navigate("ManageRequest", { profileId })
+                      navigation.navigate("ManageRequest", {
+                        profileId,
+                        userData,
+                      })
                     }
                   >
                     <View style={styles.menuItem(0.5)}>

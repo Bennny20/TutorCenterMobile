@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
   btnStyle: (color) => ({
     height: 50,
     width: "100%",
-    marginVertical: 20,
+    marginTop: 25,
     backgroundColor: color,
     justifyContent: "center",
     alignItems: "center",

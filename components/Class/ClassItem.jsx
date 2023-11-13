@@ -3,12 +3,14 @@ import React from "react";
 import { COLORS, SIZES } from "../../constants";
 import { useNavigation } from "@react-navigation/native";
 import axios from "axios";
+import CurrencyFormatter from "../CurrencyFormatter ";
 const ClassItem = ({ item }) => {
   const navigation = useNavigation();
-  console.log(item);
-
+  const formattedAmount = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(item.request.price);
   const majors = item.request.major.join(" - ");
-  console.log(majors);
   return (
     <View style={styles.card_container}>
       <View
@@ -34,7 +36,7 @@ const ClassItem = ({ item }) => {
           <Text style={styles.text}>Giới tính: {item.request.gender}</Text>
         </View>
         <View style={styles.price}>
-          <Text style={styles.priceText}>{item.request.price} VNĐ</Text>
+          <Text style={styles.priceText}>{formattedAmount}</Text>
         </View>
       </TouchableOpacity>
     </View>

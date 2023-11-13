@@ -5,6 +5,7 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { COLORS, SIZES } from "../constants";
@@ -15,10 +16,12 @@ import { useNavigation } from "@react-navigation/native";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import { Platform } from "react-native";
 import { Pressable } from "react-native";
+import { Ionicons, Fontisto } from "@expo/vector-icons";
 
 const CreateRequestPage = () => {
   const navigation = useNavigation();
   const [isOpen, setIsOpen] = useState(false);
+  const [isProvinceOpen, setProvinceOpen] = useState(false);
   const [isClassOpen, setIsClassOpen] = useState(false);
   const [levelOpen, setLevelOpen] = useState(false);
   const [academicOpen, setAcademicOpen] = useState(false);
@@ -35,24 +38,29 @@ const CreateRequestPage = () => {
   const [dateStart, setDateStart] = useState("");
   const [dateEnd, setDateEnd] = useState("");
 
-  // const [province, setProvince] = useState([]);
+  const [province, setProvince] = useState([]);
+  const [selectProvince, setSelectProvince] = useState("Select province");
+  const [isClickProvince, setIsClickProvince] = useState(false);
+  const [loader, setLoader] = useState(false);
+  useEffect(() => {
+    setLoader(true);
+    const fetchProvince = async () => {
+      try {
+        const response = await axios.get(
+          "https://tc-837o.onrender.com/api/district/province"
+        );
+        setProvince(response.data);
+      } catch (error) {
+        console.log("error", error);
+      } finally {
+        setLoader(false);
+      }
+    };
 
-  // useEffect(() => {
-  //   const fetchProvince = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         "http://192.168.1.203/api/district/province"
-  //       );
-  //       setProvince(response.data);
-  //     } catch (error) {
-  //       console.log("error", error);
-  //     }
-  //   };
+    fetchProvince();
+  }, []);
 
-  //   fetchProvince();
-  // }, []);
-
-  // console.log(province);
+  // console.log(province.data);
 
   const GioiTinh = [
     { label: "Nam", value: "Nam" },
@@ -172,40 +180,40 @@ const CreateRequestPage = () => {
     };
     console.log(newRequest);
 
-    // axios
-    //   .post("https://tutor-center.onrender.com/request/create", newRequest)
-    //   .then((response) => {
-    //     console.log(response.data);
-    //     Alert.alert("Tạo yêu cầu thành công", "Quản lý yêu cầu", [
-    //       {
-    //         text: "Cancel",
-    //         onPress: () => navigation.navigate("ManageRequest"),
-    //       },
-    //       {
-    //         text: "Continue",
-    //         onPress: () => {
-    //           navigation.navigate("ManageRequest", { profileId });
-    //         },
-    //       },
-    //       { defaultIndex: 1 },
-    //     ]);
-    //   })
-    //   .catch((error) => {
-    //     Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
-    //       {
-    //         text: "Cancel",
-    //         onPress: () => {},
-    //       },
-    //       {
-    //         text: "Continue",
-    //         onPress: () => {
-    //           navigation.navigate("ManageRequest", { profileId });
-    //         },
-    //       },
-    //       { defaultIndex: 1 },
-    //     ]);
-    //     console.log("Create failed", error);
-    //   });
+    axios
+      .post("https://tutor-center.onrender.com/request/create", newRequest)
+      .then((response) => {
+        console.log(response.data);
+        Alert.alert("Tạo yêu cầu thành công", "Quản lý yêu cầu", [
+          {
+            text: "Cancel",
+            onPress: () => navigation.navigate("ManageRequest"),
+          },
+          {
+            text: "Continue",
+            onPress: () => {
+              navigation.navigate("ManageRequest", { profileId });
+            },
+          },
+          { defaultIndex: 1 },
+        ]);
+      })
+      .catch((error) => {
+        Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {
+              navigation.navigate("ManageRequest", { profileId });
+            },
+          },
+          { defaultIndex: 1 },
+        ]);
+        console.log("Create failed", error);
+      });
   };
 
   return (
@@ -235,22 +243,46 @@ const CreateRequestPage = () => {
             badgeDotColors={["white"]}
           />
         </View>
+
+        {/* <View>
+          <Text style={styles.itemText}>Tỉnh thành</Text>
+          <TouchableOpacity
+            style={styles.dropdownSelector}
+            onPress={() => {
+              setIsClickProvince(!isClickProvince);
+            }}
+          >
+            <Text>{selectProvince}</Text>
+            {isClickProvince ? (
+              <Ionicons name="chevron-down-outline" size={24} />
+            ) : (
+              <Ionicons name="chevron-up-outline" size={24} />
+            )}
+          </TouchableOpacity>
+          {isClickProvince && (
+            <View style={styles.dropdownArea}>
+              <FlatList
+                data={province.data}
+                renderItem={({ item, index }) => {
+                  return (
+                    <TouchableOpacity
+                      style={styles.item}
+                      onPress={() => {
+                        setSelectProvince(item.name);
+                        setIsClickProvince(false);
+                      }}
+                    >
+                      <Text>{item.name}</Text>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+          )}
+        </View> */}
+
         <View style={{ zIndex: 19 }}>
           <Text style={styles.itemText}>Lớp học</Text>
-
-          {/* <DropDownPicker
-            schema={{
-              label: data.name,
-              value: data.codename,
-            }}
-            open={isClassOpen}
-            setOpen={() => setIsClassOpen(!isClassOpen)}
-            value={classValue}
-            setValue={(val) => setClassValue(val)}
-            placeholder="Chọn lớp học"
-            showTickIcon={true}
-            zIndex={10}
-          /> */}
           <DropDownPicker
             items={lopHoc}
             open={isClassOpen}
@@ -524,5 +556,46 @@ const styles = StyleSheet.create({
   title: {
     justifyContent: "center",
     alignItems: "center",
+  },
+  dropdownSelector: {
+    width: "90%",
+    height: 50,
+    borderRadius: 10,
+    borderWidth: 0.5,
+    borderColor: "#8e8e8e",
+    marginHorizontal: 10,
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 15,
+  },
+
+  dropdownArea: {
+    width: "90%",
+    height: 300,
+    borderRadius: 10,
+    marginTop: 20,
+    backgroundColor: "",
+    elevation: 5,
+    alignSelf: "center",
+  },
+
+  searchInput: {
+    width: "90%",
+    height: 50,
+    borderWidth: 0.5,
+    borderColor: "#8e8e8e",
+    alignItems: "center",
+    marginTop: 20,
+    paddingLeft: 15,
+  },
+
+  item: {
+    width: "80%",
+    height: 50,
+    borderBottomWidth: 0.2,
+    borderBottomColor: "#8e8e8e",
+    alignSelf: "center",
+    justifyContent: "center",
   },
 });

@@ -9,30 +9,18 @@ import TutorRow from "../components/Tutor/TutorRow";
 import ClassRow from "../components/Class/ClassRow";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { RefreshControl } from "react-native";
 
 const Home = () => {
   const navigation = useNavigation();
-  // const [userData, setUserData] = useState(null);
-  // const [userLogin, setUserLogin] = useState(false);
-  // useEffect(() => {
-  //   // console.log(userData.data.user?.name);
-  //   checkExitingUser();
-  // });
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
-  // const checkExitingUser = async () => {
-  //   const id = await AsyncStorage.getItem("id");
-  //   const userId = `user${JSON.parse(id)}`;
-
-  //   try {
-  //     const currentUser = await AsyncStorage.getItem(userId);
-  //     if (currentUser !== null) {
-  //       const parsedData = JSON.parse(currentUser);
-  //       setUserData(parsedData);
-  //     }
-  //   } catch (error) {
-  //     console.log("Error retrieving the data: ", error);
-  //   }
-  // };
   return (
     <SafeAreaView>
       <View style={styles.appBarWrapper}>
@@ -58,7 +46,11 @@ const Home = () => {
         </View>
       </View>
 
-      <ScrollView>
+      <ScrollView
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
+      >
         <Carousel />
         <Welcome />
         <TutorRow />

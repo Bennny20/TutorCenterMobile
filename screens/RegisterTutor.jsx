@@ -19,9 +19,9 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 
 const RegisterTutor = () => {
   const steps = [
-    { title: "Infomation", content: "Info Form" },
-    { title: "Chuyên môn", content: "Chuyen Mon" },
-    { title: "Trình độ", content: "Trinh Do" },
+    { title: "Tài khoản", content: "Info Form" },
+    { title: "Thông tin", content: "Chuyen Mon" },
+    { title: "Chuyên môn", content: "Chuyên môn" },
     { title: "Bằng cấp", content: "Bang Cap" },
   ];
   const [currentStep, setCurrentStep] = useState(0);
@@ -34,7 +34,9 @@ const RegisterTutor = () => {
   const [phone, setPhone] = useState();
   const [university, setUniversity] = useState();
   const [major, setMajor] = useState();
-  const [certificate, setCertificate] = useState([]);
+  const [certificate1, setCertificate1] = useState(null);
+  const [certificate2, setCertificate2] = useState(null);
+
   const [subject, setSubject] = useState([]);
 
   const [isImage, setIsImage] = useState(false);
@@ -59,6 +61,33 @@ const RegisterTutor = () => {
     if (!result.canceled) {
       setIsImage(true);
       setImage(result.assets[0].uri);
+    }
+  };
+
+  const pickerCeti1 = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+    console.log(result);
+    if (!result.canceled) {
+      setIsImage(true);
+      setCertificate1(result.assets[0].uri);
+    }
+  };
+  const pickerCeti2 = async () => {
+    let result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+    console.log(result);
+    if (!result.canceled) {
+      setIsImage(true);
+      setCertificate2(result.assets[0].uri);
     }
   };
   // console.log(image);
@@ -228,17 +257,17 @@ const RegisterTutor = () => {
                   style={styles.input}
                   value={address}
                   onChangeText={(text) => setAddress(text)}
-                  placeholder="Nhập email"
+                  placeholder="Nhập địa chỉ của bạn"
                 />
               </View>
 
               <View>
-                <Text style={styles.itemText}>Trường đại học </Text>
+                <Text style={styles.itemText}>Giới tính</Text>
                 <TextInput
                   style={styles.input}
-                  value={university}
-                  onChangeText={(text) => setUniversity(text)}
-                  placeholder="Nhập password"
+                  value={address}
+                  onChangeText={(text) => setAddress(text)}
+                  placeholder="Nhập giới tính của bạn"
                 />
               </View>
 
@@ -248,7 +277,7 @@ const RegisterTutor = () => {
                   style={styles.input}
                   value={phone}
                   onChangeText={(text) => setPhone(text)}
-                  placeholder="Nhập họ và tên"
+                  placeholder="Nhập số điện thoại"
                 />
               </View>
             </KeyboardAwareScrollView>
@@ -260,19 +289,192 @@ const RegisterTutor = () => {
             isValid={name}
             loader={false}
           />
-          {address != "" &&
-            phone != "" &&
-            university != "" &&
-            address != null &&
-            phone != null &&
-            university != null && (
-              <Button
-                title={"Tiếp túc"}
-                onPress={() => setCurrentStep(1)}
-                isValid={name}
-                loader={false}
-              />
-            )}
+          {address != "" && phone != "" && address != null && phone != null && (
+            <Button
+              title={"Tiếp túc"}
+              onPress={() => setCurrentStep(2)}
+              isValid={name}
+              loader={false}
+            />
+          )}
+        </View>
+      )}
+
+      {currentStep == 2 && (
+        <View style={{ marginHorizontal: 20 }}>
+          <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+            Thông tin chuyên môn
+          </Text>
+          <Pressable>
+            <KeyboardAwareScrollView extraScrollHeight={-150}>
+              <View>
+                <Text style={styles.itemText}>Trương đại học </Text>
+                <TextInput
+                  style={styles.input}
+                  value={university}
+                  onChangeText={(text) => setUniversity(text)}
+                  placeholder="Nhập trương đại học"
+                />
+              </View>
+
+              <View>
+                <Text style={styles.itemText}>Ngành học </Text>
+                <TextInput
+                  style={styles.input}
+                  value={major}
+                  onChangeText={(text) => setMajor(text)}
+                  placeholder="Nhập ngành học"
+                />
+              </View>
+
+              <View>
+                <Text style={styles.itemText}>Chuyên môn (Môn dạy): </Text>
+                <TextInput
+                  style={styles.input}
+                  value={major}
+                  onChangeText={(text) => setMajor(text)}
+                  placeholder="Nhập họ và tên"
+                />
+              </View>
+            </KeyboardAwareScrollView>
+          </Pressable>
+
+          <Button
+            title={"Trở lại"}
+            onPress={() => setCurrentStep(1)}
+            isValid={name}
+            loader={false}
+          />
+          <Button
+            title={"Tiếp túc"}
+            onPress={() => setCurrentStep(3)}
+            isValid={name}
+            loader={false}
+          />
+        </View>
+      )}
+
+      {currentStep == 3 && (
+        <View style={{ marginHorizontal: 20 }}>
+          <Text style={{ fontSize: 16, fontWeight: "bold" }}>
+            Thông tin bằng cấp
+          </Text>
+          <Pressable>
+            <KeyboardAwareScrollView extraScrollHeight={-150}>
+              <View style={styles.cetification}>
+                {isImage === false ? (
+                  <View style={{ alignItems: "center" }}>
+                    <Image
+                      source={require("../assets/images/userDefault.png")}
+                      style={styles.certificate}
+                    />
+                    <TouchableOpacity
+                      onPress={() => pickerCeti1()}
+                      style={{
+                        marginTop: 20,
+                        height: 50,
+                        width: "60%",
+                        backgroundColor: "skyblue",
+                        borderRadius: 20,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        alignSelf: "center",
+                      }}
+                    >
+                      <Text style={styles.itemText}>Bằng cấp 1</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={{ alignItems: "center" }}>
+                    {certificate1 && (
+                      <Image
+                        source={{ uri: certificate1 }}
+                        style={styles.certificate}
+                      />
+                    )}
+                    <TouchableOpacity
+                      onPress={() => pickerCeti1()}
+                      style={{
+                        marginTop: 20,
+                        height: 50,
+                        width: "60%",
+                        backgroundColor: "skyblue",
+                        borderRadius: 20,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        alignSelf: "center",
+                      }}
+                    >
+                      <Text style={styles.itemText}>Bằng cấp 1</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+              {/* certificate */}
+              <View style={styles.avatar}>
+                {isImage === false ? (
+                  <View style={{ alignItems: "center" }}>
+                    <Image
+                      source={require("../assets/images/userDefault.png")}
+                      style={styles.certificate}
+                    />
+                    <TouchableOpacity
+                      onPress={() => pickerCeti2()}
+                      style={{
+                        marginTop: 20,
+                        height: 50,
+                        width: "60%",
+                        backgroundColor: "skyblue",
+                        borderRadius: 20,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        alignSelf: "center",
+                      }}
+                    >
+                      <Text style={styles.itemText}>Bằng cấp 2</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={{ alignItems: "center" }}>
+                    {certificate1 && (
+                      <Image
+                        source={{ uri: certificate2 }}
+                        style={styles.certificate}
+                      />
+                    )}
+                    <TouchableOpacity
+                      onPress={() => pickerCeti2()}
+                      style={{
+                        marginTop: 20,
+                        height: 50,
+                        width: "60%",
+                        backgroundColor: "skyblue",
+                        borderRadius: 20,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        alignSelf: "center",
+                      }}
+                    >
+                      <Text style={styles.itemText}>Bằng cấp 2</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+            </KeyboardAwareScrollView>
+          </Pressable>
+
+          <Button
+            title={"Trở lại"}
+            onPress={() => setCurrentStep(2)}
+            isValid={name}
+            loader={false}
+          />
+          <Button
+            title={"Tiếp túc"}
+            onPress={() => setCurrentStep(3)}
+            isValid={name}
+            loader={false}
+          />
         </View>
       )}
     </ScrollView>
@@ -282,6 +484,16 @@ const RegisterTutor = () => {
 export default RegisterTutor;
 
 const styles = StyleSheet.create({
+  certificate: {
+    height: 200,
+    width: 400,
+    borderRadius: 10,
+    borderColor: COLORS.primary,
+    borderWidth: 2,
+    resizeMode: "cover",
+    marginTop: 10,
+  },
+
   profileImg: {
     height: 155,
     width: 155,
@@ -289,7 +501,7 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     borderWidth: 2,
     resizeMode: "cover",
-    marginTop: -20,
+    marginTop: 20,
   },
 
   avatar: {

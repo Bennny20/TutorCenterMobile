@@ -18,8 +18,14 @@ import BlogDetail from "./BlogDetail";
 import EditProfile from "./EditProfile";
 import SearchForTutor from "./SearchForTutor";
 import ManageApply from "./ManageApply";
+import TransferMoney from "./TransferMoney";
+import DepositAndWithdrawMoney from "./DepositAndWithdrawMoney";
+import FeedbackClass from "./FeedbackClass";
 
 export {
+  TransferMoney,
+  FeedbackClass,
+  DepositAndWithdrawMoney,
   ManageApply,
   SearchForTutor,
   EditProfile,

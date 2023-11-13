@@ -12,21 +12,32 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { COLORS, SIZES } from "../constants";
 import { ScrollView } from "react-native";
 import TutorItemApply from "../components/Tutor/TuorItemApply";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import axios from "axios";
 import { useEffect } from "react";
 import { ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "react-native";
+import { RefreshControl } from "react-native";
+import CurrencyFormatter from "../components/CurrencyFormatter ";
 
 const ClassDetail = () => {
   const navigation = useNavigation();
+
   const [userData, setUserData] = useState(null);
   const [userLogin, setUserLogin] = useState(false);
   const [loader, setLoader] = useState(false);
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
 
   const route = useRoute();
   const { item } = route.params;
+  console.log(item);
   const majors = item.request.major.join(" - ");
 
   useEffect(() => {
@@ -113,7 +124,10 @@ const ClassDetail = () => {
       }
     }
   }
-
+  const formattedAmount = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(item.request.price);
   return (
     <SafeAreaView style={{ marginBottom: 350 }}>
       <View styles={styles.container}>
@@ -143,7 +157,7 @@ const ClassDetail = () => {
           <Text style={styles.sup}>Dia diem: {item.request.address}</Text>
           {/* <Text style={styles.sup}>Ngay hoc: {request.classNo}</Text>
           <Text style={styles.sup}>Ngay kết thúc: {request.classNo}</Text> */}
-          <Text style={styles.sup}>Giá tiền: {item.request.price}VND</Text>
+          <Text style={styles.sup}>Giá tiền: {formattedAmount}</Text>
           <Text style={styles.sup}>
             Học lực: {item.request.academicAbility}
           </Text>
@@ -166,7 +180,7 @@ const ClassDetail = () => {
         }}
       >
         {userData?.user.role === "USER_PARENT" ? (
-          <View style={styles.btnStatus}></View>
+          <View></View>
         ) : check < 1 ? (
           <TouchableOpacity style={styles.btnApply} onPress={createApply}>
             <Ionicons name="receipt-outline" size={30} color={COLORS.black} />
@@ -198,25 +212,49 @@ const ClassDetail = () => {
       </View>
       <ScrollView
         style={{ marginTop: 10, marginHorizontal: 5, marginBottom: 100 }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
       >
         {tutorApply != null ? (
-          <TouchableOpacity style={styles.containerTutor}>
-            <View style={styles.image}>
-              <Image
-                source={{
-                  uri: "https://img.freepik.com/premium-photo/blue-white-sign-with-man-white-shirt-blue-circle-with-man-front-it_745528-3249.jpg?w=2000",
+          <View>
+            <TouchableOpacity style={styles.containerTutor}>
+              <View style={styles.image}>
+                <Image
+                  source={{
+                    uri: "https://img.freepik.com/premium-photo/blue-white-sign-with-man-white-shirt-blue-circle-with-man-front-it_745528-3249.jpg?w=2000",
+                  }}
+                  style={styles.productImg}
+                />
+              </View>
+              <View style={styles.textContentTutor}>
+                <Text style={styles.nameTutor}>{tutorApply.nameTutor}</Text>
+                <Text style={styles.supplier}>{tutorApply.major}</Text>
+                <Text style={styles.supplier}>{tutorApply.university}</Text>
+                <Text style={styles.supplier}>{tutorApply.subject}</Text>
+                <Text style={styles.supplier}>{tutorApply.address}</Text>
+              </View>
+            </TouchableOpacity>
+            <View style={{ marginHorizontal: 20 }}>
+              <Text style={styles.titleText}>Đánh giá chất lượng</Text>
+              <View
+                style={{
+                  marginTop: 5,
+                  borderColor: COLORS.main,
+                  borderWidth: 2,
+                  height: 100,
+                  borderRadius: 10,
+                  padding: 10,
                 }}
-                style={styles.productImg}
-              />
+              >
+                <Text style={styles.nameTutor}>
+                  Người đánh giá: {tutorApply.nameTutor}
+                </Text>
+                <Text style={styles.supplier}> {tutorApply.nameTutor}</Text>
+                <Text style={styles.supplier}> {tutorApply.nameTutor}</Text>
+              </View>
             </View>
-            <View style={styles.textContentTutor}>
-              <Text style={styles.nameTutor}>{tutorApply.nameTutor}</Text>
-              <Text style={styles.supplier}>{tutorApply.major}</Text>
-              <Text style={styles.supplier}>{tutorApply.university}</Text>
-              <Text style={styles.supplier}>{tutorApply.subject}</Text>
-              <Text style={styles.supplier}>{tutorApply.address}</Text>
-            </View>
-          </TouchableOpacity>
+          </View>
         ) : loader ? (
           <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primarys} />
         ) : (

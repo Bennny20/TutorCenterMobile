@@ -9,11 +9,14 @@ import {
 import React from "react";
 import { COLORS, SIZES } from "../constants";
 import { Ionicons, Feather } from "@expo/vector-icons";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useState } from "react";
 
 const Wallet = () => {
   const navigation = useNavigation();
+  const route = useRoute();
+  const { userData } = route.params;
+  console.log(userData);
   const [searchKey, setSearchKey] = useState("");
   const [searchResult, setSearcResult] = useState([]);
   return (
@@ -39,18 +42,20 @@ const Wallet = () => {
       </View>
       <View style={{ marginTop: 10, marginHorizontal: 30 }}>
         <View style={styles.wallet}>
-          <View>
+          <View style={{ marginRight: 20 }}>
             <Text style={styles.textHeading}>Số dư khả dụng: </Text>
             <Text style={styles.number}>10 000 000 VNĐ</Text>
           </View>
-          <View>
-            <View style={styles.btn(COLORS.secondMain)}>
-              <Text style={styles.btnText}>Nạp tiền </Text>
-            </View>
-
-            <View style={styles.btn(COLORS.gray2)}>
-              <Text style={styles.btnText}>Rút tiền </Text>
-            </View>
+          <View style={{ justifyContent: "center", alignItems: "center" }}>
+            <TouchableOpacity
+              onPressIn={() =>
+                navigation.navigate("DepositAndWithdrawMoney", { userData })
+              }
+            >
+              <View style={[styles.btn(COLORS.secondMain)]}>
+                <Text style={styles.btnText}>Nạp/Rút tiền </Text>
+              </View>
+            </TouchableOpacity>
           </View>
         </View>
         <Text style={styles.titleHistory}>Lịch sử giao dịch:</Text>
@@ -145,7 +150,8 @@ const styles = StyleSheet.create({
 
   wallet: {
     flexDirection: "row",
-    justifyContent: "space-between",
+    alignItems: "center",
+    justifyContent: "space-around",
     padding: 20,
     borderColor: COLORS.main,
     borderWidth: 3,

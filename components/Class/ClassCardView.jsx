@@ -12,7 +12,10 @@ const ClassCardView = ({ item }) => {
   const [loader, setLoader] = useState(false);
   const [error, setError] = useState();
   const majors = item.request.major.join(", ");
-
+  const formattedAmount = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(item.request.price);
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate("ClassDetail", { item })}
@@ -33,10 +36,6 @@ const ClassCardView = ({ item }) => {
           </Text>
           <Text style={styles.supplier} numberOfLines={1}>
             Mon hoc: {majors}
-            {/* {item.request.major.map((majors) => {
-              majors + " ";
-            })} */}
-            {/* {item.request.major[0]}, {request.major[1]} */}
           </Text>
           <Text style={styles.supplier} numberOfLines={1}>
             Địa điểm: {item.request.address}
@@ -44,27 +43,8 @@ const ClassCardView = ({ item }) => {
           <Text style={styles.supplier} numberOfLines={1}>
             Giới tính: {item.request.gender}
           </Text>
-          <Text style={styles.price}>{item.request.price} VND</Text>
+          <Text style={styles.price}>{formattedAmount} </Text>
         </View>
-
-        {/* <View style={styles.details}>
-          <Text style={styles.supplier} numberOfLines={1}>
-            Trinh do:
-          </Text>
-          <Text style={styles.supplier} numberOfLines={1}>
-            Lop:
-          </Text>
-          <Text style={styles.supplier} numberOfLines={1}>
-            Mon hoc:
-          </Text>
-          <Text style={styles.supplier} numberOfLines={1}>
-            Địa điểm:
-          </Text>
-          <Text style={styles.supplier} numberOfLines={1}>
-            Giới tính:
-          </Text>
-          <Text style={styles.price}> VND</Text>
-        </View> */}
         <TouchableOpacity style={styles.addBtn}>
           <Text style={styles.detailText}>xem chi tiet</Text>
           <Ionicons

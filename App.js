@@ -20,6 +20,9 @@ import {
   TutorDetail,
   Wallet,
   ManageApply,
+  DepositAndWithdrawMoney,
+  TransferMoney,
+  FeedbackClass,
 } from "./screens";
 
 const Stack = createNativeStackNavigator();
@@ -51,31 +54,26 @@ export default function App() {
           component={BottomTabNavigation}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="TutorDetail"
           component={TutorDetail}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="NotificationPage"
           component={NotificationPage}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="TutorList"
           component={Tutor}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="ClassList"
           component={Class}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="ClassDetail"
           component={ClassDetail}
@@ -86,58 +84,64 @@ export default function App() {
           component={Login}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="Wallet"
           component={Wallet}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="ManageClass"
           component={ManageClass}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="ManageRequest"
           component={ManageRequest}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="AttendancePage"
           component={AttendancePage}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="Register"
           component={Register}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="RegisterTutor"
           component={RegisterTutor}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="BlogDetail"
           component={BlogDetail}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="EditProfile"
           component={EditProfile}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="ManageApply"
           component={ManageApply}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="TransferMoney"
+          component={TransferMoney}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="DepositAndWithdrawMoney"
+          component={DepositAndWithdrawMoney}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="FeedbackClass"
+          component={FeedbackClass}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

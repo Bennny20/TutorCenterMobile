@@ -47,27 +47,6 @@ const Login = () => {
     ]);
   };
 
-  // const login = async (values) => {
-  //   const user = {
-  //     email: "phientruong20@gmail.com",
-  //     password: "12345678",
-  //   };
-  //   console.log(values);
-  //   console.log(user);
-  //   axios
-  //     .post("https://tutor-center.onrender.com/login", user)
-  //     .then((response) => {
-  //       console.log(response);
-  //       // const token = response.data.token;
-  //       // AsyncStorage.setItem("authToken", token);
-  //       // navigation.replace("Main");
-  //     })
-  //     .catch((error) => {
-  //       Alert.alert("Login Error", "Invalid Email");
-  //       console.log(error);
-  //     });
-  // };
-
   const login = async (values) => {
     console.log("Value: ", values);
     const user = {
