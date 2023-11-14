@@ -20,6 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { Image } from "react-native";
 import { RefreshControl } from "react-native";
 import CurrencyFormatter from "../components/CurrencyFormatter ";
+import { FlatList } from "react-native";
 
 const ClassDetail = () => {
   const navigation = useNavigation();
@@ -210,12 +211,7 @@ const ClassDetail = () => {
           </View>
         )}
       </View>
-      <ScrollView
-        style={{ marginTop: 10, marginHorizontal: 5, marginBottom: 100 }}
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-      >
+      <View style={{ marginTop: 10, marginHorizontal: 5, marginBottom: 5000 }}>
         {tutorApply != null ? (
           <View>
             <TouchableOpacity style={styles.containerTutor}>
@@ -258,17 +254,22 @@ const ClassDetail = () => {
         ) : loader ? (
           <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primarys} />
         ) : (
-          <View style={styles.tableBody}>
-            {item.apply.map((item) => (
+          <FlatList
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            style={{ marginBottom: 100 }}
+            data={item.apply}
+            renderItem={({ item }) => (
               <TutorItemApply
                 item={item}
                 profile={userData}
                 classInfo={classInfo}
               />
-            ))}
-          </View>
+            )}
+            keyExtractor={(item) => item.id}
+          />
         )}
-      </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };

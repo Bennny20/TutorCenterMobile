@@ -6,18 +6,35 @@ import {
   View,
   ActivityIndicator,
 } from "react-native";
-import React from "react";
-import { COLORS, SIZES } from "../../constants";
+import React, { useEffect } from "react";
+import { COLORS, SIZES, HOST_API } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import TutorCardView from "./TutorCardView";
 import useFetch from "../../hook/Tutor/useFetch";
+import { useState } from "react";
+import axios from "axios";
 const TutorRow = () => {
   const { data, isLoading, error } = useFetch();
 
   const products = [1, 2, 3, 4];
   const navigation = useNavigation();
+  const [loader, setLoader] = useState(false);
+  const [classes, setClasses] = useState([]);
+  // const getMoviesFromApiAsync = async () => {
+  //   try {
+  //     const response = await fetch(HOST_API.local + "class/");
+  //     const json = await response.json();
+  //     setClasses(json);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
+  // useEffect(() => {
+  //   getMoviesFromApiAsync();
+  // }, []);
+  // console.log("Test class local:  ", classes);
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -32,13 +49,6 @@ const TutorRow = () => {
       </View>
 
       <View style={styles.containerRow}>
-        {/* <FlatList
-          data={products}
-          renderItem={({ item }) => <TutorCardView />}
-          horizontal
-          contentContainerStyle={{ columnGap: SIZES.medium }}
-        /> */}
-
         {isLoading ? (
           <ActivityIndicator size={SIZES.xxLarge + 10} color={COLORS.main} />
         ) : error ? (

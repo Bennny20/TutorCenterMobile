@@ -21,6 +21,15 @@ const Class = () => {
 
   const { data, isLoading, error } = useFetch();
   // console.log(data);
+
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = React.useCallback(() => {
+    useFetch();
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
   return (
     <SafeAreaView>
       <View style={styles.wrapper}>
@@ -46,17 +55,23 @@ const Class = () => {
           </View>
         </View>
       </View>
-      <ScrollView style={{ marginHorizontal: 5, marginBottom: 40 }}>
-        <View>
-          {isLoading ? (
-            <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primarys} />
-          ) : error ? (
-            <Text>Something went wrong </Text>
-          ) : (
-            data.map((item) => <ClassItem item={item} />)
-          )}
-        </View>
-      </ScrollView>
+      <View style={{ marginHorizontal: 5, marginBottom: 40 }}>
+        {isLoading ? (
+          <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primarys} />
+        ) : error ? (
+          <Text>Something went wrong </Text>
+        ) : (
+          <FlatList
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            style={{ marginTop: 40, marginBottom: 40 }}
+            data={data}
+            renderItem={({ item }) => <ClassItem item={item} />}
+            keyExtractor={(item) => item.id}
+          />
+          // data.map((item) => <ClassItem item={item} />)
+        )}
+      </View>
     </SafeAreaView>
   );
 };
