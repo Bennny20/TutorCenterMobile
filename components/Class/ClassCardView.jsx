@@ -11,42 +11,52 @@ const ClassCardView = ({ item }) => {
   const navigation = useNavigation();
   const [loader, setLoader] = useState(false);
   const [error, setError] = useState();
-  const majors = item.request.major.join(", ");
+
+  var major = "";
+  var classNo = "";
+
+  for (let index = 0; index < item.subjects.length; index++) {
+    if (index == item.subjects.length - 1) {
+      major += item.subjects[index].name;
+    } else {
+      major += item.subjects[index].name + ", ";
+    }
+    classNo = item.subjects[index].level;
+  }
+
   const formattedAmount = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
-  }).format(item.request.price);
+  }).format(item.tuition);
   return (
     <TouchableOpacity
       onPress={() => navigation.navigate("ClassDetail", { item })}
     >
       <View style={styles.container}>
         <View style={styles.heading}>
-          <Text style={styles.headingText}>
-            {majors} - Lớp {item.request.classNo}
-          </Text>
+          <Text style={styles.headingText}>{major}</Text>
         </View>
 
         <View style={styles.details}>
           <Text style={styles.supplier} numberOfLines={1}>
-            Trinh do: {item.request.level}
+            Trình độ: {item.tutorLevel}
           </Text>
           <Text style={styles.supplier} numberOfLines={1}>
-            Lop: {item.request.classNo}
+            {classNo}
           </Text>
           <Text style={styles.supplier} numberOfLines={1}>
-            Mon hoc: {majors}
+            Hôn học: {major}
           </Text>
           <Text style={styles.supplier} numberOfLines={1}>
-            Địa điểm: {item.request.address}
+            Địa điểm: {item.address}, {item.districtName}
           </Text>
           <Text style={styles.supplier} numberOfLines={1}>
-            Giới tính: {item.request.gender}
+            Giới tính: {item.gender}
           </Text>
           <Text style={styles.price}>{formattedAmount} </Text>
         </View>
         <TouchableOpacity style={styles.addBtn}>
-          <Text style={styles.detailText}>xem chi tiet</Text>
+          <Text style={styles.detailText}>Xem chi tiết</Text>
           <Ionicons
             name="chevron-forward"
             size={20}
@@ -84,6 +94,7 @@ const styles = StyleSheet.create({
   },
 
   headingText: {
+    fontFamily: "regular",
     fontFamily: "bold",
     fontSize: SIZES.large,
     color: COLORS.lightWhite,

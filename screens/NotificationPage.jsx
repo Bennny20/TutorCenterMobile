@@ -10,22 +10,30 @@ import { Ionicons } from "@expo/vector-icons";
 const NotificationPage = () => {
   const notificationList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
+  const Item = ({ item }) => (
+    <View style={styles.notificationItem}>
+      <View style={styles.info}>
+        <Text style={styles.date}>22/10/2023</Text>
+        <Text style={styles.mess}>Thong bao</Text>
+      </View>
+      <TouchableOpacity style={styles.btnDelete}>
+        <Ionicons name="trash" size={34} color={COLORS.red} />
+      </TouchableOpacity>
+    </View>
+  );
   return (
     <SafeAreaView>
       <Heading title={"Notification"} />
       <ScrollView style={{ marginTop: 40, marginBottom: 40 }}>
         <View>
-          {notificationList.map((item) => (
-            <View style={styles.notificationItem}>
-              <View style={styles.info}>
-                <Text style={styles.date}>22/10/2023</Text>
-                <Text style={styles.mess}>Thong bao</Text>
-              </View>
-              <TouchableOpacity style={styles.btnDelete}>
-                <Ionicons name="trash" size={34} color={COLORS.red} />
-              </TouchableOpacity>
-            </View>
-          ))}
+          <FlatList
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            style={{ marginTop: 40, marginBottom: 40 }}
+            data={notificationList}
+            renderItem={({ item }) => <Item item={item} />}
+            keyExtractor={(item) => item.id}
+          />
         </View>
       </ScrollView>
     </SafeAreaView>

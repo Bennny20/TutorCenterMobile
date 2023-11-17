@@ -10,7 +10,7 @@ import { SafeAreaView } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import Heading from "../components/Heading";
-import { COLORS, SIZES } from "../constants";
+import { COLORS, HOST_API, SIZES } from "../constants";
 import { useState } from "react";
 import axios from "axios";
 
@@ -33,7 +33,7 @@ const ManageClass = () => {
       setLoader(true);
       try {
         const response = await axios.get(
-          `https://tutor-center.onrender.com/apply/tutor/${profileId}`
+          HOST_API.local + `/api/request/parent/${profileId}`
         );
         setData(response.data);
       } catch (error) {

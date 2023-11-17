@@ -11,7 +11,7 @@ import { SafeAreaView } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import Heading from "../components/Heading";
-import { COLORS, SIZES } from "../constants";
+import { COLORS, HOST_API, SIZES } from "../constants";
 import { useState } from "react";
 import axios from "axios";
 import { ActivityIndicator } from "react-native";
@@ -30,15 +30,22 @@ const ManageClass = () => {
   }, []);
 
   const route = useRoute();
-  const { profileId } = route.params;
+  const { user } = route.params;
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState([]);
 
+  console.log(user);
   const fetchUserProfile = async () => {
+    const token = await AsyncStorage.getItem("token");
     setLoader(true);
     try {
       const response = await axios.get(
-        `https://tutor-center.onrender.com/class/parent/${profileId}`
+        HOST_API.local + `/api/clazz/tutor/${user}`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
       );
       setData(response.data);
     } catch (error) {
@@ -51,21 +58,32 @@ const ManageClass = () => {
     fetchUserProfile();
   }, []);
 
+  const majors = ({ item }) => {
+    var major = "";
+    var classNo = "";
+    for (let index = 0; index < item.subjects.length; index++) {
+      major += item.subjects[index].name + ", ";
+      if (index == item.subjects.length - 1) {
+        major += item.subjects[index].name;
+      }
+      classNo = item.subjects[index].level;
+    }
+    return { major, classNo };
+  };
+
   const Item = ({ item }) => (
     <View style={styles.requestItem}>
       <TouchableOpacity
         onPress={() => navigation.navigate("ClassDetail", { item })}
       >
         <View style={styles.requestInfo}>
-          <Text style={styles.requestTitle}>
-            {item.request.major.join(", ")}
-          </Text>
-          <Text style={styles.requestSup}>{item.request.level} </Text>
-          <Text style={styles.requestSup}>Lớp: {item.request.classNo}</Text>
-          <Text style={styles.requestSup}>{item.request.address} </Text>
+          <Text style={styles.requestTitle}>{majors(item).major}</Text>
+          <Text style={styles.requestSup}>{item.tutorLevel} </Text>
+          <Text style={styles.requestSup}>{majors(item).major}</Text>
+          <Text style={styles.requestSup}>{item.address} </Text>
         </View>
       </TouchableOpacity>
-      {item.status === "CHƯA CÓ GIÁO VIÊN" ? (
+      {item.status == 0 ? (
         <TouchableOpacity
           onPress={() => navigation.navigate("ClassDetail", { item })}
           style={styles.requestStatus}
@@ -81,7 +99,7 @@ const ManageClass = () => {
             <Text style={styles.requestStatusBtn}>Chọn gia sư</Text>
           </View>
         </TouchableOpacity>
-      ) : (
+      ) : item.status == 1 ? (
         <TouchableOpacity
           onPress={() => navigation.navigate("AttendancePage", { item })}
           style={styles.requestStatus}
@@ -95,6 +113,22 @@ const ManageClass = () => {
             }}
           >
             <Text style={styles.requestStatusBtn}>Điểm danh</Text>
+          </View>
+        </TouchableOpacity>
+      ) : (
+        <TouchableOpacity
+          onPress={() => navigation.navigate("AttendancePage", { item })}
+          style={styles.requestStatus}
+        >
+          <View
+            style={{
+              backgroundColor: COLORS.lightWhite,
+              borderRadius: 20,
+              borderWidth: 2,
+              borderColor: COLORS.main,
+            }}
+          >
+            <Text style={styles.requestStatusBtn}>Hoàn thành</Text>
           </View>
         </TouchableOpacity>
       )}
@@ -112,7 +146,7 @@ const ManageClass = () => {
             refreshing={refreshing}
             onRefresh={onRefresh}
             style={{ marginTop: 40, marginBottom: 40 }}
-            data={data}
+            data={data.data}
             renderItem={({ item }) => <Item item={item} />}
             keyExtractor={(item) => item.id}
           />

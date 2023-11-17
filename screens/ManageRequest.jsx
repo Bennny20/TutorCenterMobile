@@ -11,21 +11,23 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import Heading from "../components/Heading";
 import ClassItem from "../components/Class/ClassItem";
-import { COLORS, SIZES } from "../constants";
+import { COLORS, HOST_API, SIZES } from "../constants";
 import { useState } from "react";
 import { useEffect } from "react";
 import axios from "axios";
 import { ActivityIndicator } from "react-native";
 import { RefreshControl } from "react-native";
 import { FlatList } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ManageRequest = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { profileId, userData } = route.params;
+  const { user, userData } = route.params;
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState([]);
 
+  console.log(user);
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -36,11 +38,17 @@ const ManageRequest = () => {
 
   useEffect(() => {
     const fetchUserProfile = async () => {
-      onRefresh();
+      const token = await AsyncStorage.getItem("token");
+
       setLoader(true);
       try {
         const response = await axios.get(
-          `https://tutor-center.onrender.com/parent/request/${profileId}`
+          HOST_API.local + `/api/request/parent/${user}`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         );
         setData(response.data);
       } catch (error) {
@@ -73,18 +81,30 @@ const ManageRequest = () => {
     fetchUserProfile();
   }, []);
 
+  const majors = ({ item }) => {
+    var major = "";
+    var classNo = "";
+    for (let index = 0; index < item.subjects.length; index++) {
+      if (index == item.subjects.length - 1) {
+        major += item.subjects[index].name;
+      } else {
+        major += item.subjects[index].name + ", ";
+      }
+      classNo = item.subjects[index].level;
+    }
+    return { major, classNo };
+  };
+
   const Item = ({ item }) => (
     <View>
       <View style={styles.requestItem}>
         <View style={styles.requestInfo}>
-          <Text style={styles.requestTitle}>
-            {(majors = item.major.join(" - "))}
-          </Text>
+          <Text style={styles.requestTitle}>{majors({ item }).major}</Text>
           <Text style={styles.requestSup}>Giới tính: {item.gender} </Text>
-          <Text style={styles.requestSup}>Lớp: {item.classNo} </Text>
+          <Text style={styles.requestSup}>{majors({ item }).classNo} </Text>
           <Text style={styles.requestSup}>{item.level} </Text>
           <Text style={styles.requestSup}>{item.address} </Text>
-          <Text style={styles.requestSup}>{item.academicAbility} </Text>
+          <Text style={styles.requestSup}>{item.tutorLevel}</Text>
         </View>
         <View style={styles.requestStatus}>
           <View
@@ -94,9 +114,14 @@ const ManageRequest = () => {
               borderWidth: 2,
             }}
           >
-            <Text style={styles.requestStatusBtn}>{item.status}</Text>
+            {item.status === 0 && (
+              <Text style={styles.requestStatusBtn}>Chưa duyệt</Text>
+            )}
+            {item.status === 1 && (
+              <Text style={styles.requestStatusBtn}>Đã duyệt</Text>
+            )}
           </View>
-          {item.status === "Đã duyệt" && (
+          {/* {item.status === 1 && (
             <TouchableOpacity
               onPressIn={() =>
                 navigation.navigate("TransferMoney", {
@@ -122,7 +147,7 @@ const ManageRequest = () => {
                 </Text>
               </View>
             </TouchableOpacity>
-          )}
+          )} */}
         </View>
       </View>
     </View>
@@ -137,7 +162,7 @@ const ManageRequest = () => {
         <FlatList
           refreshing={loader}
           style={{ marginTop: 40, marginBottom: 40 }}
-          data={data}
+          data={data.data}
           renderItem={({ item }) => <Item item={item} />}
           keyExtractor={(item) => item.id}
         />

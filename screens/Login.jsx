@@ -10,7 +10,7 @@ import {
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { COLORS, SIZES } from "../constants";
+import { COLORS, HOST_API, SIZES } from "../constants";
 import Button from "../components/Button";
 import { Formik } from "formik";
 import * as Yup from "yup";
@@ -20,7 +20,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const validationSchema = Yup.object().shape({
   password: Yup.string()
-    .min(8, "Password must be at least 8 characters")
+    .min(1, "Password must be at least 8 characters")
     .required("Required"),
   email: Yup.string()
     .email("Provide a valid email address")
@@ -48,64 +48,88 @@ const Login = () => {
   };
 
   const login = async (values) => {
-    console.log("Value: ", values);
-    const user = {
-      email: "phientruong20@gmail.com",
-      password: "12345678",
-    };
-    setLoader(true);
-    try {
-      const endpoint = "https://tutor-center.onrender.com/login";
-      const data = values;
-      console.log("Data: ", data);
+    fetch("http://192.168.1.203:9000/api/auth/authenticate", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: values.email,
+        password: values.password,
+      }),
+    })
+      .then((res) => res.json())
+      .then(async (data) => {
+        try {
+          console.log(data);
+          await AsyncStorage.setItem("token", data.data.access_token);
+          // await AsyncStorage.setItem("email", values.email);
+          navigation.replace("Bottom Navigation");
+        } catch (e) {
+          console.log("error hai", e);
+          Alert.alert("Error", "error", [
+            {
+              text: "Cancel",
+              onPress: () => {},
+            },
+            {
+              text: "Continue",
+              onPress: () => {},
+            },
+            { defaultIndex: 1 },
+          ]);
+        }
+      });
 
-      const response = await axios.post(endpoint, data);
+    // setLoader(true);
+    // try {
+    //   const endpoint = HOST_API.local + `/api/auth/authenticaten`;
+    //   console.log(values);
+    //   const response = await axios.post(
+    //     HOST_API.local + `/api/auth/authenticaten`,
+    //     {
+    //       email: values.email,
+    //       password: values.password,
+    //     }
+    //   );
 
-      if (response.status === 200) {
-        console.log(response.data);
-        setResponseData(response.data);
-        // console.log(`user${responseData.user._id}`);
-        await AsyncStorage.setItem(
-          `user${responseData.user?._id}`,
-          JSON.stringify(responseData)
-        );
+    //   if (response.status === 200) {
+    //     console.log(response.data);
+    //     setResponseData(response.data);
 
-        await AsyncStorage.setItem(
-          "id",
-          JSON.stringify(responseData.user?._id)
-        );
+    //     // await AsyncStorage.setItem("token", data.data.access_token);
 
-        navigation.replace("Bottom Navigation");
-        setLoader(false);
-      } else {
-        Alert.alert("Error Logging im", "Please provide all require fields", [
-          {
-            text: "Cancel",
-            onPress: () => {},
-          },
-          {
-            text: "Continue",
-            onPress: () => {},
-          },
-          { defaultIndex: 1 },
-        ]);
-      }
-    } catch (error) {
-      console.log(error.message);
-      Alert.alert("Error", "error", [
-        {
-          text: "Cancel",
-          onPress: () => {},
-        },
-        {
-          text: "Continue",
-          onPress: () => {},
-        },
-        { defaultIndex: 1 },
-      ]);
-    } finally {
-      setLoader(false);
-    }
+    //     // await AsyncStorage.setItem(
+    //     //   `user${responseData.user?._id}`,
+    //     //   JSON.stringify(responseData)
+    //     // );
+
+    //     // await AsyncStorage.setItem(
+    //     //   "id",
+    //     //   JSON.stringify(responseData.user?._id)
+    //     // );
+
+    //     // navigation.replace("Bottom Navigation");
+    //     setLoader(false);
+    //   } else {
+    //     Alert.alert("Error Logging im", "Please provide all require fields", [
+    //       {
+    //         text: "Cancel",
+    //         onPress: () => {},
+    //       },
+    //       {
+    //         text: "Continue",
+    //         onPress: () => {},
+    //       },
+    //       { defaultIndex: 1 },
+    //     ]);
+    //   }
+    // } catch (error) {
+    //   console.log(error.message);
+
+    // } finally {
+    //   setLoader(false);
+    // }
   };
 
   return (

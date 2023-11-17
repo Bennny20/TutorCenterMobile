@@ -10,9 +10,25 @@ const TutorDetail = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { item, user } = route.params;
-  // console.log("Tutor: ", item);
-  // console.log("User: ", user);
-  const subjects = item.subject.join(" - ");
+  const [tutor, setTutorDetail] = useState();
+  const [loader, setLoader] = useState(false);
+  useEffect(() => {
+    setLoader(true);
+    const fetchClassDetail = async () => {
+      try {
+        const response = await axios.get(
+          HOST_API.local + `/api/tutor/${item.id}`
+        );
+        setClassDetail(response.data.data);
+      } catch (error) {
+        console.log("error", error);
+      } finally {
+        setLoader(false);
+      }
+    };
+    fetchClassDetail();
+  }, []);
+
   return (
     <View>
       <View styles={styles.container}>
@@ -38,14 +54,15 @@ const TutorDetail = () => {
                 />
               </View>
               <View style={{ marginHorizontal: 20, marginVertical: 10 }}>
-                <Text style={styles.name}>{user?.profile.name} </Text>
-                <Text style={styles.sup}>Giới tính: Nam </Text>
+                <Text style={styles.name}>{item.tutorName} </Text>
+                <Text style={styles.sup}>Giới tính: {item.gender} </Text>
                 <Text style={styles.sup}>Địa chỉ: {item.address} </Text>
-                <Text style={styles.sup}>Sinh viên </Text>
                 <Text style={styles.sup}>
-                  Trường đại học: {item.university}
+                  {item.districtName}, {item.provinceName}
                 </Text>
-                <Text style={styles.sup}>Chuyên môn: {subjects}</Text>
+                <Text style={styles.sup}>Sinh viên </Text>
+                <Text style={styles.sup}>Trường đại học:{item.gender}</Text>
+                <Text style={styles.sup}>Chuyên môn: {item.major}</Text>
                 <Text style={styles.sup}>Kinh nghiệm: {item.major}</Text>
               </View>
             </View>
@@ -71,18 +88,18 @@ const TutorDetail = () => {
           </View>
           <View style={{ marginTop: 10, marginLeft: 10 }}>
             <Text style={styles.name}>Đánh giá: </Text>
-            <View style={styles.rating}>
+            {/* <View style={styles.rating}>
               {[1, 2, 3, 4, 5].map((index) => (
                 <Ionicons key={index} name="star" size={30} color="gold" />
               ))}
               <Text style={styles.ratingText}>(4.9)</Text>
-            </View>
+            </View> */}
           </View>
 
           <View
             style={{ alignItems: "center", marginTop: 10, marginBottom: 20 }}
           >
-            <Text style={styles.name}>Viết đánh giá: </Text>
+            {/* <Text style={styles.name}>Viết đánh giá: </Text> */}
             <View style={styles.inputWrapper}>
               <TextInput
                 placeholder="Đánh giá của bạn"

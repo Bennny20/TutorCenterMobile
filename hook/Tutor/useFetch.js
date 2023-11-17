@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
+import { HOST_API } from "../../constants/index";
 
 const useFetch = () => {
   const [data, setData] = useState([]);
@@ -9,9 +10,8 @@ const useFetch = () => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.get("https://tutor-center.onrender.com/tutor/");
+      const res = await axios.get(HOST_API.local + `/api/tutor`);
       setData(res.data);
-      // console.log("Tutor: ", data);
     } catch (error) {
       setError(error);
     } finally {

@@ -2,15 +2,22 @@ import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
 import React from "react";
 import { COLORS, SIZES } from "../../constants";
 import { useNavigation } from "@react-navigation/native";
-import axios from "axios";
-import CurrencyFormatter from "../CurrencyFormatter ";
+
 const ClassItem = ({ item }) => {
   const navigation = useNavigation();
+
+  for (let index = 0; index < item.subjects.length; index++) {
+    major += item.subjects[index].name + ", ";
+    if (index == item.subjects.length - 1) {
+      major += item.subjects[index].name;
+    }
+    classNo = item.subjects[index].level;
+  }
+
   const formattedAmount = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
-  }).format(item.request.price);
-  const majors = item.request.major.join(" - ");
+  }).format(item.tuition);
   return (
     <View style={styles.card_container}>
       <View
@@ -27,13 +34,16 @@ const ClassItem = ({ item }) => {
         onPress={() => navigation.navigate("ClassDetail", { item })}
       >
         <View style={styles.title}>
-          <Text style={styles.titleText}>{majors}</Text>
+          <Text style={styles.titleText}>{major}</Text>
         </View>
         <View style={styles.info}>
-          <Text style={styles.text}>Trình đồ: {item.request.level}</Text>
-          <Text style={styles.text}>Lớp: {item.request.classNo}</Text>
-          <Text style={styles.text}>Địa chỉ: {item.request.address}</Text>
-          <Text style={styles.text}>Giới tính: {item.request.gender}</Text>
+          <Text style={styles.text}>Trình đồ: {item.tutorLevel}</Text>
+          <Text style={styles.text}> {classNo}</Text>
+          <Text style={styles.text}>Địa chỉ: {item.address}</Text>
+          <Text style={styles.text}>
+            {item.address}, {item.provinceName}
+          </Text>
+          <Text style={styles.text}>Giới tính: {item.gender}</Text>
         </View>
         <View style={styles.price}>
           <Text style={styles.priceText}>{formattedAmount}</Text>

@@ -6,19 +6,23 @@ import {
   View,
   TouchableOpacity,
   TextInput,
+  FlatList,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
-import { COLORS, SIZES } from "../constants";
+import { COLORS, HOST_API, SIZES } from "../constants";
 import Button from "../components/Button";
 import { Formik } from "formik";
 import * as Yup from "yup";
 import { Alert } from "react-native";
+import axios from "axios";
+import { useEffect } from "react";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 const validationSchema = Yup.object().shape({
   password: Yup.string()
-    .min(8, "Password must be at least 8 characters")
+    .min(1, "Password must be at least 8 characters")
     .required("Required"),
   email: Yup.string()
     .email("Provide a valid email address")
@@ -30,13 +34,52 @@ const validationSchema = Yup.object().shape({
     .min(10, "Provide a valid phone number")
     .max(10, "Provide a valid phone number")
     .required("Required"),
+  fullname: Yup.string()
+    .min(5, "Provide a valid your fullname")
+    .required("Required"),
 });
 const Register = () => {
   const navigation = useNavigation();
-  const [loader, setLoader] = useState(false);
-  const [responseData, setResponseData] = useState(null);
-  const [obsecureText, setObsecureText] = useState(false);
 
+  //Tỉnh thành
+  const [province, setProvince] = useState([]);
+  const [selectProvince, setSelectProvince] = useState(
+    "Chọn tỉnh thành nơi dậy"
+  );
+  const [isClickProvince, setIsClickProvince] = useState(false);
+  const [loader, setLoader] = useState(false);
+  useEffect(() => {
+    setLoader(true);
+    const fetchProvince = async () => {
+      try {
+        const response = await axios.get(
+          HOST_API.local + `/api/district/province`
+        );
+        setProvince(response.data);
+      } catch (error) {
+        console.log("error", error);
+      } finally {
+        setLoader(false);
+      }
+    };
+    fetchProvince();
+  }, []);
+
+  //Quận huyện
+  const [selectDistrict, setSelectDistrict] = useState(
+    "Chọn quận/huyện nơi dậy"
+  );
+  const [isClickDistrict, setIsClickDistrict] = useState(false);
+  const [district, setDistrict] = useState([]);
+  const [districtValue, setDistrictValue] = useState();
+  async function handLoadDistrict(idProvince) {
+    const response = await fetch(
+      HOST_API.local + `/api/district/province/${idProvince}`
+    );
+    setDistrict(await response.json());
+  }
+
+  const [obsecureText, setObsecureText] = useState(false);
   const inValidForm = () => {
     Alert.alert("Invalid form", "Please provide all require fields", [
       {
@@ -51,28 +94,131 @@ const Register = () => {
     ]);
   };
 
+  const [checkEmail, setCheckEmail] = useState(false);
+  const handleCheckEmail = async (email) => {
+    console.log(email);
+    await axios
+      .get(HOST_API.local + `/api/auth/emailExist/${email}`)
+      .then((response) => {
+        console.log(response.data);
+        setCheckEmail(response.data);
+        if (checkEmail.data == true) {
+          Alert.alert("Email đã được đăng kí", "Nhập lại email", [
+            {
+              text: "Cancel",
+              onPress: () => {
+                // navigation.navigate("ManageRequest");
+              },
+            },
+            { defaultIndex: 1 },
+          ]);
+        }
+      });
+  };
+  //register
+  const register = async (data) => {
+    const user = {
+      email: data.email,
+      password: data.password,
+      fullname: data.fullname,
+      phone: data.phone,
+      address: data.location,
+      districtId: districtValue,
+    };
+    console.log("Value: ", user);
+
+    handleCheckEmail(data.email);
+    console.log(checkEmail);
+    if (checkEmail.data == false) {
+      setLoader(true);
+      try {
+        const endpoint = HOST_API.local + "/api/auth/registerParent";
+        const response = await axios.post(endpoint, {
+          email: data.email,
+          password: data.password,
+          fullname: data.fullname,
+          phone: data.phone,
+          address: data.location,
+          districtId: districtValue,
+        });
+        console.log(response.data);
+        if (response.data.responseCode === "00") {
+          console.log(response.data);
+          Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
+            {
+              text: "Cancel",
+              onPress: () => {},
+            },
+            {
+              text: "Continue",
+              onPress: () => {
+                navigation.replace("Login");
+              },
+            },
+            { defaultIndex: 1 },
+          ]);
+          setLoader(false);
+        } else {
+          Alert.alert("Error Logging im", "Please provide all require fields", [
+            {
+              text: "Cancel",
+              onPress: () => {},
+            },
+            {
+              text: "Continue",
+              onPress: () => {},
+            },
+            { defaultIndex: 1 },
+          ]);
+        }
+      } catch (error) {
+        console.log(error.message);
+        Alert.alert("Error", "error", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {},
+          },
+          { defaultIndex: 1 },
+        ]);
+      } finally {
+        setLoader(false);
+      }
+    }
+  };
   return (
-    <ScrollView>
-      <SafeAreaView style={{ marginHorizontal: 20 }}>
-        <View>
-          <TouchableOpacity
-            onPress={() => navigation.goBack()}
-            style={{ marginLeft: 5 }}
-          >
-            <Ionicons
-              name="chevron-back-circle"
-              size={40}
-              color={COLORS.primary}
-            />
-          </TouchableOpacity>
-          <View style={{ alignItems: "center" }}>
-            <Text style={styles.title}>TUTOR CENTER</Text>
-            <Text style={styles.supTitle}>ĐĂNG KÍ TÀI KHOẢN</Text>
-          </View>
+    <ScrollView
+      style={{ marginHorizontal: 20, marginTop: 30, marginBottom: 20 }}
+    >
+      <View>
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{ marginLeft: 5 }}
+        >
+          <Ionicons
+            name="chevron-back-circle"
+            size={40}
+            color={COLORS.primary}
+          />
+        </TouchableOpacity>
+        <View style={{ alignItems: "center" }}>
+          <Text style={styles.title}>TUTOR CENTER</Text>
+          <Text style={styles.supTitle}>ĐĂNG KÍ TÀI KHOẢN</Text>
+        </View>
+        <KeyboardAwareScrollView extraScrollHeight={50}>
           <Formik
-            initialValues={{ email: "", password: "", location: "", phone: "" }}
+            initialValues={{
+              email: "",
+              password: "",
+              location: "",
+              phone: "",
+              fullname: "",
+            }}
             validationSchema={validationSchema}
-            onSubmit={(data) => console.log(data)}
+            onSubmit={(data) => register(data)}
           >
             {({
               handleChange,
@@ -100,6 +246,7 @@ const Register = () => {
                       style={{ marginRight: 10 }}
                     />
                     <TextInput
+                      keyboardType="email-address"
                       placeholder="Enter your email"
                       onFocus={() => {
                         setFieldTouched("email");
@@ -116,6 +263,85 @@ const Register = () => {
                   </View>
                   {touched.email && errors.email && (
                     <Text style={styles.errorMessage}>{errors.email}</Text>
+                  )}
+                </View>
+
+                {/* Password */}
+                <View style={{ marginBottom: 20 }}>
+                  <Text style={styles.label}>Password</Text>
+                  <View
+                    style={styles.inputWrapper(
+                      touched.password ? COLORS.main : COLORS.offwhite
+                    )}
+                  >
+                    <MaterialCommunityIcons
+                      name="lock-outline"
+                      size={20}
+                      color={COLORS.gray}
+                      style={{ marginRight: 10 }}
+                    />
+                    <TextInput
+                      secureTextEntry={obsecureText}
+                      placeholder="Enter your password"
+                      onFocus={() => {
+                        setFieldTouched("password");
+                      }}
+                      onBlur={() => {
+                        setFieldTouched("password", "");
+                      }}
+                      value={values.password}
+                      onChangeText={handleChange("password")}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      style={{ flex: 1 }}
+                    />
+                    <TouchableOpacity
+                      onPress={() => {
+                        setObsecureText(!obsecureText);
+                      }}
+                    >
+                      <MaterialCommunityIcons
+                        name={obsecureText ? "eye-outline" : "eye-off-outline"}
+                        size={18}
+                      />
+                    </TouchableOpacity>
+                  </View>
+                  {touched.password && errors.password && (
+                    <Text style={styles.errorMessage}>{errors.password}</Text>
+                  )}
+                </View>
+
+                {/* Fullname */}
+                <View style={{ marginBottom: 20 }}>
+                  <Text style={styles.label}>Fullname</Text>
+                  <View
+                    style={styles.inputWrapper(
+                      touched.fullname ? COLORS.main : COLORS.offwhite
+                    )}
+                  >
+                    <Ionicons
+                      name="person-outline"
+                      size={20}
+                      color={COLORS.gray}
+                      style={{ marginRight: 10 }}
+                    />
+                    <TextInput
+                      placeholder="Enter your your fullname"
+                      onFocus={() => {
+                        setFieldTouched("fullname");
+                      }}
+                      onBlur={() => {
+                        setFieldTouched("fullname", "");
+                      }}
+                      value={values.fullname}
+                      onChangeText={handleChange("fullname")}
+                      autoCapitalize="none"
+                      autoCorrect={false}
+                      style={{ flex: 1 }}
+                    />
+                  </View>
+                  {touched.fullname && errors.fullname && (
+                    <Text style={styles.errorMessage}>{errors.fullname}</Text>
                   )}
                 </View>
 
@@ -154,6 +380,84 @@ const Register = () => {
                   )}
                 </View>
 
+                {/* Tỉnh thành */}
+                <View style={{ marginBottom: 20 }}>
+                  <Text style={styles.label}>Tỉnh thành</Text>
+                  <TouchableOpacity
+                    style={styles.dropdownSelector}
+                    onPress={() => {
+                      setIsClickProvince(!isClickProvince);
+                    }}
+                  >
+                    <Text>{selectProvince}</Text>
+                    {isClickProvince ? (
+                      <Ionicons name="chevron-down-outline" size={24} />
+                    ) : (
+                      <Ionicons name="chevron-up-outline" size={24} />
+                    )}
+                  </TouchableOpacity>
+                  {isClickProvince && (
+                    <View style={styles.dropdownArea}>
+                      <FlatList
+                        data={province.data}
+                        renderItem={({ item, index }) => {
+                          return (
+                            <TouchableOpacity
+                              style={styles.item}
+                              onPress={() => {
+                                setSelectProvince(item.name);
+                                setIsClickProvince(false);
+                                handLoadDistrict(item.id);
+                              }}
+                            >
+                              <Text>{item.name}</Text>
+                            </TouchableOpacity>
+                          );
+                        }}
+                      />
+                    </View>
+                  )}
+                </View>
+
+                {/* Quận huyện */}
+                <View style={{ marginBottom: 20 }}>
+                  <Text style={styles.label}>Quận huyện</Text>
+                  <TouchableOpacity
+                    style={styles.dropdownSelector}
+                    onPress={() => {
+                      setIsClickDistrict(!isClickDistrict);
+                    }}
+                  >
+                    <Text>{selectDistrict}</Text>
+                    {isClickDistrict ? (
+                      <Ionicons name="chevron-down-outline" size={24} />
+                    ) : (
+                      <Ionicons name="chevron-up-outline" size={24} />
+                    )}
+                  </TouchableOpacity>
+                  {isClickDistrict && (
+                    <View style={styles.dropdownArea}>
+                      <FlatList
+                        data={district.data}
+                        renderItem={({ item, index }) => {
+                          return (
+                            <TouchableOpacity
+                              style={styles.item}
+                              onPress={() => {
+                                setSelectDistrict(item.name);
+                                setIsClickDistrict(false);
+                                setDistrictValue(item.id);
+                              }}
+                            >
+                              <Text>{item.name}</Text>
+                            </TouchableOpacity>
+                          );
+                        }}
+                      />
+                    </View>
+                  )}
+                </View>
+
                 {/* Location */}
                 <View style={{ marginBottom: 20 }}>
                   <Text style={styles.label}>Location</Text>
@@ -188,56 +492,11 @@ const Register = () => {
                   )}
                 </View>
 
-                {/* Password */}
-                <View style={{ marginBottom: 20 }}>
-                  <Text style={styles.label}>Password</Text>
-                  <View
-                    style={styles.inputWrapper(
-                      touched.password ? COLORS.main : COLORS.offwhite
-                    )}
-                  >
-                    <MaterialCommunityIcons
-                      name="lock-outline"
-                      size={20}
-                      color={COLORS.gray}
-                      style={{ marginRight: 10 }}
-                    />
-                    <TextInput
-                      secureTextEntry={obsecureText}
-                      placeholder="Enter your password"
-                      onFocus={() => {
-                        setFieldTouched("password");
-                      }}
-                      onBlur={() => {
-                        setFieldTouched("password", "");
-                      }}
-                      value={values.password}
-                      onChangeText={handleChange("password")}
-                      autoCapitalize="none"
-                      autoCorrect={false}
-                      style={{ flex: 1 }}
-                    />
-
-                    <TouchableOpacity
-                      onPress={() => {
-                        setObsecureText(!obsecureText);
-                      }}
-                    >
-                      <MaterialCommunityIcons
-                        name={obsecureText ? "eye-outline" : "eye-off-outline"}
-                        size={18}
-                      />
-                    </TouchableOpacity>
-                  </View>
-                  {touched.password && errors.password && (
-                    <Text style={styles.errorMessage}>{errors.password}</Text>
-                  )}
-                </View>
-
                 <Button
                   title={"Đăng kí tài khoản"}
                   onPress={isValid ? handleSubmit : inValidForm}
                   isValid={isValid}
+                  loader={loader}
                 />
 
                 <View
@@ -259,8 +518,8 @@ const Register = () => {
               </View>
             )}
           </Formik>
-        </View>
-      </SafeAreaView>
+        </KeyboardAwareScrollView>
+      </View>
     </ScrollView>
   );
 };
@@ -313,5 +572,30 @@ const styles = StyleSheet.create({
     color: COLORS.main,
     alignItems: "center",
     marginBottom: SIZES.xLarge,
+  },
+  dropdownSelector: {
+    backgroundColor: COLORS.lightWhite,
+    height: 55,
+    borderRadius: 10,
+    borderWidth: 0.5,
+    borderColor: COLORS.lightWhite,
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 15,
+  },
+
+  dropdownArea: {
+    width: "90%",
+    height: 150,
+    borderRadius: 10,
+    marginTop: 20,
+    backgroundColor: "",
+    elevation: 5,
+    alignSelf: "center",
+  },
+  item: {
+    marginVertical: 10,
+    marginHorizontal: 10,
   },
 });

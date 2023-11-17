@@ -1,56 +1,87 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 import React from "react";
-import { SIZES, SHADOWS, COLORS } from "../../constants";
+import { SIZES, SHADOWS, COLORS, HOST_API } from "../../constants";
 import { useEffect } from "react";
 import axios from "axios";
 import { useState } from "react";
 import { Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const TutorItemApply = ({ item, profile, classInfo }) => {
+const TutorItemApply = ({ item }) => {
   const navigation = useNavigation();
 
-  const profileId = classInfo.parent;
-  const handleChoose = () => {
-    const tutor = {
-      id: item.idTutor,
-      name: item.nameTutor,
-    };
+  const [user, setUser] = useState(null);
+  useEffect(() => {
+    checkExitingUser();
+  }, []);
 
-    axios
-      .put(`https://tutor-center.onrender.com/class/${classInfo._id}`, tutor)
-      .then((response) => {
-        console.log(response.data);
-        Alert.alert("Chọn gia sư thành công", "Quản lý lớp", [
-          {
-            text: "Cancel",
-            onPress: () => navigation.navigate("ManageClass", { profileId }),
+  const checkExitingUser = async () => {
+    const token = await AsyncStorage.getItem("token");
+    console.log(token);
+    setLoader(true);
+    try {
+      const currentUser = await axios.get(
+        HOST_API.local + `/api/user/authProfile`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
           },
-          {
-            text: "Continue",
-            onPress: () => {
-              navigation.navigate("ManageClass", { profileId });
-            },
+        }
+      );
+      if (currentUser !== null) {
+        setUser(currentUser.data.data.id);
+      }
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const handleChoose = async () => {
+    const token = await AsyncStorage.getItem("token");
+    const response = await fetch(
+      HOST_API.local + `/api/tutorApply/acceptTutor/${item.id}`,
+      {
+        method: "PUT", // *GET, POST, PUT, DELETE, etc.
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      }
+    );
+    const result = await response.json();
+    console.log(result.responseCode);
+    if (result.responseCode == "00") {
+      Alert.alert("Chọn gia sư thành công", "Quản lý lớp", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+        },
+        {
+          text: "Continue",
+          onPress: () => {
+            navigation.navigate("ManageClass", { user });
           },
-          { defaultIndex: 1 },
-        ]);
-      })
-      .catch((error) => {
-        Alert.alert("Chọn gia sư thành công", "Quản lý lớp", [
-          {
-            text: "Cancel",
-            onPress: () => {},
+        },
+        { defaultIndex: 1 },
+      ]);
+    } else {
+      Alert.alert("Chọn gia sư khoong thành công", "Quản lý lớp", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+        },
+        {
+          text: "Continue",
+          onPress: () => {
+            {
+            }
           },
-          {
-            text: "Continue",
-            onPress: () => {
-              navigation.navigate("ManageClass", { profileId });
-            },
-          },
-          { defaultIndex: 1 },
-        ]);
-        console.log("Create failed", error);
-      });
+        },
+        { defaultIndex: 1 },
+      ]);
+    }
   };
   return (
     <View
@@ -70,11 +101,11 @@ const TutorItemApply = ({ item, profile, classInfo }) => {
           />
         </View>
         <View style={styles.textContent}>
-          <Text style={styles.name}>{item.nameTutor}</Text>
+          <Text style={styles.name}>{item.tutorName}</Text>
           {/* <Text style={styles.supplier}>{item.major}</Text> */}
-          <Text style={styles.supplier}>{item.university}</Text>
-          <Text style={styles.supplier}>{item.subject}</Text>
-          <Text style={styles.supplier}>{item.address}</Text>
+          <Text style={styles.supplier}>{item.tutorUniversity}</Text>
+          <Text style={styles.supplier}>{item.tutorUniversity}</Text>
+          <Text style={styles.supplier}>{item.tutorAddress}</Text>
         </View>
       </TouchableOpacity>
       <View
@@ -84,17 +115,16 @@ const TutorItemApply = ({ item, profile, classInfo }) => {
           width: "30%",
         }}
       >
-        {classInfo.parent == profile?.user.profile.id ? (
+        {item.status == 1 ? (
           <TouchableOpacity style={styles.btnStatus} onPress={handleChoose}>
-            <Text style={styles.txtStatus}>Chọn gia sư</Text>
+            <Text style={styles.txtStatus}>Đã chọn gia sư</Text>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity style={styles.btnStatus}>
-            <Text style={styles.txtStatus}>
-              Đợi xác nhận
-              {/* {idParent} */}
-            </Text>
-          </TouchableOpacity>
+          item.status == 0 && (
+            <TouchableOpacity style={styles.btnStatus} onPress={handleChoose}>
+              <Text style={styles.txtStatus}>Chọn gia sư</Text>
+            </TouchableOpacity>
+          )
         )}
       </View>
     </View>

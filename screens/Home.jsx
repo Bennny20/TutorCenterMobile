@@ -26,12 +26,10 @@ const Home = () => {
       <View style={styles.appBarWrapper}>
         <View style={styles.appBar}>
           <Ionicons name="help-circle-outline" size={24} />
-          <Text style={styles.location}>
-            {/* {userData ? userData.data.user?.name : "TUTOR CENTER"} */}
-            TUTOR CENTER
-          </Text>
+          <Text style={styles.location}>TUTOR CENTER</Text>
 
           <TouchableOpacity
+            style={{ zIndex: 99 }}
             onPressIn={() => navigation.navigate("NotificationPage")}
           >
             <View style={{ alignItems: "flex-end" }}>

@@ -9,7 +9,7 @@ import {
 import React from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { COLORS, SIZES } from "../constants";
+import { COLORS, HOST_API, SIZES } from "../constants";
 import { ScrollView } from "react-native";
 import TutorItemApply from "../components/Tutor/TuorItemApply";
 import { useState, useCallback } from "react";
@@ -25,9 +25,95 @@ import { FlatList } from "react-native";
 const ClassDetail = () => {
   const navigation = useNavigation();
 
-  const [userData, setUserData] = useState(null);
-  const [userLogin, setUserLogin] = useState(false);
+  const route = useRoute();
+  const { item } = route.params;
+  const [classDetail, setClassDetail] = useState();
   const [loader, setLoader] = useState(false);
+  useEffect(() => {
+    setLoader(true);
+    const fetchClassDetail = async () => {
+      try {
+        const response = await axios.get(
+          HOST_API.local + `/api/clazz/${item.id}`
+        );
+        setClassDetail(response.data.data);
+      } catch (error) {
+        console.log("error", error);
+      } finally {
+        setLoader(false);
+      }
+    };
+    fetchClassDetail();
+  }, []);
+
+  console.log(classDetail);
+  const [userData, setUserData] = useState(null);
+  const [user, setUser] = useState(null);
+  const [userLogin, setUserLogin] = useState(false);
+  useEffect(() => {
+    checkExitingUser();
+    fetchListApply();
+  }, []);
+
+  const checkExitingUser = async () => {
+    const token = await AsyncStorage.getItem("token");
+    setLoader(true);
+    try {
+      const currentUser = await axios.get(
+        HOST_API.local + `/api/user/authProfile`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      if (currentUser !== null) {
+        setUserData(currentUser.data.data);
+        setUserLogin(true);
+        setUser(currentUser.data.data.id);
+      }
+    } catch (error) {
+      console.log("Get user data error", error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const [listApply, setListApply] = useState();
+  const fetchListApply = async () => {
+    console.log(user);
+    setLoader(true);
+    const token = await AsyncStorage.getItem("token");
+    try {
+      const response = await fetch(
+        HOST_API.local + `/api/tutorApply/tutor/${user}`,
+        {
+          method: "GET", // *GET, POST, PUT, DELETE, etc.
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      const result = await response.json();
+      setListApply(response.data.data);
+    } catch (error) {
+      console.log("List apply error", error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  var major = "";
+  var classNo = "";
+  for (let index = 0; index < item.subjects.length; index++) {
+    if (index == item.subjects.length - 1) {
+      major += item.subjects[index].name;
+    } else {
+      major += item.subjects[index].name + ", ";
+    }
+    classNo = item.subjects[index].level;
+  }
+
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -36,99 +122,78 @@ const ClassDetail = () => {
     }, 2000);
   }, []);
 
-  const route = useRoute();
-  const { item } = route.params;
-  console.log(item);
-  const majors = item.request.major.join(" - ");
-
-  useEffect(() => {
-    checkExitingUser();
-  }, []);
-
-  const checkExitingUser = async () => {
-    const id = await AsyncStorage.getItem("id");
-    const userId = `user${JSON.parse(id)}`;
-
-    try {
-      const currentUser = await AsyncStorage.getItem(userId);
-      if (currentUser !== null) {
-        const parsedData = JSON.parse(currentUser);
-        setUserData(parsedData);
-        setUserLogin(true);
-      }
-    } catch (error) {
-      console.log("Error retrieving the data: ", error);
-    }
-  };
-
-  const createApply = () => {
+  const createApply = async () => {
+    const token = await AsyncStorage.getItem("token");
+    console.log(token);
+    console.log(classDetail.id);
+    console.log(user);
+    const url =
+      HOST_API.local +
+      `/api/tutorApply/create?clazzId=${classDetail.id}&tutorId=${user}`;
     if (userData == null) {
       navigation.navigate("Login");
     } else {
-      const data = {
-        tutor: userData?.user.profile.id,
-        classId: item._id,
-      };
-      const profileId = data.tutor;
-      console.log(data);
-      axios
-        .post("https://tutor-center.onrender.com/class/apply", data)
-        .then((response) => {
-          console.log(response.data);
-          Alert.alert("Đăng kí thành công", "Quản lý apply", [
-            {
-              text: "Cancel",
-              onPress: () => navigation.navigate("ClassDetail", { item }),
+      const response = await fetch(url, {
+        method: "POST", // *GET, POST, PUT, DELETE, etc.
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
+      const result = await response.json();
+      if (result.responseCode === "00") {
+        console.log(response.data);
+        Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {
+              navigation.replace("Login");
             },
-            {
-              text: "Continue",
-              onPress: () => {
-                navigation.replace("ManageApply", { profileId });
-              },
-            },
-            { defaultIndex: 1 },
-          ]);
-        })
-        .catch((error) => {
-          Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
-            {
-              text: "Cancel",
-              onPress: () => {},
-            },
-            {
-              text: "Continue",
-              onPress: () => {
-                navigation.navigate("ManageApply", { profileId });
-              },
-            },
-            { defaultIndex: 1 },
-          ]);
-          console.log("Create failed", error);
-        });
+          },
+          { defaultIndex: 1 },
+        ]);
+        setLoader(false);
+      } else {
+        Alert.alert("Error Logging im", "Please provide all require fields", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {},
+          },
+          { defaultIndex: 1 },
+        ]);
+        G;
+      }
     }
   };
 
   var check = 0;
-  for (var temp of item.apply) {
-    if (temp.idTutor === userData?.user.profile.id) {
-      check += 1;
-    }
-  }
+  // for (var temp of item.apply) {
+  //   if (temp.idTutor === userData?.user.profile.id) {
+  //     check += 1;
+  //   }
+  // }
 
-  const classInfo = item;
-  var tutorApply = null;
-  if (item.tutor != undefined) {
-    for (var temp of item.apply) {
-      if (temp.idTutor == item.tutor.id) {
-        tutorApply = temp;
-        break;
-      }
-    }
-  }
+  // const classInfo = item;
+  // var tutorApply = null;
+  // if (item.tutor != undefined) {
+  //   for (var temp of item.apply) {
+  //     if (temp.idTutor == item.tutor.id) {
+  //       tutorApply = temp;
+  //       break;
+  //     }
+  //   }
+  // }
   const formattedAmount = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
-  }).format(item.request.price);
+  }).format(item.tuition);
   return (
     <SafeAreaView style={{ marginBottom: 350 }}>
       <View styles={styles.container}>
@@ -147,24 +212,31 @@ const ClassDetail = () => {
       </View>
       <View style={styles.headingInfo}>
         <View style={styles.headingName}>
-          <Text style={styles.name}>{item.request.address}</Text>
+          <Text style={styles.name}>{item.address}</Text>
         </View>
       </View>
       <View style={styles.info}>
         <View style={styles.infoDetail}>
-          <Text style={styles.sup}>Mon hoc: {majors}</Text>
-          <Text style={styles.sup}>Lop: {item.request.classNo}</Text>
-          <Text style={styles.sup}>Gioi tinh:{item.request.gender}</Text>
-          <Text style={styles.sup}>Dia diem: {item.request.address}</Text>
-          {/* <Text style={styles.sup}>Ngay hoc: {request.classNo}</Text>
-          <Text style={styles.sup}>Ngay kết thúc: {request.classNo}</Text> */}
-          <Text style={styles.sup}>Giá tiền: {formattedAmount}</Text>
+          <Text style={styles.sup}>Mon hoc: {major}</Text>
+          <Text style={styles.sup}>Lop: {classNo}</Text>
+          <Text style={styles.sup}>Gioi tinh:{item.gender}</Text>
           <Text style={styles.sup}>
-            Học lực: {item.request.academicAbility}
+            Dia diem: {item.address}, {item.provinceName}
           </Text>
-          <Text style={styles.sup}>Trình độ: {item.request.level}</Text>
-          <Text style={styles.sup}>Số buổi: {item.request.slot} buổi</Text>
-          <Text style={styles.sup}>Trạng thái: {item.status}</Text>
+          <Text style={styles.sup}>Ngay hoc: {item.dateStart}</Text>
+          <Text style={styles.sup}>Ngay kết thúc: {item.dateEnd}</Text>
+          <Text style={styles.sup}>Giá tiền: {formattedAmount}</Text>
+          <Text style={styles.sup}>Trình độ: {item.tutorLevel}</Text>
+          <Text style={styles.sup}>Số buổi: {item.slot} </Text>
+          {item.status == 0 && (
+            <Text style={styles.sup}>Trạng thái: Chưa có gia sư</Text>
+          )}
+          {item.status == 1 && (
+            <Text style={styles.sup}>Trạng thái: Đã có gia sư</Text>
+          )}
+          {item.status == 2 && (
+            <Text style={styles.sup}>Trạng thái: Hoàn thành</Text>
+          )}
         </View>
       </View>
 
@@ -174,44 +246,36 @@ const ClassDetail = () => {
           <Text style={styles.titleText}>Trang thai</Text>
         </View>
       </View>
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {userData?.user.role === "USER_PARENT" ? (
-          <View></View>
-        ) : check < 1 ? (
-          <TouchableOpacity style={styles.btnApply} onPress={createApply}>
-            <Ionicons name="receipt-outline" size={30} color={COLORS.black} />
-            <Text
-              style={{
-                marginLeft: 5,
-                fontFamily: "bold",
-                fontSize: SIZES.large,
-              }}
-            >
-              Apply
-            </Text>
-          </TouchableOpacity>
-        ) : (
-          <View style={styles.btnApplied}>
-            <Ionicons name="receipt-outline" size={30} color={COLORS.white} />
-            <Text
-              style={{
-                marginLeft: 5,
-                fontFamily: "bold",
-                fontSize: SIZES.large,
-                color: COLORS.white,
-              }}
-            >
-              Đã apply
-            </Text>
-          </View>
-        )}
-      </View>
-      <View style={{ marginTop: 10, marginHorizontal: 5, marginBottom: 5000 }}>
+
+      {loader ? (
+        <ActivityIndicator size={500} color={COLORS.main} />
+      ) : (
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {userData?.role === "TUTOR" ? (
+            <TouchableOpacity style={styles.btnApply} onPress={createApply}>
+              <Ionicons name="receipt-outline" size={30} color={COLORS.black} />
+              <Text
+                style={{
+                  marginLeft: 5,
+                  fontFamily: "bold",
+                  fontSize: SIZES.large,
+                }}
+              >
+                Apply
+              </Text>
+            </TouchableOpacity>
+          ) : (
+            userData?.role === "PARENT" && <View></View>
+          )}
+        </View>
+      )}
+
+      {/* <View style={{ marginTop: 10, marginHorizontal: 5, marginBottom: 5000 }}>
         {tutorApply != null ? (
           <View>
             <TouchableOpacity style={styles.containerTutor}>
@@ -269,7 +333,7 @@ const ClassDetail = () => {
             keyExtractor={(item) => item.id}
           />
         )}
-      </View>
+      </View> */}
     </SafeAreaView>
   );
 };

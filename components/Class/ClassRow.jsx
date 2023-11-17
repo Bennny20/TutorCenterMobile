@@ -14,10 +14,8 @@ import ClassCardView from "./ClassCardView";
 import useFetch from "../../hook/Class/useFetch";
 
 const ClassRow = () => {
-  const classes = [1, 2, 3, 4];
   const navigation = useNavigation();
   const { data, isLoading, error } = useFetch();
-
   return (
     <View style={styles.container}>
       <View style={styles.header}>
@@ -38,19 +36,13 @@ const ClassRow = () => {
           <Text>Something went wrong </Text>
         ) : (
           <FlatList
-            data={data}
+            data={data.data}
             keyExtractor={(item) => item.id}
             renderItem={({ item }) => <ClassCardView item={item} />}
             horizontal
             contentContainerStyle={{ columnGap: SIZES.medium }}
           />
         )}
-        {/* <FlatList
-          data={classes}
-          renderItem={({ item }) => <ClassCardView />}
-          horizontal
-          contentContainerStyle={{ columnGap: SIZES.medium }}
-        /> */}
       </View>
     </View>
   );

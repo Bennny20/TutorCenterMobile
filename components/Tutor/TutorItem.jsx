@@ -7,30 +7,30 @@ import axios from "axios";
 
 const TutorItem = ({ item }) => {
   const navigation = useNavigation();
-  const userId = item.user;
-  const [user, setUser] = useState();
+  // const userId = item.user;
+  // const [user, setUser] = useState();
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await axios.get(
-          `https://tutor-center.onrender.com/user/${userId}`
-        );
-        setUser(response.data);
-      } catch (error) {
-        console.log("error", error);
-      }
-    };
+  // useEffect(() => {
+  //   const fetchUserProfile = async () => {
+  //     try {
+  //       const response = await axios.get(
+  //         `https://tutor-center.onrender.com/user/${userId}`
+  //       );
+  //       setUser(response.data);
+  //     } catch (error) {
+  //       console.log("error", error);
+  //     }
+  //   };
 
-    fetchUserProfile();
-  }, []);
+  //   fetchUserProfile();
+  // }, []);
 
-  const subjects = item.subject.join(" - ");
+  // const subjects = item.subject.join(" - ");
   return (
     <View>
       <TouchableOpacity
         style={styles.container}
-        onPress={() => navigation.navigate("TutorDetail", { item, user })}
+        onPress={() => navigation.navigate("TutorDetail", { item })}
       >
         <View style={styles.image}>
           <Image
@@ -41,10 +41,13 @@ const TutorItem = ({ item }) => {
           />
         </View>
         <View style={styles.textContent}>
-          <Text style={styles.name}>{user?.profile.name} </Text>
-          <Text style={styles.supplier}>{subjects}</Text>
+          <Text style={styles.name}> {item.tutorName} </Text>
+          <Text style={styles.supplier}>{item.major}</Text>
           <Text style={styles.supplier}>{item.university}</Text>
-          <Text style={styles.supplier}>{item.address}</Text>
+          <Text style={styles.supplier}>{item.gender}</Text>
+          <Text style={styles.supplier}>
+            {item.districtName}, {item.provinceName}
+          </Text>
         </View>
       </TouchableOpacity>
     </View>
@@ -69,7 +72,7 @@ const styles = StyleSheet.create({
 
   textContent: {
     flex: 1,
-    marginHorizontal: SIZES.medium,
+    marginHorizontal: SIZES.small - 5,
   },
   productImg: {
     width: "100%",
@@ -92,7 +95,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     marginBottom: SIZES.small,
     flexDirection: "row",
-    padding: SIZES.medium,
+    padding: SIZES.small,
     borderRadius: SIZES.small,
     backgroundColor: "#FFF",
     ...SHADOWS.medium,

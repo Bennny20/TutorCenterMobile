@@ -21,12 +21,12 @@ const AttendanceItem = ({ item, stt }) => {
           <Text style={styles.textItem}>Slot: {temp}</Text>
         </View>
         <View style={{ marginLeft: 30 }}>
-          <Text style={styles.textItem}>Ngày điểm danh: {item.date}</Text>
-          <Text style={styles.textItem}>Giờ điểm danh: {item.time}</Text>
+          <Text style={styles.textItem}>Ngày điểm danh: {item.dateCreate}</Text>
+          {/* <Text style={styles.textItem}>Giờ điểm danh: {item.time}</Text> */}
         </View>
       </View>
       <View style={styles.status}>
-        <Text>{item.status}</Text>
+        {item.status && <Text>Đã điểm danh</Text>}
       </View>
     </View>
   );

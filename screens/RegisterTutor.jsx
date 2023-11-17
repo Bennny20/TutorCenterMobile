@@ -1,21 +1,24 @@
 import {
   Pressable,
-  Platform,
   ScrollView,
   StyleSheet,
   Text,
   TextInput,
   View,
-  KeyboardAvoidingView,
+  Alert,
+  FlatList,
 } from "react-native";
 import React, { useEffect, useState } from "react";
 import Heading from "../components/Heading";
-import { COLORS, SIZES } from "../constants";
+import { COLORS, HOST_API, SIZES } from "../constants";
 import Button from "../components/Button";
 import * as ImagePicker from "expo-image-picker";
 import { Image } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import axios from "axios";
+import { Ionicons } from "@expo/vector-icons";
+import { useNavigation } from "@react-navigation/native";
 
 const RegisterTutor = () => {
   const steps = [
@@ -25,31 +28,68 @@ const RegisterTutor = () => {
     { title: "Bằng cấp", content: "Bang Cap" },
   ];
   const [currentStep, setCurrentStep] = useState(0);
+  const navigation = useNavigation();
 
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
-  const [image, setImage] = useState();
+
   const [address, setAddress] = useState();
   const [phone, setPhone] = useState();
   const [university, setUniversity] = useState();
   const [major, setMajor] = useState();
-  const [certificate1, setCertificate1] = useState(null);
-  const [certificate2, setCertificate2] = useState(null);
 
-  const [subject, setSubject] = useState([]);
+  //Tỉnh thành
+  const [selectProvince, setSelectProvince] = useState(
+    "Chọn tỉnh thành nơi dậy"
+  );
+  const [isClickProvince, setIsClickProvince] = useState(false);
+  const [province, setProvince] = useState([]);
+  const [loader, setLoader] = useState(false);
+  useEffect(() => {
+    setLoader(true);
+    const fetchProvince = async () => {
+      try {
+        const response = await axios.get(
+          HOST_API.local + `/api/district/province`
+        );
+        setProvince(response.data);
+      } catch (error) {
+        console.log("error", error);
+      } finally {
+        setLoader(false);
+      }
+    };
+    fetchProvince();
+  }, []);
 
+  //Quận huyện
+  const [selectDistrict, setSelectDistrict] = useState(
+    "Chọn quận/huyện nơi dậy"
+  );
+  const [isClickDistrict, setIsClickDistrict] = useState(false);
+  const [district, setDistrict] = useState([]);
+  const [districtValue, setDistrictValue] = useState();
+  async function handLoadDistrict(idProvince) {
+    const response = await fetch(
+      HOST_API.local + `/api/district/province/${idProvince}`
+    );
+    setDistrict(await response.json());
+  }
+
+  //Giới tính
+  const [selectGender, setSelectGender] = useState("Chọn giới tính gia sư");
+  const [isClickGender, setIsClickGender] = useState(false);
+  const [genderValue, setGenderValue] = useState("");
+  const GioiTinh = [
+    { label: "Nam", value: "Nam" },
+    { label: "Nữ", value: "Nữ" },
+    { label: "Nam - Nữ", value: "Nam - Nữ" },
+  ];
+
+  const [imgProfile, setImgProfile] = useState();
+  const [imageProfile, setImageProfile] = useState();
   const [isImage, setIsImage] = useState(false);
-  // useEffect(async () => {
-  //   if (Platform.OS !== "wed") {
-  //     const { status } =
-  //       await ImagePicker.requestMediaLibraryPermissionsAsync();
-  //     if (status !== "granted") {
-  //       alert("Permisson denird!");
-  //     }
-  //   }
-  // }, []);
-
   const pickerImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -60,10 +100,13 @@ const RegisterTutor = () => {
     console.log(result);
     if (!result.canceled) {
       setIsImage(true);
-      setImage(result.assets[0].uri);
+      setImageProfile(result.assets[0].uri);
+      setImgProfile(result.assets[0].fileName);
     }
   };
 
+  const [imgCertificate1, setImgCertificate1] = useState(null);
+  const [certificate1, setCertificate1] = useState(null);
   const pickerCeti1 = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -75,8 +118,12 @@ const RegisterTutor = () => {
     if (!result.canceled) {
       setIsImage(true);
       setCertificate1(result.assets[0].uri);
+      setImgCertificate1(result.assets[0].fileName);
     }
   };
+
+  const [imgCertificate2, setImgCertificate2] = useState(null);
+  const [certificate2, setCertificate2] = useState(null);
   const pickerCeti2 = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -88,11 +135,139 @@ const RegisterTutor = () => {
     if (!result.canceled) {
       setIsImage(true);
       setCertificate2(result.assets[0].uri);
+      setImgCertificate2(result.assets[0].fileName);
     }
   };
-  // console.log(image);
+
+  const [checkEmail, setCheckEmail] = useState(false);
+  const handleCheckEmail = async (email) => {
+    console.log(email);
+    await axios
+      .get(HOST_API.local + `/api/auth/emailExist/${email}`)
+      .then((response) => {
+        console.log(response.data);
+        setCheckEmail(response.data);
+        if (checkEmail.data == true) {
+          Alert.alert("Email đã được đăng kí", "Nhập lại email", [
+            {
+              text: "Cancel",
+              onPress: () => {},
+            },
+            { defaultIndex: 1 },
+          ]);
+          setEmail("");
+        } else {
+          setCurrentStep(1);
+        }
+      });
+  };
+
+  const register = async () => {
+    const user = {
+      email: email,
+      idNumber: 1,
+      password: password,
+      fullname: name,
+      phone: phone,
+      address: address,
+      districtId: districtValue,
+      gender: genderValue,
+      university: university,
+      major: major,
+      area: selectDistrict + ", " + selectProvince,
+      imgCertificate: imgCertificate1,
+      imgAvatar: imgProfile,
+      imgIdFront: imgCertificate1,
+      imdIdBack: imgCertificate2,
+    };
+    console.log("Value: ", user);
+
+    setLoader(true);
+    try {
+      const endpoint = HOST_API.local + "/api/auth/registerTutor";
+      const response = await axios.post(endpoint, {
+        email: user.email,
+        idNumber: 1,
+        password: user.password,
+        fullname: user.name,
+        phone: user.phone,
+        address: user.address,
+        districtId: user.districtValue,
+        gender: user.genderValue,
+        university: user.university,
+        major: user.major,
+        area: user.area,
+        imgCertificate: user.certificate1,
+        imgAvatar: user.imageProfile,
+        imgIdFront: user.certificate2,
+        imdIdBack: user.certificate2,
+
+        // email: "DemoRegisterTutor@gmail.com",
+        // idNumber: 1,
+        // password: "1",
+        // fullname: "Demo Register Tutor",
+        // phone: "0838228607",
+        // address: "123 Demo",
+        // districtId: 2,
+        // gender: "Nam",
+        // university: "FPT University",
+        // major: "Công Nghệ Thông Tin",
+        // area: "Quận Hoàn Kiếm, Thành phố Hà Nội",
+        // imgCertificate: "IMG_3329.jpg",
+        // imgAvatar: "IMG_3556.jpg",
+        // imgIdFront: "IMG_3329.jpg",
+        // imdIdBack: "IMG_3198.JPG",
+      });
+      console.log(response.data);
+      if (response.data.responseCode === "00") {
+        console.log(response.data);
+        Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {
+              navigation.replace("Login");
+            },
+          },
+          { defaultIndex: 1 },
+        ]);
+        setLoader(false);
+      } else {
+        Alert.alert("Error Logging im", "Please provide all require fields", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {},
+          },
+          { defaultIndex: 1 },
+        ]);
+      }
+    } catch (error) {
+      console.log(error.message);
+      Alert.alert("Error", "error", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+        },
+        {
+          text: "Continue",
+          onPress: () => {},
+        },
+        { defaultIndex: 1 },
+      ]);
+    } finally {
+      setLoader(false);
+    }
+  };
+
   return (
-    <ScrollView style={{ marginTop: 30 }}>
+    <ScrollView style={{ marginTop: 30, marginBottom: 20 }}>
       <Heading title={"Đăng kí gia sư"} />
       <View style={{ flex: 1, paddingHorizontal: 20, paddingTop: 30 }}>
         <View
@@ -157,6 +332,7 @@ const RegisterTutor = () => {
             <View>
               <Text style={styles.itemText}>Email </Text>
               <TextInput
+                keyboardType="email-address"
                 style={styles.input}
                 value={email}
                 onChangeText={(text) => setEmail(text)}
@@ -183,14 +359,16 @@ const RegisterTutor = () => {
               />
             </View>
           </Pressable>
-          {email != null && password != null && name != null && (
-            <Button
-              title={"Tiếp túc"}
-              onPress={() => setCurrentStep(1)}
-              isValid={name}
-              loader={false}
-            />
-          )}
+          {/* {email != null && password != null && name != null && (
+           
+          )} */}
+
+          <Button
+            title={"Tiếp túc"}
+            onPress={() => handleCheckEmail(email)}
+            isValid={name}
+            loader={false}
+          />
         </View>
       )}
 
@@ -200,7 +378,7 @@ const RegisterTutor = () => {
             Thông tin cá nhân
           </Text>
           <Pressable>
-            <KeyboardAwareScrollView extraScrollHeight={-150}>
+            <KeyboardAwareScrollView extraScrollHeight={-50}>
               <View style={styles.avatar}>
                 {isImage === false ? (
                   <View style={{ alignItems: "center" }}>
@@ -226,9 +404,9 @@ const RegisterTutor = () => {
                   </View>
                 ) : (
                   <View style={{ alignItems: "center" }}>
-                    {image && (
+                    {imageProfile && (
                       <Image
-                        source={{ uri: image }}
+                        source={{ uri: imageProfile }}
                         style={styles.profileImg}
                       />
                     )}
@@ -251,6 +429,84 @@ const RegisterTutor = () => {
                 )}
               </View>
 
+              {/* Tỉnh thành */}
+              <View>
+                <Text style={styles.itemText}>Tỉnh thành</Text>
+                <TouchableOpacity
+                  style={styles.dropdownSelector}
+                  onPress={() => {
+                    setIsClickProvince(!isClickProvince);
+                  }}
+                >
+                  <Text>{selectProvince}</Text>
+                  {isClickProvince ? (
+                    <Ionicons name="chevron-down-outline" size={24} />
+                  ) : (
+                    <Ionicons name="chevron-up-outline" size={24} />
+                  )}
+                </TouchableOpacity>
+                {isClickProvince && (
+                  <View style={styles.dropdownArea}>
+                    <FlatList
+                      data={province.data}
+                      renderItem={({ item, index }) => {
+                        return (
+                          <TouchableOpacity
+                            style={styles.item}
+                            onPress={() => {
+                              setSelectProvince(item.name);
+                              setIsClickProvince(false);
+                              handLoadDistrict(item.id);
+                            }}
+                          >
+                            <Text>{item.name}</Text>
+                          </TouchableOpacity>
+                        );
+                      }}
+                    />
+                  </View>
+                )}
+              </View>
+
+              {/* Quận huyện */}
+              <View>
+                <Text style={styles.itemText}>Quận huyện</Text>
+                <TouchableOpacity
+                  style={styles.dropdownSelector}
+                  onPress={() => {
+                    setIsClickDistrict(!isClickDistrict);
+                  }}
+                >
+                  <Text>{selectDistrict}</Text>
+                  {isClickDistrict ? (
+                    <Ionicons name="chevron-down-outline" size={24} />
+                  ) : (
+                    <Ionicons name="chevron-up-outline" size={24} />
+                  )}
+                </TouchableOpacity>
+                {isClickDistrict && (
+                  <View style={styles.dropdownArea}>
+                    <FlatList
+                      data={district.data}
+                      renderItem={({ item, index }) => {
+                        return (
+                          <TouchableOpacity
+                            style={styles.item}
+                            onPress={() => {
+                              setSelectDistrict(item.name);
+                              setIsClickDistrict(false);
+                              setDistrictValue(item.id);
+                            }}
+                          >
+                            <Text>{item.name}</Text>
+                          </TouchableOpacity>
+                        );
+                      }}
+                    />
+                  </View>
+                )}
+              </View>
+
               <View>
                 <Text style={styles.itemText}>Địa chỉ </Text>
                 <TextInput
@@ -261,19 +517,49 @@ const RegisterTutor = () => {
                 />
               </View>
 
+              {/* Giới tính */}
               <View>
-                <Text style={styles.itemText}>Giới tính</Text>
-                <TextInput
-                  style={styles.input}
-                  value={address}
-                  onChangeText={(text) => setAddress(text)}
-                  placeholder="Nhập giới tính của bạn"
-                />
+                <Text style={styles.itemText}>Giới tính </Text>
+                <TouchableOpacity
+                  style={styles.dropdownSelector}
+                  onPress={() => {
+                    setIsClickGender(!isClickGender);
+                  }}
+                >
+                  <Text>{selectGender}</Text>
+                  {isClickGender ? (
+                    <Ionicons name="chevron-down-outline" size={24} />
+                  ) : (
+                    <Ionicons name="chevron-up-outline" size={24} />
+                  )}
+                </TouchableOpacity>
+                {isClickGender && (
+                  <View style={styles.dropdownArea}>
+                    <FlatList
+                      data={GioiTinh}
+                      renderItem={({ item, index }) => {
+                        return (
+                          <TouchableOpacity
+                            style={styles.item}
+                            onPress={() => {
+                              setSelectGender(item.label);
+                              setIsClickGender(false);
+                              setGenderValue(item.value);
+                            }}
+                          >
+                            <Text>{item.label}</Text>
+                          </TouchableOpacity>
+                        );
+                      }}
+                    />
+                  </View>
+                )}
               </View>
 
               <View>
                 <Text style={styles.itemText}>Số điện thoại </Text>
                 <TextInput
+                  keyboardType="phone-pad"
                   style={styles.input}
                   value={phone}
                   onChangeText={(text) => setPhone(text)}
@@ -289,14 +575,16 @@ const RegisterTutor = () => {
             isValid={name}
             loader={false}
           />
-          {address != "" && phone != "" && address != null && phone != null && (
-            <Button
-              title={"Tiếp túc"}
-              onPress={() => setCurrentStep(2)}
-              isValid={name}
-              loader={false}
-            />
-          )}
+
+          <Button
+            title={"Tiếp túc"}
+            onPress={() => setCurrentStep(2)}
+            isValid={name}
+            loader={false}
+          />
+          {/* {address != "" && phone != "" && address != null && phone != null && (
+          
+          )} */}
         </View>
       )}
 
@@ -470,8 +758,8 @@ const RegisterTutor = () => {
             loader={false}
           />
           <Button
-            title={"Tiếp túc"}
-            onPress={() => setCurrentStep(3)}
+            title={"Đăng kí"}
+            onPress={() => register()}
             isValid={name}
             loader={false}
           />
@@ -501,24 +789,60 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     borderWidth: 2,
     resizeMode: "cover",
-    marginTop: 20,
   },
 
   avatar: {
-    marginTop: 40,
     justifyContent: "center",
   },
   input: {
     paddingLeft: 10,
-    height: 45,
-    borderWidth: 1,
+    width: "90%",
+    height: 50,
     borderRadius: 10,
-    backgroundColor: COLORS.lightWhite,
+    borderWidth: 0.5,
+    borderColor: "#8e8e8e",
+    marginHorizontal: 10,
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 15,
   },
   itemText: {
     padding: 10,
     fontFamily: "bold",
     fontSize: SIZES.medium,
     color: COLORS.main,
+  },
+
+  dropdownSelector: {
+    width: "90%",
+    height: 50,
+    borderRadius: 10,
+    borderWidth: 0.5,
+    borderColor: "#8e8e8e",
+    marginHorizontal: 10,
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 15,
+  },
+
+  dropdownArea: {
+    width: "90%",
+    height: 150,
+    borderRadius: 10,
+    marginTop: 20,
+    backgroundColor: "",
+    elevation: 5,
+    alignSelf: "center",
+  },
+
+  item: {
+    width: "80%",
+    height: 50,
+    borderBottomWidth: 0.2,
+    borderBottomColor: "#8e8e8e",
+    alignSelf: "center",
+    justifyContent: "center",
   },
 });

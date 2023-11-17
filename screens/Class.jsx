@@ -20,7 +20,6 @@ const Class = () => {
   const navigation = useNavigation();
 
   const { data, isLoading, error } = useFetch();
-  // console.log(data);
 
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = React.useCallback(() => {
@@ -64,12 +63,11 @@ const Class = () => {
           <FlatList
             refreshing={refreshing}
             onRefresh={onRefresh}
-            style={{ marginTop: 40, marginBottom: 40 }}
-            data={data}
+            style={{ marginBottom: 40 }}
+            data={data.data}
             renderItem={({ item }) => <ClassItem item={item} />}
             keyExtractor={(item) => item.id}
           />
-          // data.map((item) => <ClassItem item={item} />)
         )}
       </View>
     </SafeAreaView>

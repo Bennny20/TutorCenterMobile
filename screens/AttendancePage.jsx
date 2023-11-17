@@ -4,7 +4,7 @@ import { SafeAreaView } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import Heading from "../components/Heading";
-import { COLORS, SIZES } from "../constants";
+import { COLORS, HOST_API, SIZES } from "../constants";
 import AttendanceItem from "../components/attendance/AttendanceItem";
 import { FlatList } from "react-native";
 import { ScrollView } from "react-native";
@@ -12,10 +12,15 @@ import axios from "axios";
 import { Alert } from "react-native";
 import { useState } from "react";
 import { RefreshControl } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useEffect } from "react";
+import { ActivityIndicator } from "react-native";
 
 const AttendancePage = () => {
   const navigation = useNavigation();
 
+  const [loader, setLoader] = useState(false);
+  const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -23,29 +28,71 @@ const AttendancePage = () => {
       setRefreshing(false);
     }, 2000);
   }, []);
-
   const route = useRoute();
   const { item } = route.params;
   let temp = 0;
-  const profileId = item.parent;
-  let length = item.attendance.length;
 
+  // console.log(item);
+  useEffect(() => {
+    fetchListApply();
+  }, []);
+  const fetchListApply = async () => {
+    const token = await AsyncStorage.getItem("token");
+
+    setLoader(true);
+    try {
+      const response = await axios.get(
+        HOST_API.local + `/api/attendance/clazz/${item.id}`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      setData(response.data);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  console.log(data);
+  const majors = ({ item }) => {
+    var major = "";
+    var classNo = "";
+    for (let index = 0; index < item.subjects.length; index++) {
+      if (index == item.subjects.length - 1) {
+        major += item.subjects[index].name;
+      } else {
+        major += item.subjects[index].name + ", ";
+      }
+      classNo = item.subjects[index].level;
+    }
+    return { major, classNo };
+  };
   var date = new Date();
   var month = new Date().getMonth() + 1;
   const createAttendance = (attendance) => {
     axios
-      .post(`https://tutor-center.onrender.com/attendance`, attendance)
+      .post(
+        HOST_API.local + `/api/attendance/create?clazzId=${item.id}&status=1`
+      )
       .then((response) => {
         console.log(response.data);
         Alert.alert("Tạo điểm danh thành công", "Quản lý lớp", [
           {
             text: "Cancel",
-            onPress: () => navigation.navigate("ManageClass", { profileId }),
+            onPress: () => {
+              {
+              }
+            },
           },
           {
             text: "Continue",
             onPress: () => {
-              navigation.navigate("ManageClass", { profileId });
+              {
+              }
             },
           },
           { defaultIndex: 1 },
@@ -69,31 +116,31 @@ const AttendancePage = () => {
       });
   };
 
-  const handleCreateAttendance = () => {
-    const attendance = {
-      classId: item._id,
-      tutor: item.tutor.id,
-      parent: item.parent,
-      createDate: date.getDate() + "/" + month + "/" + date.getFullYear(),
-      createTime:
-        date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds(),
-    };
+  // const handleCreateAttendance = () => {
+  //   const attendance = {
+  //     clazzId : item. id,
+  //     tutor: item.tutor.id,
+  //     parent: item.parent,
+  //     createDate: date.getDate() + "/" + month + "/" + date.getFullYear(),
+  //     createTime:
+  //       date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds(),
+  //   };
 
-    Alert.alert(
-      "Bạn có muốn điểm danh",
-      "Thời gian: " + attendance.createDate + " " + attendance.createTime,
-      [
-        {
-          text: "Continue",
-          onPress: () => {
-            createAttendance(attendance);
-            navigation.replace("ManageClass", { profileId });
-          },
-        },
-        { defaultIndex: 1 },
-      ]
-    );
-  };
+  //   Alert.alert(
+  //     "Bạn có muốn điểm danh",
+  //     "Thời gian: " + attendance.createDate + " " + attendance.createTime,
+  //     [
+  //       {
+  //         text: "Continue",
+  //         onPress: () => {
+  //           createAttendance(attendance);
+  //           navigation.replace("ManageClass", { profileId });
+  //         },
+  //       },
+  //       { defaultIndex: 1 },
+  //     ]
+  //   );
+  // };
 
   return (
     <SafeAreaView style={{ marginTop: -20 }}>
@@ -101,22 +148,20 @@ const AttendancePage = () => {
       <View style={styles.class}>
         <View style={styles.classHeading}>
           <View style={styles.headingName}>
-            <Text style={styles.name}>{item.request.major.join(" - ")}</Text>
+            <Text style={styles.name}>{majors({ item }).major}</Text>
           </View>
         </View>
         <View style={styles.info}>
           <View style={styles.infoDetail}>
-            <Text style={styles.sup}>
-              Môn học: {item.request.major.join(", ")}
-            </Text>
-            <Text style={styles.sup}>Lớp học: {item.request.classNo}</Text>
-            <Text style={styles.sup}>
+            <Text style={styles.sup}>Môn học: {majors({ item }).major}</Text>
+            <Text style={styles.sup}>{majors({ item }).classNo}</Text>
+            {/* <Text style={styles.sup}>
               Ngày bắt đầu: {item.request.dateStart}
             </Text>
             <Text style={styles.sup}>
               Ngày kết thúc: {item.request.dateEnd}
-            </Text>
-            <Text style={styles.sup}>Gia sư: {item.tutor.name}</Text>
+            </Text> */}
+            <Text style={styles.sup}>Gia sư: {item.tutorLevel}</Text>
           </View>
         </View>
 
@@ -130,11 +175,16 @@ const AttendancePage = () => {
             marginHorizontal: 10,
           }}
         >
-          <TouchableOpacity style={styles.createAttendance}>
-            <Text style={styles.titleText}>
-              Số buổi: {item.attendance.length}/ {item.request.slot}
-            </Text>
-          </TouchableOpacity>
+          {loader ? (
+            <ActivityIndicator size={500} color={COLORS.main} />
+          ) : (
+            <TouchableOpacity style={styles.createAttendance}>
+              <Text style={styles.titleText}>
+                {/* Số buổi: {data.data.length}/ {item.slots} */}
+              </Text>
+            </TouchableOpacity>
+          )}
+
           <TouchableOpacity
             style={styles.createAttendance}
             onPressIn={() => navigation.navigate("FeedbackClass", { item })}
@@ -156,7 +206,14 @@ const AttendancePage = () => {
         <View style={styles.title}>
           <Text style={styles.titleText}>Danh sách điểm danh</Text>
 
-          {length.toString() === item.request.slot ? (
+          <TouchableOpacity
+            style={styles.createAttendance}
+            onPress={createAttendance}
+          >
+            <Ionicons name="add-circle" size={20} color={COLORS.main} />
+            <Text style={styles.titleText}>Tạo điểm danh</Text>
+          </TouchableOpacity>
+          {/* {data.data.length === item.slot ? (
             <TouchableOpacity
               style={styles.createAttendance}
               onPressIn={() => navigation.navigate("FeedbackClass", { item })}
@@ -172,18 +229,14 @@ const AttendancePage = () => {
               <Ionicons name="add-circle" size={20} color={COLORS.main} />
               <Text style={styles.titleText}>Tạo điểm danh</Text>
             </TouchableOpacity>
-          )}
+          )} */}
         </View>
       </View>
       <View style={{ marginTop: 10 }}>
-        {/* {item.attendance.map((item, stt = 0) => (
-          <AttendanceItem item={item} stt={stt + 1} />
-        ))} */}
-
         <FlatList
           refreshing={refreshing}
           onRefresh={onRefresh}
-          data={item.attendance}
+          data={data.data}
           style={{ marginBottom: 750 }}
           renderItem={({ item, stt = temp++ }) => (
             <AttendanceItem item={item} stt={stt} />

@@ -8,7 +8,7 @@ import {
   FlatList,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import { COLORS, SIZES } from "../constants";
+import { COLORS, SIZES, HOST_API } from "../constants";
 import axios from "axios";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Alert } from "react-native";
@@ -17,37 +17,33 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import { Platform } from "react-native";
 import { Pressable } from "react-native";
 import { Ionicons, Fontisto } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CreateRequestPage = () => {
   const navigation = useNavigation();
-  const [isOpen, setIsOpen] = useState(false);
-  const [isProvinceOpen, setProvinceOpen] = useState(false);
-  const [isClassOpen, setIsClassOpen] = useState(false);
-  const [levelOpen, setLevelOpen] = useState(false);
-  const [academicOpen, setAcademicOpen] = useState(false);
-  const [genderOpen, setGenderOpen] = useState(false);
-  const [genderValue, setGenderValue] = useState();
-  const [academicValue, setAcademicValue] = useState();
-  const [levelValue, setLevelValue] = useState();
-  const [subjectValue, setSubjectValue] = useState([]);
-  const [classValue, setClassValue] = useState("");
   const [address, setAddress] = useState("");
-  const [slot, setSlot] = useState();
-  const [price, setPrice] = useState();
+  const [slot, setSlot] = useState(0);
+  const [phone, setPhone] = useState();
+  const [price, setPrice] = useState(0);
   const [description, setDescription] = useState("");
   const [dateStart, setDateStart] = useState("");
   const [dateEnd, setDateEnd] = useState("");
+  const [dateStartValue, setDateStartValue] = useState("");
+  const [dateEndValue, setDateEndValue] = useState("");
 
-  const [province, setProvince] = useState([]);
-  const [selectProvince, setSelectProvince] = useState("Select province");
+  //Tỉnh thành
+  const [selectProvince, setSelectProvince] = useState(
+    "Chọn tỉnh thành nơi dậy"
+  );
   const [isClickProvince, setIsClickProvince] = useState(false);
+  const [province, setProvince] = useState([]);
   const [loader, setLoader] = useState(false);
   useEffect(() => {
     setLoader(true);
     const fetchProvince = async () => {
       try {
         const response = await axios.get(
-          "https://tc-837o.onrender.com/api/district/province"
+          HOST_API.local + `/api/district/province`
         );
         setProvince(response.data);
       } catch (error) {
@@ -56,63 +52,94 @@ const CreateRequestPage = () => {
         setLoader(false);
       }
     };
-
     fetchProvince();
   }, []);
 
-  // console.log(province.data);
+  //Quận huyện
+  const [selectDistrict, setSelectDistrict] = useState(
+    "Chọn quận/huyện nơi dậy"
+  );
+  const [isClickDistrict, setIsClickDistrict] = useState(false);
+  const [district, setDistrict] = useState([]);
+  const [districtValue, setDistrictValue] = useState();
+  async function handLoadDistrict(idProvince) {
+    const response = await fetch(
+      HOST_API.local + `/api/district/province/${idProvince}`
+    );
+    setDistrict(await response.json());
+  }
 
+  //Giới tính
+  const [selectGender, setSelectGender] = useState("Chọn giới tính gia sư");
+  const [isClickGender, setIsClickGender] = useState(false);
+  const [genderValue, setGenderValue] = useState("");
   const GioiTinh = [
     { label: "Nam", value: "Nam" },
-    { label: "Nữ", value: "Nu" },
+    { label: "Nữ", value: "Nữ" },
+    { label: "Nam - Nữ", value: "Nam - Nữ" },
   ];
 
+  //Slot length
+  const [selectSlotLength, setSelectSlotLength] =
+    useState("Chọn thời gian dạy");
+  const [isSlotLength, setIsSlotLength] = useState(false);
+  const [slotLength, setSlotLength] = useState("");
+  const thoiLuong = [
+    { label: "1 Giờ", value: 1 },
+    { label: "1 Giờ 30 Phút", value: 2 },
+    { label: "2 Giờ", value: 3 },
+    { label: "2 Giờ 30 Phút", value: 4 },
+    { label: "3 Giờ", value: 5 },
+  ];
+
+  //Trình độ
+  const [selectLevel, setSelectLevel] = useState("Chọn trình độ gia sư");
+  const [isClickLevel, setIsClickLevel] = useState(false);
+  const [levelValue, setLevelValue] = useState("");
   const trinhDo = [
     { label: "Sinh viên", value: "Sinh viên" },
     { label: "Giáo viên", value: "Giáo viên" },
     { label: "Sinh viên - Giáo viên", value: "Sinh viên - Giáo viên" },
   ];
 
-  const hocLuc = [
-    { label: "Giỏi", value: "Giỏi" },
-    { label: "Khá", value: "Khá" },
-    { label: "Trung bình", value: "Trung bình" },
-    { label: "Yếu", value: "Yếu" },
-    { label: "Xuat sắc", value: "Xuất sắc" },
-  ];
-
-  const monHoc = [
-    { label: "Toán", value: "Toán" },
-    { label: "Ly", value: "Ly" },
-    { label: "Hóa", value: "Hóa" },
-    { label: "Văn", value: "Văn" },
-    { label: "Anh văn", value: "Anh văn" },
-    { label: "Tin học", value: "Tin học" },
-    { label: "Đánh đàn", value: "Đánh đàn" },
-    { label: "Báo bai", value: "Báo bai" },
-    { label: "Khác", value: "Khác" },
-  ];
-
+  //Lớp học
+  const [selectClass, setSelectClass] = useState("Chọn trình độ gia sư");
+  const [isClickClass, setIsClickClass] = useState(false);
+  const [classValue, setClassValue] = useState("");
   const lopHoc = [
-    { label: "1", value: "Lớp 1" },
-    { label: "2", value: "Lớp 2" },
-    { label: "3", value: "Lớp 3" },
-    { label: "4", value: "Lớp 4" },
-    { label: "5", value: "Lớp 5" },
-    { label: "6", value: "Lớp 6" },
-    { label: "7", value: "Lớp 7" },
-    { label: "8", value: "Lớp 8" },
-    { label: "9", value: "Lớp 9" },
-    { label: "10", value: "Lớp 10" },
-    { label: "11", value: "Lớp 11" },
-    { label: "12", value: "Lớp 12" },
+    { label: "Lớp 1", value: "Lớp 1" },
+    { label: "Lớp 2", value: "Lớp 2" },
+    { label: "Lớp 3", value: "Lớp 3" },
+    { label: "Lớp 4", value: "Lớp 4" },
+    { label: "Lớp 5", value: "Lớp 5" },
+    { label: "Lớp 6", value: "Lớp 6" },
+    { label: "Lớp 7", value: "Lớp 7" },
+    { label: "Lớp 8", value: "Lớp 8" },
+    { label: "Lớp 9", value: "Lớp 9" },
+    { label: "Lớp 10", value: "Lớp 10" },
+    { label: "Lớp 11", value: "Lớp 11" },
+    { label: "Lớp 12", value: "Lớp 12" },
     { label: "Khác", value: "Order" },
   ];
+
+  //Môn học
+  const [selectSubject, setSelectSubject] = useState("Chọn môn học");
+  const [isClickSubject, setIsClickSubject] = useState(false);
+  const [subject, setSubject] = useState([]);
+  const [subjectValue, setSubjectValue] = useState([]);
+  async function handLoadSubject(classNo) {
+    const response = await fetch(
+      HOST_API.local + `/api/subject/level?level=` + classNo
+    );
+    await response.json().then((data) => {
+      setSubject(data.data);
+    });
+    // console.log(subject);
+  }
 
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const [showPickerEnd, setShowPickerEnd] = useState(false);
-
   const formatData = (rawDate) => {
     let date = new Date(rawDate);
     let year = date.getFullYear();
@@ -130,6 +157,7 @@ const CreateRequestPage = () => {
   };
 
   const confirmDateStart = () => {
+    setDateStartValue(date);
     setDateStart(formatData(date));
     toggleDatePickerStart();
   };
@@ -148,6 +176,7 @@ const CreateRequestPage = () => {
   };
 
   const confirmDateEnd = () => {
+    setDateEndValue(date);
     setDateEnd(formatData(date));
     toggleDatePickerEnd();
   };
@@ -160,43 +189,87 @@ const CreateRequestPage = () => {
       toggleDatePickerEnd();
     }
   };
+  let tempData = [];
+  let tempName = [];
 
-  const profileId = "6549376222941aaa4f72bf3f";
-  const handleCreate = () => {
+  const onClose = () => {
+    setIsClickSubject(!isClickSubject);
+  };
+  const handleCreate = async () => {
+    const token = await AsyncStorage.getItem("token");
+    // console.log(token);
+
     const newRequest = {
-      parent: profileId,
+      phone: phone,
       address: address,
-      major: subjectValue,
-      classNo: classValue,
-      slot: slot,
-      level: levelValue,
+      listSubjectId: [subjectValue],
       gender: genderValue,
-      price: price,
-      dateStart: dateStart,
-      dateEnd: dateEnd,
-      academicAbility: academicValue,
-      description: description,
-      status: "Chưa duyệt",
+      slot: Number(slot),
+      slotsLength: slotLength,
+      tuition: Number(price),
+      note: description,
+      dateStart: dateStartValue,
+      dateEnd: dateEndValue,
+      districtId: districtValue,
+      tutorLevel: levelValue,
     };
     console.log(newRequest);
-
     axios
-      .post("https://tutor-center.onrender.com/request/create", newRequest)
+      .post(
+        "http://192.168.1.203:9000/api/request/create",
+        {
+          phone: phone,
+          address: address,
+          listSubjectId: [subjectValue],
+          gender: genderValue,
+          slots: Number(slot),
+          slotsLength: slotLength,
+          tuition: Number(price),
+          note: description,
+          dateStart: dateStartValue,
+          dateEnd: dateEndValue,
+          districtId: districtValue,
+          tutorLevel: levelValue,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
       .then((response) => {
         console.log(response.data);
-        Alert.alert("Tạo yêu cầu thành công", "Quản lý yêu cầu", [
-          {
-            text: "Cancel",
-            onPress: () => navigation.navigate("ManageRequest"),
-          },
-          {
-            text: "Continue",
-            onPress: () => {
-              navigation.navigate("ManageRequest", { profileId });
+        if (response.data.responseCode == "00") {
+          Alert.alert("Tạo yêu cầu thành công", "Quản lý yêu cầu", [
+            {
+              text: "Cancel",
+              onPress: () => {
+                // navigation.navigate("ManageRequest");
+              },
             },
-          },
-          { defaultIndex: 1 },
-        ]);
+            {
+              text: "Continue",
+              onPress: () => {
+                // navigation.navigate("ManageRequest", { profileId });
+              },
+            },
+            { defaultIndex: 1 },
+          ]);
+        } else {
+          Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
+            {
+              text: "Cancel",
+              onPress: () => {},
+            },
+            {
+              text: "Continue",
+              onPress: () => {
+                // navigation.navigate("ManageRequest", { profileId });
+              },
+            },
+            { defaultIndex: 1 },
+          ]);
+        }
       })
       .catch((error) => {
         Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
@@ -207,7 +280,7 @@ const CreateRequestPage = () => {
           {
             text: "Continue",
             onPress: () => {
-              navigation.navigate("ManageRequest", { profileId });
+              // navigation.navigate("ManageRequest", { profileId });
             },
           },
           { defaultIndex: 1 },
@@ -215,7 +288,6 @@ const CreateRequestPage = () => {
         console.log("Create failed", error);
       });
   };
-
   return (
     <View style={{ padding: 16, marginTop: 40, marginBottom: 80 }}>
       <View style={styles.title}>
@@ -223,28 +295,8 @@ const CreateRequestPage = () => {
       </View>
 
       <KeyboardAwareScrollView extraScrollHeight={50}>
-        <View style={{ zIndex: 20 }}>
-          <Text style={styles.itemText}>Môn học</Text>
-          <DropDownPicker
-            items={monHoc}
-            open={isOpen}
-            setOpen={() => setIsOpen(!isOpen)}
-            value={subjectValue}
-            setValue={(val) => setSubjectValue(val)}
-            placeholder="Chọn môn học"
-            showTickIcon={true}
-            showArrowIcon={true}
-            multiple={true}
-            min={1}
-            max={4}
-            mode="BADGE"
-            zIndex={20}
-            badgeColors={COLORS.secondMain}
-            badgeDotColors={["white"]}
-          />
-        </View>
-
-        {/* <View>
+        {/* Tỉnh thành */}
+        <View>
           <Text style={styles.itemText}>Tỉnh thành</Text>
           <TouchableOpacity
             style={styles.dropdownSelector}
@@ -270,6 +322,7 @@ const CreateRequestPage = () => {
                       onPress={() => {
                         setSelectProvince(item.name);
                         setIsClickProvince(false);
+                        handLoadDistrict(item.id);
                       }}
                     >
                       <Text>{item.name}</Text>
@@ -279,86 +332,250 @@ const CreateRequestPage = () => {
               />
             </View>
           )}
-        </View> */}
-
-        <View style={{ zIndex: 19 }}>
-          <Text style={styles.itemText}>Lớp học</Text>
-          <DropDownPicker
-            items={lopHoc}
-            open={isClassOpen}
-            setOpen={() => setIsClassOpen(!isClassOpen)}
-            value={classValue}
-            setValue={(val) => setClassValue(val)}
-            placeholder="Chọn lớp học"
-            showTickIcon={true}
-            zIndex={-1}
-          />
-        </View>
-        <View style={{ zIndex: 18 }}>
-          <Text style={styles.itemText}>Trình độ</Text>
-          <DropDownPicker
-            items={trinhDo}
-            open={levelOpen}
-            setOpen={() => setLevelOpen(!levelOpen)}
-            value={levelValue}
-            setValue={(val) => setLevelValue(val)}
-            placeholder="Chọn trình độ"
-            showTickIcon={true}
-            zIndex={10}
-          />
-        </View>
-        <View style={{ zIndex: 17 }}>
-          <Text style={styles.itemText}>Học lực</Text>
-          <DropDownPicker
-            items={hocLuc}
-            open={academicOpen}
-            setOpen={() => setAcademicOpen(!academicOpen)}
-            value={academicValue}
-            setValue={(val) => setAcademicValue(val)}
-            placeholder="Chọn học lực"
-            showTickIcon={true}
-            zIndex={10}
-          />
-        </View>
-        <View style={{ zIndex: 16 }}>
-          <Text style={styles.itemText}>Giới tính </Text>
-          <DropDownPicker
-            items={GioiTinh}
-            open={genderOpen}
-            setOpen={() => setGenderOpen(!genderOpen)}
-            value={genderValue}
-            lec
-            setValue={(val) => setGenderValue(val)}
-            placeholder="Chọn giới tính gia sư"
-            showTickIcon={true}
-            zIndex={10}
-          />
         </View>
 
+        {/* Quận huyện */}
+        <View>
+          <Text style={styles.itemText}>Quận huyện</Text>
+          <TouchableOpacity
+            style={styles.dropdownSelector}
+            onPress={() => {
+              setIsClickDistrict(!isClickDistrict);
+            }}
+          >
+            <Text>{selectDistrict}</Text>
+            {isClickDistrict ? (
+              <Ionicons name="chevron-down-outline" size={24} />
+            ) : (
+              <Ionicons name="chevron-up-outline" size={24} />
+            )}
+          </TouchableOpacity>
+          {isClickDistrict && (
+            <View style={styles.dropdownArea}>
+              <FlatList
+                data={district.data}
+                renderItem={({ item, index }) => {
+                  return (
+                    <TouchableOpacity
+                      style={styles.item}
+                      onPress={() => {
+                        setSelectDistrict(item.name);
+                        setIsClickDistrict(false);
+                        setDistrictValue(item.id);
+                      }}
+                    >
+                      <Text>{item.name}</Text>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+          )}
+        </View>
+
+        {/* Địa chỉ */}
         <View>
           <Text style={styles.itemText}>Địa chỉ </Text>
           <TextInput
             style={styles.input}
             value={address}
             onChangeText={(text) => setAddress(text)}
-            placeholder="Dia chi "
+            placeholder="Địa chỉ"
           />
         </View>
 
+        {/* Giới tính */}
         <View>
-          <Text style={styles.itemText}>Lương </Text>
+          <Text style={styles.itemText}>Giới tính </Text>
+          <TouchableOpacity
+            style={styles.dropdownSelector}
+            onPress={() => {
+              setIsClickGender(!isClickGender);
+            }}
+          >
+            <Text>{selectGender}</Text>
+            {isClickGender ? (
+              <Ionicons name="chevron-down-outline" size={24} />
+            ) : (
+              <Ionicons name="chevron-up-outline" size={24} />
+            )}
+          </TouchableOpacity>
+          {isClickGender && (
+            <View style={styles.dropdownArea}>
+              <FlatList
+                data={GioiTinh}
+                renderItem={({ item, index }) => {
+                  return (
+                    <TouchableOpacity
+                      style={styles.item}
+                      onPress={() => {
+                        setSelectGender(item.label);
+                        setIsClickGender(false);
+                        setGenderValue(item.value);
+                      }}
+                    >
+                      <Text>{item.label}</Text>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+          )}
+        </View>
+
+        {/* Trình độ */}
+        <View>
+          <Text style={styles.itemText}>Trình độ</Text>
+          <TouchableOpacity
+            style={styles.dropdownSelector}
+            onPress={() => {
+              setIsClickLevel(!isClickLevel);
+            }}
+          >
+            <Text>{selectLevel}</Text>
+            {isClickLevel ? (
+              <Ionicons name="chevron-down-outline" size={24} />
+            ) : (
+              <Ionicons name="chevron-up-outline" size={24} />
+            )}
+          </TouchableOpacity>
+          {isClickLevel && (
+            <View style={styles.dropdownArea}>
+              <FlatList
+                data={trinhDo}
+                renderItem={({ item, index }) => {
+                  return (
+                    <TouchableOpacity
+                      style={styles.item}
+                      onPress={() => {
+                        setSelectLevel(item.label);
+                        setIsClickLevel(false);
+                        setLevelValue(item.value);
+                      }}
+                    >
+                      <Text>{item.label}</Text>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+          )}
+        </View>
+
+        {/* Số điện thoại */}
+        <View>
+          <Text style={styles.itemText}>Số điện thoại </Text>
           <TextInput
+            keyboardType="number-pad"
+            style={styles.input}
+            value={phone}
+            onChangeText={(text) => setPhone(text)}
+            placeholder="Số điện thoại "
+          />
+        </View>
+
+        {/* Lớp */}
+        <View>
+          <Text style={styles.itemText}>Lớp học</Text>
+          <TouchableOpacity
+            style={styles.dropdownSelector}
+            onPress={() => {
+              setIsClickClass(!isClickClass);
+            }}
+          >
+            <Text>{selectClass}</Text>
+            {isClickClass ? (
+              <Ionicons name="chevron-down-outline" size={24} />
+            ) : (
+              <Ionicons name="chevron-up-outline" size={24} />
+            )}
+          </TouchableOpacity>
+          {isClickClass && (
+            <View style={styles.dropdownArea}>
+              <FlatList
+                data={lopHoc}
+                renderItem={({ item, index }) => {
+                  return (
+                    <TouchableOpacity
+                      style={styles.item}
+                      onPress={() => {
+                        setSelectClass(item.label);
+                        setIsClickClass(false);
+                        setClassValue(item.value);
+                        handLoadSubject(item.value);
+                      }}
+                    >
+                      <Text>{item.label}</Text>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+          )}
+        </View>
+
+        {/* Môn học */}
+        <View>
+          <Text style={styles.itemText}>Môn học</Text>
+          <TouchableOpacity
+            style={styles.dropdownSelector}
+            onPress={() => {
+              setIsClickSubject(!isClickSubject);
+            }}
+          >
+            <Text>{selectSubject}</Text>
+            {isClickSubject ? (
+              <Ionicons name="chevron-down-outline" size={24} />
+            ) : (
+              <TouchableOpacity
+                onPress={() => {
+                  onClose;
+                }}
+              >
+                <Ionicons name="chevron-up-outline" size={24} />
+              </TouchableOpacity>
+            )}
+          </TouchableOpacity>
+          {isClickSubject && (
+            <View style={styles.dropdownArea}>
+              <FlatList
+                data={subject}
+                renderItem={({ item, index }) => {
+                  return (
+                    <TouchableOpacity
+                      style={[styles.item, { borderColor: COLORS.main }]}
+                      onPress={() => {
+                        setSelectSubject(item.name);
+                        setIsClickSubject(false);
+                        setSubjectValue(item.id);
+                      }}
+                    >
+                      <Text>{item.name}</Text>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+          )}
+        </View>
+
+        {/* Chi phí */}
+        <View>
+          <Text style={styles.itemText}>Chi phí khóa học </Text>
+          <TextInput
+            keyboardType="number-pad"
             style={styles.input}
             value={price}
             onChangeText={(text) => setPrice(text)}
-            placeholder="Dia chi "
+            placeholder="Chi phí"
           />
         </View>
 
+        {/* Số buổi */}
         <View>
           <Text style={styles.itemText}>Số buổi </Text>
           <TextInput
-            keyboardType="phone-pad"
+            keyboardType="number-pad"
             style={styles.input}
             value={slot}
             onChangeText={(text) => setSlot(text)}
@@ -366,6 +583,46 @@ const CreateRequestPage = () => {
           />
         </View>
 
+        {/* Slot lenght */}
+        <View>
+          <Text style={styles.itemText}>Thời gian dạy</Text>
+          <TouchableOpacity
+            style={styles.dropdownSelector}
+            onPress={() => {
+              setIsSlotLength(!isSlotLength);
+            }}
+          >
+            <Text>{selectSlotLength}</Text>
+            {isSlotLength ? (
+              <Ionicons name="chevron-down-outline" size={24} />
+            ) : (
+              <Ionicons name="chevron-up-outline" size={24} />
+            )}
+          </TouchableOpacity>
+          {isSlotLength && (
+            <View style={styles.dropdownArea}>
+              <FlatList
+                data={thoiLuong}
+                renderItem={({ item, index }) => {
+                  return (
+                    <TouchableOpacity
+                      style={styles.item}
+                      onPress={() => {
+                        setSelectSlotLength(item.label);
+                        setIsSlotLength(false);
+                        setSlotLength(item.value);
+                      }}
+                    >
+                      <Text>{item.label}</Text>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+          )}
+        </View>
+
+        {/* Ngày bắt đầu */}
         <View>
           <Text style={styles.itemText}>Ngày bắt đầu</Text>
           {showPicker && (
@@ -417,6 +674,7 @@ const CreateRequestPage = () => {
           )}
         </View>
 
+        {/* Ngày kết thúc */}
         <View>
           <Text style={styles.itemText}>Ngày kết thúc</Text>
           {showPickerEnd && (
@@ -468,6 +726,7 @@ const CreateRequestPage = () => {
           )}
         </View>
 
+        {/* Mô tả */}
         <View>
           <Text style={styles.itemText}>Mô tả thêm </Text>
           <TextInput
@@ -524,18 +783,31 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   inputArea: {
+    paddingTop: 10,
+    width: "90%",
     height: 90,
-    borderWidth: 1,
     borderRadius: 10,
-    backgroundColor: COLORS.lightWhite,
+    borderWidth: 0.5,
+    borderColor: "#8e8e8e",
+    marginHorizontal: 10,
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 15,
   },
 
   input: {
     paddingLeft: 10,
-    height: 45,
-    borderWidth: 1,
+    width: "90%",
+    height: 50,
     borderRadius: 10,
-    backgroundColor: COLORS.lightWhite,
+    borderWidth: 0.5,
+    borderColor: "#8e8e8e",
+    marginHorizontal: 10,
+    justifyContent: "space-between",
+    flexDirection: "row",
+    alignItems: "center",
+    paddingHorizontal: 15,
   },
   itemText: {
     padding: 10,
@@ -572,7 +844,7 @@ const styles = StyleSheet.create({
 
   dropdownArea: {
     width: "90%",
-    height: 300,
+    height: 150,
     borderRadius: 10,
     marginTop: 20,
     backgroundColor: "",

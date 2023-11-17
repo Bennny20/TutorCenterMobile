@@ -6,6 +6,7 @@ import {
   ScrollView,
   Image,
   Alert,
+  ActivityIndicator,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { SafeAreaView } from "react-native-safe-area-context";
@@ -15,40 +16,53 @@ import {
   SimpleLineIcons,
   AntDesign,
 } from "@expo/vector-icons";
-import { COLORS, SIZES } from "../constants";
+import { COLORS, HOST_API, SIZES } from "../constants";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
 
 const Profile = () => {
   const navigation = useNavigation();
-  const [userData, setUserData] = useState(null);
-  const [userLogin, setUserLogin] = useState(false);
 
+  const [loader, setLoader] = useState(false);
+
+  const [userData, setUserData] = useState(null);
+  const [user, setUser] = useState(null);
+  const [userLogin, setUserLogin] = useState(false);
   useEffect(() => {
     checkExitingUser();
   }, []);
 
   const checkExitingUser = async () => {
-    const id = await AsyncStorage.getItem("id");
-    const userId = `user${JSON.parse(id)}`;
-
+    const token = await AsyncStorage.getItem("token");
+    console.log(token);
+    setLoader(true);
     try {
-      const currentUser = await AsyncStorage.getItem(userId);
+      const currentUser = await axios.get(
+        HOST_API.local + `/api/user/authProfile`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
       if (currentUser !== null) {
-        const parsedData = JSON.parse(currentUser);
-        setUserData(parsedData);
+        setUserData(currentUser.data.data);
+        console.log(userData);
         setUserLogin(true);
+        setUser(currentUser.data.data.id);
       }
     } catch (error) {
-      console.log("Error retrieving the data: ", error);
+      console.log("error", error);
+    } finally {
+      setLoader(false);
     }
   };
   const userLogout = async () => {
-    const id = await AsyncStorage.getItem("id");
-    const userId = `user${JSON.parse(id)}`;
+    const id = await AsyncStorage.getItem("token");
 
     try {
-      await AsyncStorage.multiRemove([userId, "id"]);
+      await AsyncStorage.multiRemove(["token"]);
       navigation.replace("Bottom Navigation");
     } catch (error) {
       console.log("Error retrieving the data: ", error);
@@ -67,7 +81,7 @@ const Profile = () => {
       },
     ]);
   };
-  const profileId = userData?.user.profile.id;
+
   return (
     <SafeAreaView>
       <View style={styles.heading}>
@@ -81,192 +95,148 @@ const Profile = () => {
           </TouchableOpacity>
         </View>
       </View>
-      <View style={styles.profilePage}>
-        <View style={styles.profile}>
-          <View style={styles.edit}>
-            <Text></Text>
-            {userLogin === true ? (
-              <TouchableOpacity
-                onPressIn={() => navigation.navigate("EditProfile")}
-              >
-                <Ionicons name="create-outline" size={40} color={COLORS.main} />
-              </TouchableOpacity>
-            ) : (
-              <Text style={{ marginBottom: 30 }}></Text>
-            )}
-          </View>
-          <View style={styles.info}>
-            <Image
-              source={require("../assets/images/profile.jpeg")}
-              style={styles.profileImg}
-            />
-            <Text style={styles.name}>
-              {userLogin === true
-                ? userData.user?.name
-                : "Please login into your account"}
-            </Text>
-            {userLogin === false ? (
-              <TouchableOpacity onPressIn={() => navigation.navigate("Login")}>
+      {loader ? (
+        <ActivityIndicator size={500} color={COLORS.main} />
+      ) : (
+        <View style={styles.profilePage}>
+          <View style={styles.profile}>
+            <View style={styles.edit}>
+              <Text></Text>
+              {userLogin === true ? (
+                <TouchableOpacity
+                  onPressIn={() => navigation.navigate("EditProfile")}
+                >
+                  <Ionicons
+                    name="create-outline"
+                    size={40}
+                    color={COLORS.main}
+                  />
+                </TouchableOpacity>
+              ) : (
+                <Text style={{ marginBottom: 30 }}></Text>
+              )}
+            </View>
+            <View style={styles.info}>
+              <Image
+                source={require("../assets/images/profile.jpeg")}
+                style={styles.profileImg}
+              />
+              <Text style={styles.name}>
+                {userLogin === true
+                  ? userData.fullName
+                  : "Please login into your account"}
+              </Text>
+              {userLogin === false ? (
+                <TouchableOpacity
+                  onPressIn={() => navigation.navigate("Login")}
+                >
+                  <View style={styles.loginBtn}>
+                    <Text style={styles.menuText}>Đăng nhập </Text>
+                  </View>
+                </TouchableOpacity>
+              ) : (
                 <View style={styles.loginBtn}>
-                  <Text style={styles.menuText}>Đăng nhập </Text>
+                  <Text style={styles.email}>{userData.fullName}</Text>
+                  <Text style={styles.supplier}>{userData.role}</Text>
                 </View>
-              </TouchableOpacity>
-            ) : (
-              <View style={styles.loginBtn}>
-                <Text style={styles.email}>{userData.user?.email}</Text>
-                <Text style={styles.supplier}>{userData.user?.role}</Text>
-              </View>
-            )}
-            {userLogin === false ? (
-              <View></View>
-            ) : (
-              <View style={styles.menuWrapper}>
-                <TouchableOpacity
-                  onPressIn={() => navigation.navigate("Wallet", { userData })}
-                >
-                  <View style={styles.menuItem(0.5)}>
-                    <MaterialCommunityIcons
-                      name="wallet-outline"
-                      size={30}
-                      color={COLORS.main}
-                    />
-                    <Text style={styles.menuItemText}> Ví của bạn </Text>
-                  </View>
-                </TouchableOpacity>
-                {userData.user.role === "USER_TUTOR" ? (
+              )}
+              {userLogin === false ? (
+                <View></View>
+              ) : (
+                <View style={styles.menuWrapper}>
                   <TouchableOpacity
                     onPressIn={() =>
-                      navigation.navigate("ManageApply", { profileId })
+                      navigation.navigate("Wallet", { userData })
                     }
                   >
                     <View style={styles.menuItem(0.5)}>
                       <MaterialCommunityIcons
-                        name="frequently-asked-questions"
+                        name="wallet-outline"
                         size={30}
                         color={COLORS.main}
                       />
-                      <Text style={styles.menuItemText}>
-                        Danh sách lớp apply
-                      </Text>
+                      <Text style={styles.menuItemText}> Ví của bạn </Text>
                     </View>
                   </TouchableOpacity>
-                ) : (
+                  {userData.role === "TUTOR" ? (
+                    <TouchableOpacity
+                      onPressIn={() =>
+                        navigation.navigate("ManageApply", { user })
+                      }
+                    >
+                      <View style={styles.menuItem(0.5)}>
+                        <MaterialCommunityIcons
+                          name="frequently-asked-questions"
+                          size={30}
+                          color={COLORS.main}
+                        />
+                        <Text style={styles.menuItemText}>
+                          Danh sách lớp apply
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      onPressIn={() =>
+                        navigation.navigate("ManageRequest", {
+                          user,
+                          userData,
+                        })
+                      }
+                    >
+                      <View style={styles.menuItem(0.5)}>
+                        <MaterialCommunityIcons
+                          name="frequently-asked-questions"
+                          size={30}
+                          color={COLORS.main}
+                        />
+                        <Text style={styles.menuItemText}>
+                          Quản lý yêu cầu tạo lớp
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )}
+
                   <TouchableOpacity
                     onPressIn={() =>
-                      navigation.navigate("ManageRequest", {
-                        profileId,
-                        userData,
-                      })
+                      navigation.navigate("ManageClass", { user })
                     }
                   >
                     <View style={styles.menuItem(0.5)}>
                       <MaterialCommunityIcons
-                        name="frequently-asked-questions"
+                        name="clipboard-text-clock"
                         size={30}
                         color={COLORS.main}
                       />
                       <Text style={styles.menuItemText}>
-                        Quản lý yêu cầu tạo lớp
+                        Quản lý lớp & Điêm danh
                       </Text>
                     </View>
                   </TouchableOpacity>
-                )}
 
-                <TouchableOpacity
-                  onPressIn={() =>
-                    navigation.navigate("ManageClass", { profileId })
-                  }
-                >
-                  <View style={styles.menuItem(0.5)}>
-                    <MaterialCommunityIcons
-                      name="clipboard-text-clock"
-                      size={30}
-                      color={COLORS.main}
-                    />
-                    <Text style={styles.menuItemText}>
-                      Quản lý lớp & Điêm danh
-                    </Text>
-                  </View>
-                </TouchableOpacity>
+                  <TouchableOpacity>
+                    <View style={styles.menuItem(0.5)}>
+                      <AntDesign
+                        name="deleteuser"
+                        size={30}
+                        color={COLORS.main}
+                      />
+                      <Text style={styles.menuItemText}> Xóa tài khoản </Text>
+                    </View>
+                  </TouchableOpacity>
 
-                <TouchableOpacity>
-                  <View style={styles.menuItem(0.5)}>
-                    <AntDesign
-                      name="deleteuser"
-                      size={30}
-                      color={COLORS.main}
-                    />
-                    <Text style={styles.menuItemText}> Xóa tài khoản </Text>
-                  </View>
-                </TouchableOpacity>
-
-                <TouchableOpacity onPress={() => logout()}>
-                  <View style={styles.menuItem(0.5)}>
-                    <AntDesign name="logout" size={30} color={COLORS.main} />
-                    <Text style={styles.menuItemText}> Đăng xuất </Text>
-                  </View>
-                </TouchableOpacity>
-              </View>
-            )}
+                  <TouchableOpacity onPress={() => logout()}>
+                    <View style={styles.menuItem(0.5)}>
+                      <AntDesign name="logout" size={30} color={COLORS.main} />
+                      <Text style={styles.menuItemText}> Đăng xuất </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
+              )}
+            </View>
           </View>
         </View>
-
-        {/* Old version */}
-        {/* <ScrollView>
-          <View style={styles.wallet}>
-            <View
-              style={
-                (styles.title,
-                { marginLeft: 30, marginTop: 15, flexDirection: "row" })
-              }
-            >
-              <Ionicons name="wallet-outline" size={30} color={COLORS.main} />
-              <Text style={styles.titleText}>Vi cua ban:</Text>
-            </View>
-            <View style={{ marginLeft: 40, marginTop: 5 }}>
-              <Text style={styles.numberText}>10.000.000 VND</Text>
-            </View>
-            <TouchableOpacity style={styles.historyBtn}>
-              <Text></Text>
-              <View style={styles.btn}>
-                <Text
-                  style={{
-                    fontFamily: "bold",
-                    fontSize: SIZES.large,
-                    color: COLORS.lightWhite,
-                  }}
-                  onPressIn={() => navigation.navigate("Search")}
-                >
-                  Xem lich su
-                </Text>
-              </View>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.classList}>
-            <View style={styles.title}>
-              <Text style={styles.titleText}>Danh sach lop cua ban</Text>
-            </View>
-          </View>
-         <View style={{ alignItems: "center", marginTop: 20 }}>
-          <TouchableOpacity
-            style={{ width: 100 }}
-            onPressIn={() => navigation.navigate("Login")}
-          >
-            <View style={styles.logoutBtn}>
-              <Text style={styles.menuText}>L O G O U T</Text>
-            </View>
-          </TouchableOpacity>
-          <Text></Text>
-          <Text></Text>
-          <Text></Text>
-          <Text></Text>
-          <Text></Text>
-          <Text></Text>
-          <Text></Text>
-          <Text></Text>
-        </View> 
-        </ScrollView> */}
-      </View>
+      )}
     </SafeAreaView>
   );
 };

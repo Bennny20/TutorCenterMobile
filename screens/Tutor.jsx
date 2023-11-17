@@ -5,8 +5,9 @@ import {
   View,
   ScrollView,
   ActivityIndicator,
+  FlatList,
 } from "react-native";
-import React from "react";
+import React, { useState } from "react";
 import { COLORS, SIZES } from "../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
@@ -15,9 +16,14 @@ import useFetch from "../hook/Tutor/useFetch";
 
 const Tutor = () => {
   const navigation = useNavigation();
-  const tutors = [1, 2, 3, 4, 7, 8, 9, 10, 11, 12, 13];
   const { data, isLoading, error } = useFetch();
-
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 5000);
+  }, []);
   return (
     <View styles={styles.container}>
       <View style={styles.wrapper}>
@@ -32,19 +38,24 @@ const Tutor = () => {
           <Text style={styles.heading}>Best Tutors</Text>
         </View>
       </View>
-      <ScrollView
-        style={{ marginTop: 80, marginHorizontal: 15, marginBottom: 60 }}
-      >
+      <View style={{ marginTop: 80, marginHorizontal: 15, marginBottom: 60 }}>
         <View>
           {isLoading ? (
             <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primarys} />
           ) : error ? (
             <Text>Something went wrong </Text>
           ) : (
-            data.map((item) => <TutorItem item={item} />)
+            <FlatList
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              style={{ marginBottom: 40 }}
+              data={data.data}
+              renderItem={({ item }) => <TutorItem item={item} />}
+              keyExtractor={(item) => item.id}
+            />
           )}
         </View>
-      </ScrollView>
+      </View>
     </View>
   );
 };

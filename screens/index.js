@@ -5,7 +5,7 @@ import ClassDetail from "./ClassDetail";
 import Tutor from "./Tutor";
 import Class from "./Class";
 import Wallet from "./Wallet";
-import ManageClass from "./ManageClass";
+import ManageClass from "./ManageClassParent";
 import ManageRequest from "./ManageRequest";
 import AttendancePage from "./AttendancePage";
 import NotificationPage from "./NotificationPage";
@@ -21,9 +21,11 @@ import ManageApply from "./ManageApply";
 import TransferMoney from "./TransferMoney";
 import DepositAndWithdrawMoney from "./DepositAndWithdrawMoney";
 import FeedbackClass from "./FeedbackClass";
+import ApplyPage from "./ApplyPage";
 
 export {
   TransferMoney,
+  ApplyPage,
   FeedbackClass,
   DepositAndWithdrawMoney,
   ManageApply,

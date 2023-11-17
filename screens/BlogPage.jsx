@@ -10,12 +10,20 @@ import {
 } from "@expo/vector-icons";
 import { FlatList } from "react-native";
 import BlogItem from "../components/Blog/BlogItem";
+import { useState } from "react";
 
 const BlogPage = () => {
+  const [refreshing, setRefreshing] = useState(false);
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
   const blogList = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13];
 
   return (
-    <ScrollView style={{ marginTop: 40, marginBottom: 90 }}>
+    <View style={{ marginTop: 40, marginBottom: 90 }}>
       <View style={styles.heading}>
         <MaterialCommunityIcons
           name={"newspaper-variant-multiple"}
@@ -25,12 +33,15 @@ const BlogPage = () => {
         <Text style={styles.headingText}>Blog</Text>
       </View>
       <View style={{ marginTop: 10 }}>
-        {blogList.map((item) => (
-          <BlogItem />
-        ))}
-        {/* <FlatList data={blogList} /> */}
+        <FlatList
+          refreshing={refreshing}
+          onRefresh={onRefresh}
+          data={blogList}
+          style={{ marginBottom: 70 }}
+          renderItem={({ item }) => <BlogItem />}
+        />
       </View>
-    </ScrollView>
+    </View>
   );
 };
 
