@@ -23,6 +23,7 @@ import {
   DepositAndWithdrawMoney,
   TransferMoney,
   FeedbackClass,
+  ApplyPage,
 } from "./screens";
 
 const Stack = createNativeStackNavigator();
@@ -142,6 +143,11 @@ export default function App() {
         <Stack.Screen
           name="FeedbackClass"
           component={FeedbackClass}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ApplyPage"
+          component={ApplyPage}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
