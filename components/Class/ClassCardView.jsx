@@ -1,6 +1,6 @@
 import { TouchableOpacity, StyleSheet, Text, View, Image } from "react-native";
 import React from "react";
-import { COLORS, SIZES } from "../../constants";
+import { COLORS, HOST_API, SIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
@@ -9,8 +9,28 @@ import axios from "axios";
 import { ActivityIndicator } from "react-native";
 const ClassCardView = ({ item }) => {
   const navigation = useNavigation();
-  const [loader, setLoader] = useState(false);
   const [error, setError] = useState();
+
+  const [classDetail, setClassDetail] = useState();
+  const [loader, setLoader] = useState(false);
+  useEffect(() => {
+    fetchClassDetail();
+  }, []);
+
+  const fetchClassDetail = async () => {
+    setLoader(true);
+
+    try {
+      const response = await axios.get(
+        HOST_API.local + `/api/clazz/${item.id}`
+      );
+      setClassDetail(response.data.data);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setLoader(false);
+    }
+  };
 
   var major = "";
   var classNo = "";
@@ -29,42 +49,50 @@ const ClassCardView = ({ item }) => {
     currency: "VND",
   }).format(item.tuition);
   return (
-    <TouchableOpacity
-      onPress={() => navigation.navigate("ClassDetail", { item })}
-    >
-      <View style={styles.container}>
-        <View style={styles.heading}>
-          <Text style={styles.headingText}>{major}</Text>
-        </View>
+    <View>
+      {loader ? (
+        <ActivityIndicator size={500} color={COLORS.main} />
+      ) : (
+        <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("ClassDetail", { item, classDetail })
+          }
+        >
+          <View style={styles.container}>
+            <View style={styles.heading}>
+              <Text style={styles.headingText}>{major}</Text>
+            </View>
 
-        <View style={styles.details}>
-          <Text style={styles.supplier} numberOfLines={1}>
-            Trình độ: {item.tutorLevel}
-          </Text>
-          <Text style={styles.supplier} numberOfLines={1}>
-            {classNo}
-          </Text>
-          <Text style={styles.supplier} numberOfLines={1}>
-            Hôn học: {major}
-          </Text>
-          <Text style={styles.supplier} numberOfLines={1}>
-            Địa điểm: {item.address}, {item.districtName}
-          </Text>
-          <Text style={styles.supplier} numberOfLines={1}>
-            Giới tính: {item.gender}
-          </Text>
-          <Text style={styles.price}>{formattedAmount} </Text>
-        </View>
-        <TouchableOpacity style={styles.addBtn}>
-          <Text style={styles.detailText}>Xem chi tiết</Text>
-          <Ionicons
-            name="chevron-forward"
-            size={20}
-            color={COLORS.lightWhite}
-          />
+            <View style={styles.details}>
+              <Text style={styles.supplier} numberOfLines={1}>
+                Trình độ: {item.tutorLevel}
+              </Text>
+              <Text style={styles.supplier} numberOfLines={1}>
+                {classNo}
+              </Text>
+              <Text style={styles.supplier} numberOfLines={1}>
+                Hôn học: {major}
+              </Text>
+              <Text style={styles.supplier} numberOfLines={1}>
+                Địa điểm: {item.address}, {item.districtName}
+              </Text>
+              <Text style={styles.supplier} numberOfLines={1}>
+                Giới tính: {item.gender}
+              </Text>
+              <Text style={styles.price}>{formattedAmount} </Text>
+            </View>
+            <TouchableOpacity style={styles.addBtn}>
+              <Text style={styles.detailText}>Xem chi tiết</Text>
+              <Ionicons
+                name="chevron-forward"
+                size={20}
+                color={COLORS.lightWhite}
+              />
+            </TouchableOpacity>
+          </View>
         </TouchableOpacity>
-      </View>
-    </TouchableOpacity>
+      )}
+    </View>
   );
 };
 

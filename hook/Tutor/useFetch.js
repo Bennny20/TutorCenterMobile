@@ -13,6 +13,7 @@ const useFetch = () => {
       const res = await axios.get(HOST_API.local + `/api/tutor`);
       setData(res.data);
     } catch (error) {
+      console.log(error);
       setError(error);
     } finally {
       setIsLoading(false);

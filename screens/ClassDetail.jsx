@@ -26,33 +26,13 @@ const ClassDetail = () => {
   const navigation = useNavigation();
 
   const route = useRoute();
-  const { item } = route.params;
-  const [classDetail, setClassDetail] = useState();
+  const { item, classDetail } = route.params;
   const [loader, setLoader] = useState(false);
-  useEffect(() => {
-    setLoader(true);
-    const fetchClassDetail = async () => {
-      try {
-        const response = await axios.get(
-          HOST_API.local + `/api/clazz/${item.id}`
-        );
-        setClassDetail(response.data.data);
-      } catch (error) {
-        console.log("error", error);
-      } finally {
-        setLoader(false);
-      }
-    };
-    fetchClassDetail();
-  }, []);
-
-  console.log(classDetail);
+  // console.log(item);
   const [userData, setUserData] = useState(null);
   const [user, setUser] = useState(null);
-  const [userLogin, setUserLogin] = useState(false);
   useEffect(() => {
     checkExitingUser();
-    fetchListApply();
   }, []);
 
   const checkExitingUser = async () => {
@@ -69,7 +49,6 @@ const ClassDetail = () => {
       );
       if (currentUser !== null) {
         setUserData(currentUser.data.data);
-        setUserLogin(true);
         setUser(currentUser.data.data.id);
       }
     } catch (error) {
@@ -79,32 +58,8 @@ const ClassDetail = () => {
     }
   };
 
-  const [listApply, setListApply] = useState();
-  const fetchListApply = async () => {
-    console.log(user);
-    setLoader(true);
-    const token = await AsyncStorage.getItem("token");
-    try {
-      const response = await fetch(
-        HOST_API.local + `/api/tutorApply/tutor/${user}`,
-        {
-          method: "GET", // *GET, POST, PUT, DELETE, etc.
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      );
-      const result = await response.json();
-      setListApply(response.data.data);
-    } catch (error) {
-      console.log("List apply error", error);
-    } finally {
-      setLoader(false);
-    }
-  };
-
-  var major = "";
-  var classNo = "";
+  var major = " ";
+  var classNo = " ";
   for (let index = 0; index < item.subjects.length; index++) {
     if (index == item.subjects.length - 1) {
       major += item.subjects[index].name;
@@ -173,23 +128,6 @@ const ClassDetail = () => {
     }
   };
 
-  var check = 0;
-  // for (var temp of item.apply) {
-  //   if (temp.idTutor === userData?.user.profile.id) {
-  //     check += 1;
-  //   }
-  // }
-
-  // const classInfo = item;
-  // var tutorApply = null;
-  // if (item.tutor != undefined) {
-  //   for (var temp of item.apply) {
-  //     if (temp.idTutor == item.tutor.id) {
-  //       tutorApply = temp;
-  //       break;
-  //     }
-  //   }
-  // }
   const formattedAmount = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -210,130 +148,201 @@ const ClassDetail = () => {
           </View>
         </View>
       </View>
-      <View style={styles.headingInfo}>
-        <View style={styles.headingName}>
-          <Text style={styles.name}>{item.address}</Text>
-        </View>
-      </View>
-      <View style={styles.info}>
-        <View style={styles.infoDetail}>
-          <Text style={styles.sup}>Mon hoc: {major}</Text>
-          <Text style={styles.sup}>Lop: {classNo}</Text>
-          <Text style={styles.sup}>Gioi tinh:{item.gender}</Text>
-          <Text style={styles.sup}>
-            Dia diem: {item.address}, {item.provinceName}
-          </Text>
-          <Text style={styles.sup}>Ngay hoc: {item.dateStart}</Text>
-          <Text style={styles.sup}>Ngay kết thúc: {item.dateEnd}</Text>
-          <Text style={styles.sup}>Giá tiền: {formattedAmount}</Text>
-          <Text style={styles.sup}>Trình độ: {item.tutorLevel}</Text>
-          <Text style={styles.sup}>Số buổi: {item.slot} </Text>
-          {item.status == 0 && (
-            <Text style={styles.sup}>Trạng thái: Chưa có gia sư</Text>
-          )}
-          {item.status == 1 && (
-            <Text style={styles.sup}>Trạng thái: Đã có gia sư</Text>
-          )}
-          {item.status == 2 && (
-            <Text style={styles.sup}>Trạng thái: Hoàn thành</Text>
-          )}
-        </View>
-      </View>
-
-      <View style={{ marginTop: 5 }}>
-        <View style={styles.title}>
-          <Text style={styles.titleText}> Thong tin gia su</Text>
-          <Text style={styles.titleText}>Trang thai</Text>
-        </View>
-      </View>
 
       {loader ? (
         <ActivityIndicator size={500} color={COLORS.main} />
       ) : (
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {userData?.role === "TUTOR" ? (
-            <TouchableOpacity style={styles.btnApply} onPress={createApply}>
-              <Ionicons name="receipt-outline" size={30} color={COLORS.black} />
-              <Text
-                style={{
-                  marginLeft: 5,
-                  fontFamily: "bold",
-                  fontSize: SIZES.large,
-                }}
-              >
-                Apply
-              </Text>
-            </TouchableOpacity>
-          ) : (
-            userData?.role === "PARENT" && <View></View>
-          )}
-        </View>
-      )}
-
-      {/* <View style={{ marginTop: 10, marginHorizontal: 5, marginBottom: 5000 }}>
-        {tutorApply != null ? (
-          <View>
-            <TouchableOpacity style={styles.containerTutor}>
-              <View style={styles.image}>
-                <Image
-                  source={{
-                    uri: "https://img.freepik.com/premium-photo/blue-white-sign-with-man-white-shirt-blue-circle-with-man-front-it_745528-3249.jpg?w=2000",
-                  }}
-                  style={styles.productImg}
+        <View>
+          <View style={styles.headingInfo}>
+            <View style={styles.headingName}>
+              <Text style={styles.name}>{major}</Text>
+            </View>
+          </View>
+          <View style={styles.info}>
+            <View style={styles.infoDetail}>
+              <Text style={styles.title}>
+                <Ionicons
+                  name="caret-forward-outline"
+                  size={20}
+                  color={COLORS.main}
                 />
-              </View>
-              <View style={styles.textContentTutor}>
-                <Text style={styles.nameTutor}>{tutorApply.nameTutor}</Text>
-                <Text style={styles.supplier}>{tutorApply.major}</Text>
-                <Text style={styles.supplier}>{tutorApply.university}</Text>
-                <Text style={styles.supplier}>{tutorApply.subject}</Text>
-                <Text style={styles.supplier}>{tutorApply.address}</Text>
-              </View>
-            </TouchableOpacity>
-            <View style={{ marginHorizontal: 20 }}>
-              <Text style={styles.titleText}>Đánh giá chất lượng</Text>
+                Môn học:
+              </Text>
+              <Text style={styles.sup}>{major}</Text>
+              <Text style={styles.title}>
+                <Ionicons
+                  name="caret-forward-outline"
+                  size={20}
+                  color={COLORS.main}
+                />
+                Lớp học:
+              </Text>
+              <Text style={styles.sup}>{classNo}</Text>
+              <Text style={styles.title}>
+                <Ionicons
+                  name="caret-forward-outline"
+                  size={20}
+                  color={COLORS.main}
+                />
+                Giới tính:
+              </Text>
+              <Text style={styles.sup}>{item.gender}</Text>
+              <Text style={styles.title}>
+                <Ionicons
+                  name="caret-forward-outline"
+                  size={20}
+                  color={COLORS.main}
+                />
+                Địa điểm:
+              </Text>
+              <Text style={styles.sup}>
+                {item.address} , {item.provinceName}, {item.provinceName}
+              </Text>
+              <Text style={styles.title}>
+                <Ionicons
+                  name="caret-forward-outline"
+                  size={20}
+                  color={COLORS.main}
+                />
+                Thời gian:
+              </Text>
               <View
                 style={{
-                  marginTop: 5,
-                  borderColor: COLORS.main,
-                  borderWidth: 2,
-                  height: 100,
-                  borderRadius: 10,
-                  padding: 10,
+                  justifyContent: "space-around",
+                  flexDirection: "row",
                 }}
               >
-                <Text style={styles.nameTutor}>
-                  Người đánh giá: {tutorApply.nameTutor}
+                <View style={styles.dateForm}>
+                  <Text style={styles.date}>{classDetail.dateStart}</Text>
+                </View>
+                <View
+                  style={{
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginBottom: 10,
+                  }}
+                >
+                  <Ionicons name="send" size={24} color={COLORS.main} />
+                </View>
+                <View style={styles.dateForm}>
+                  <Text style={styles.date}>{classDetail.dateEnd}</Text>
+                </View>
+              </View>
+              <Text style={styles.title}>
+                <Ionicons
+                  name="caret-forward-outline"
+                  size={20}
+                  color={COLORS.main}
+                />
+                Trình độ:
+              </Text>
+              <Text style={styles.sup}>{item.tutorLevel}</Text>
+              <Text style={styles.title}>
+                <Ionicons
+                  name="caret-forward-outline"
+                  size={20}
+                  color={COLORS.main}
+                />
+                Số buổi:
+              </Text>
+              <Text style={styles.sup}> {item.slots} buổi</Text>
+              {item.status == 0 && (
+                <View style={{ marginLeft: 5 }}>
+                  <Text style={styles.title}>
+                    <Ionicons
+                      name="caret-forward-outline"
+                      size={20}
+                      color={COLORS.main}
+                    />
+                    Trạng thái:
+                  </Text>
+                  <Text style={styles.sup}>Chưa có gia sư</Text>
+                </View>
+              )}
+              {item.status == 1 && (
+                <View>
+                  <Text style={styles.title}>
+                    <Ionicons
+                      name="caret-forward-outline"
+                      size={20}
+                      color={COLORS.main}
+                    />
+                    Trạng thái:
+                  </Text>
+                  <Text style={[styles.sup, { color: COLORS.red }]}>
+                    Đã có gia sư
+                  </Text>
+                </View>
+              )}
+              {item.status == 2 && (
+                <View>
+                  <Text style={styles.title}>
+                    <Ionicons
+                      name="caret-forward-outline"
+                      size={20}
+                      color={COLORS.main}
+                    />
+                    Trạng thái:
+                  </Text>
+                  <Text style={styles.sup}> Hoàn thành</Text>
+                </View>
+              )}
+            </View>
+
+            <View style={styles.priceInfo}>
+              <View style={styles.price}>
+                <Text style={styles.priceTxt}>Học phí</Text>
+                <Text
+                  style={[
+                    styles.priceTxt,
+                    { paddingTop: 0, color: COLORS.red },
+                  ]}
+                >
+                  {formattedAmount}
                 </Text>
-                <Text style={styles.supplier}> {tutorApply.nameTutor}</Text>
-                <Text style={styles.supplier}> {tutorApply.nameTutor}</Text>
               </View>
             </View>
           </View>
-        ) : loader ? (
-          <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primarys} />
-        ) : (
-          <FlatList
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            style={{ marginBottom: 100 }}
-            data={item.apply}
-            renderItem={({ item }) => (
-              <TutorItemApply
-                item={item}
-                profile={userData}
-                classInfo={classInfo}
-              />
-            )}
-            keyExtractor={(item) => item.id}
-          />
+        </View>
+      )}
+
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        {userData == null && (
+          <TouchableOpacity style={styles.btnApply} onPress={createApply}>
+            <Ionicons name="receipt-outline" size={30} color={COLORS.black} />
+            <Text
+              style={{
+                marginLeft: 5,
+                fontFamily: "bold",
+                fontSize: SIZES.large,
+              }}
+            >
+              Apply
+            </Text>
+          </TouchableOpacity>
         )}
-      </View> */}
+        {userData?.role === "TUTOR" ? (
+          <TouchableOpacity style={styles.btnApply} onPress={createApply}>
+            <Ionicons name="receipt-outline" size={30} color={COLORS.black} />
+            <Text
+              style={{
+                marginLeft: 5,
+                fontFamily: "bold",
+                fontSize: SIZES.large,
+              }}
+            >
+              Apply
+            </Text>
+          </TouchableOpacity>
+        ) : (
+          userData?.role === "PARENT" && <View></View>
+        )}
+      </View>
     </SafeAreaView>
   );
 };
@@ -398,6 +407,7 @@ const styles = StyleSheet.create({
   },
 
   btnApply: {
+    marginTop: 15,
     flexDirection: "row",
     paddingHorizontal: 30,
     padding: 4,
@@ -412,30 +422,62 @@ const styles = StyleSheet.create({
     fontSize: SIZES.large,
     color: COLORS.main,
   },
-  title: {
-    marginHorizontal: 10,
-    justifyContent: "space-between",
-    flexDirection: "row",
-  },
+  // title: {
+  //   marginHorizontal: 10,
+  //   justifyContent: "space-between",
+  //   flexDirection: "row",
+  // },
   sup: {
+    marginLeft: 10,
     fontFamily: "regular",
-    fontSize: SIZES.medium,
+    fontSize: SIZES.large,
     color: COLORS.black,
-    marginBottom: 10,
+    marginBottom: 5,
+  },
+
+  dateForm: {
+    borderRadius: 10,
+    borderWidth: 0.5,
+    justifyContent: "center",
+    alignItems: "center",
+    marginBottom: 15,
+  },
+
+  date: {
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    fontFamily: "regular",
+    fontSize: SIZES.large,
+    color: COLORS.black,
+  },
+
+  title: {
+    fontFamily: "regular",
+    fontSize: SIZES.large,
+    color: COLORS.main,
+    marginBottom: 5,
   },
 
   infoDetail: {
     marginLeft: 15,
-    marginTop: 10,
+    marginTop: 5,
   },
   name: {
+    padding: 10,
     fontFamily: "bold",
     fontSize: SIZES.xLarge,
     color: COLORS.lightWhite,
   },
+  priceTxt: {
+    paddingVertical: 5,
+    fontFamily: "bold",
+    fontSize: SIZES.large,
+    color: COLORS.main,
+  },
+
   headingName: {
     marginTop: -10,
-    width: 300,
+    width: 350,
     borderColor: COLORS.main,
     borderRadius: 20,
     borderWidth: 2,
@@ -443,19 +485,41 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.main,
   },
 
+  name: {
+    padding: 10,
+    fontFamily: "bold",
+    fontSize: SIZES.xLarge,
+    color: COLORS.lightWhite,
+  },
+
+  price: {
+    width: 250,
+    borderColor: COLORS.main,
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: "center",
+    backgroundColor: COLORS.lightWhite,
+  },
+
   info: {
+    paddingVertical: 5,
     borderWidth: 2,
     borderColor: COLORS.black,
     borderRadius: 30,
-    marginHorizontal: 50,
-    marginTop: -10,
+    marginHorizontal: 20,
+    marginTop: -9,
     backgroundColor: COLORS.secondMain,
+    zIndex: 10,
   },
 
   headingInfo: {
     alignItems: "center",
     marginTop: 40,
     zIndex: 999,
+  },
+  priceInfo: {
+    alignItems: "center",
+    zIndex: 1,
   },
 
   heading: {

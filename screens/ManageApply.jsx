@@ -1,4 +1,7 @@
 import {
+  ActivityIndicator,
+  FlatList,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,6 +16,7 @@ import Heading from "../components/Heading";
 import { COLORS, HOST_API, SIZES } from "../constants";
 import { useState } from "react";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ManageClass = () => {
   const navigation = useNavigation();
@@ -30,12 +34,18 @@ const ManageClass = () => {
   const [data, setData] = useState([]);
   useEffect(() => {
     const fetchUserProfile = async () => {
+      const token = await AsyncStorage.getItem("token");
       setLoader(true);
       try {
         const response = await axios.get(
-          HOST_API.local + `/api/request/parent/${profileId}`
+          HOST_API.local + `/api/tutorApply/tutor`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
         );
-        setData(response.data);
+        setData(response.data.data);
       } catch (error) {
         console.log("error", error);
       } finally {
@@ -45,55 +55,115 @@ const ManageClass = () => {
 
     fetchUserProfile();
   }, []);
-  // console.log(data);
+  console.log(data);
+
+  const majors = ({ item }) => {
+    var major = "";
+    var classNo = "";
+    for (let index = 0; index < item.subjects.length; index++) {
+      if (index == item.subjects.length - 1) {
+        major += item.subjects[index].subjectName;
+      } else {
+        major += item.subjects[index].subjectName + ", ";
+      }
+      classNo = item.subjects[index].level;
+    }
+    return { major, classNo };
+  };
+
+  const format = (item) => {
+    return (formattedAmount = new Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(item));
+  };
+
+  const Item = ({ item }) => (
+    <View style={styles.requestItem}>
+      <View style={styles.requestInfo}>
+        <Text style={styles.requestTitle}>{majors({ item }).major}</Text>
+        <Text style={styles.requestSup}>{item.tutorLevel} </Text>
+        <Text style={styles.requestSup}>{majors({ item }).classNo}</Text>
+        <Text style={styles.requestSup}>
+          {item.address}, {item.districtName}
+        </Text>
+        <Text style={styles.requestSup}>{format(item.tuition)} </Text>
+      </View>
+      {item.status == 1 && (
+        <TouchableOpacity
+          onPress={() => navigation.navigate("AttendancePage")}
+          style={styles.requestStatus}
+        >
+          <View
+            style={{
+              width: "100%",
+              backgroundColor: COLORS.lightWhite,
+              borderRadius: 20,
+              borderWidth: 2,
+              borderColor: COLORS.main,
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={styles.requestStatusBtn}
+              onPress={() => navigation.navigate("AttendancePage")}
+            >
+              Đợi xác nhận
+            </Text>
+          </View>
+        </TouchableOpacity>
+      )}
+
+      {item.status == 2 && (
+        <TouchableOpacity
+          onPress={() => navigation.navigate("AttendancePage")}
+          style={styles.requestStatus}
+        >
+          <View
+            style={{
+              width: "100%",
+              backgroundColor: COLORS.lightWhite,
+              borderRadius: 20,
+              borderWidth: 2,
+              borderColor: COLORS.main,
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={styles.requestStatusBtn}
+              onPress={() => navigation.navigate("AttendancePage")}
+            >
+              Đã xác nhận
+            </Text>
+          </View>
+        </TouchableOpacity>
+      )}
+    </View>
+  );
 
   return (
     <SafeAreaView>
-      <Heading title={"Danh sách lớp "} />
-      <ScrollView
-        refreshControl={
-          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-        }
-        style={{ marginTop: 40, marginBottom: 40 }}
-      >
+      <Heading title={"Danh sách đăng kí "} />
+
+      {loader ? (
+        <ActivityIndicator size={500} color={COLORS.main} />
+      ) : (
         <View>
-          {data.map((item) => (
-            <View style={styles.requestItem}>
-              <View style={styles.requestInfo}>
-                <Text style={styles.requestTitle}>
-                  {item.class.major.join(", ")}
-                </Text>
-                <Text style={styles.requestSup}>{item.class.level} </Text>
-                <Text style={styles.requestSup}>Lớp: {item.class.classNo}</Text>
-                <Text style={styles.requestSup}>{item.class.address} </Text>
-                <Text style={styles.requestSup}>{item.class.price} </Text>
-              </View>
-              <TouchableOpacity
-                onPress={() => navigation.navigate("AttendancePage")}
-                style={styles.requestStatus}
-              >
-                <View
-                  style={{
-                    width: "100%",
-                    backgroundColor: COLORS.lightWhite,
-                    borderRadius: 20,
-                    borderWidth: 2,
-                    borderColor: COLORS.main,
-                    alignItems: "center",
-                  }}
-                >
-                  <Text
-                    style={styles.requestStatusBtn}
-                    onPress={() => navigation.navigate("AttendancePage")}
-                  >
-                    {item.status}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            </View>
-          ))}
+          <FlatList
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            style={{ marginTop: 40, marginBottom: 40 }}
+            data={data}
+            renderItem={({ item }) => <Item item={item} />}
+            keyExtractor={(item) => item.id}
+          />
         </View>
-      </ScrollView>
+      )}
+      {/* <View>
+          {data.map((item) => (
+           
+          ))}
+        </View> */}
     </SafeAreaView>
   );
 };
@@ -109,12 +179,10 @@ const styles = StyleSheet.create({
   },
 
   requestStatus: {
-    width: "40%",
+    width: "35%",
     alignItems: "center",
     justifyContent: "center",
-    paddingLeft: 10,
-    borderLeftWidth: 3,
-    borderLeftColor: COLORS.main,
+    paddingLeft: 5,
   },
 
   requestSup: {
@@ -129,8 +197,6 @@ const styles = StyleSheet.create({
     color: COLORS.black,
   },
 
-  requestInfo: {},
-
   requestItem: {
     borderWidth: 2,
     borderColor: COLORS.black,
@@ -138,7 +204,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     backgroundColor: COLORS.secondMain,
     marginBottom: 20,
-    marginHorizontal: 20,
+    marginHorizontal: 15,
     borderRadius: 20,
     padding: 15,
   },

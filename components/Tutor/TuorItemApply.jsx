@@ -88,7 +88,7 @@ const TutorItemApply = ({ item }) => {
       style={{
         display: "flex",
         flexDirection: "row",
-        justifyContent: "space-between",
+        justifyContent: "space-around",
       }}
     >
       <TouchableOpacity style={styles.container}>
@@ -112,7 +112,7 @@ const TutorItemApply = ({ item }) => {
         style={{
           justifyContent: "center",
           alignItems: "center",
-          width: "30%",
+          width: "35%",
         }}
       >
         {item.status == 1 ? (
@@ -146,7 +146,6 @@ const styles = StyleSheet.create({
     borderColor: COLORS.black,
     borderRadius: SIZES.small,
     backgroundColor: COLORS.secondMain,
-    marginRight: 6,
     alignItems: "center",
   },
   supplier: {
@@ -157,7 +156,7 @@ const styles = StyleSheet.create({
   },
 
   name: {
-    fontSize: SIZES.medium,
+    fontSize: SIZES.small + 1,
     fontFamily: "bold",
     color: COLORS.primary,
   },

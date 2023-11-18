@@ -48,6 +48,7 @@ const Login = () => {
   };
 
   const login = async (values) => {
+    console.log(values);
     fetch("http://192.168.1.203:9000/api/auth/authenticate", {
       method: "POST",
       headers: {
@@ -62,12 +63,30 @@ const Login = () => {
       .then(async (data) => {
         try {
           console.log(data);
-          await AsyncStorage.setItem("token", data.data.access_token);
-          // await AsyncStorage.setItem("email", values.email);
-          navigation.replace("Bottom Navigation");
+          if (data == null) {
+            Alert.alert(
+              "Đăng nhập thất bại",
+              "Email hoặc password không đúng",
+              [
+                {
+                  text: "Cancel",
+                  onPress: () => {},
+                },
+                {
+                  text: "Continue",
+                  onPress: () => {},
+                },
+                { defaultIndex: 1 },
+              ]
+            );
+          } else {
+            await AsyncStorage.setItem("token", data.data.access_token);
+            // await AsyncStorage.setItem("email", values.email);
+            navigation.replace("Bottom Navigation");
+          }
         } catch (e) {
           console.log("error hai", e);
-          Alert.alert("Error", "error", [
+          Alert.alert("Đăng nhập thất bại", "error", [
             {
               text: "Cancel",
               onPress: () => {},
