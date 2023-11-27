@@ -16,8 +16,9 @@ import { useState } from "react";
 import axios from "axios";
 import { ActivityIndicator } from "react-native";
 import { RefreshControl } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const ManageClass = () => {
+const ManageClassTutor = () => {
   const navigation = useNavigation();
 
   const [refreshing, setRefreshing] = useState(false);
@@ -30,23 +31,19 @@ const ManageClass = () => {
   }, []);
 
   const route = useRoute();
-  const { user } = route.params;
+  // const { user } = route.params;
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState([]);
-
-  console.log(user);
-  const fetchUserProfile = async () => {
+  const fetchClass = async () => {
     const token = await AsyncStorage.getItem("token");
+    console.log(token);
     setLoader(true);
     try {
-      const response = await axios.get(
-        HOST_API.local + `/api/clazz/tutor/${user}`,
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      );
+      const response = await axios.get(HOST_API.local + `/api/clazz/tutor`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
       setData(response.data);
     } catch (error) {
       console.log("error", error);
@@ -55,9 +52,9 @@ const ManageClass = () => {
     }
   };
   useEffect(() => {
-    fetchUserProfile();
+    fetchClass();
   }, []);
-
+  console.log(data);
   const majors = ({ item }) => {
     var major = "";
     var classNo = "";
@@ -156,7 +153,7 @@ const ManageClass = () => {
   );
 };
 
-export default ManageClass;
+export default ManageClassTutor;
 
 const styles = StyleSheet.create({
   requestStatusBtn: {

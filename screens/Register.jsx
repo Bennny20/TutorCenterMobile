@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   TextInput,
   FlatList,
+  LogBox,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -40,7 +41,9 @@ const validationSchema = Yup.object().shape({
 });
 const Register = () => {
   const navigation = useNavigation();
-
+  useEffect(() => {
+    LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
+  }, []);
   //Tỉnh thành
   const [province, setProvince] = useState([]);
   const [selectProvince, setSelectProvince] = useState(

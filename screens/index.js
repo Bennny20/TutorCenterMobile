@@ -6,6 +6,7 @@ import Tutor from "./Tutor";
 import Class from "./Class";
 import Wallet from "./Wallet";
 import ManageClass from "./ManageClassParent";
+import ManageClassTutor from "./ManageClassTutor";
 import ManageRequest from "./ManageRequest";
 import AttendancePage from "./AttendancePage";
 import NotificationPage from "./NotificationPage";
@@ -22,8 +23,13 @@ import TransferMoney from "./TransferMoney";
 import DepositAndWithdrawMoney from "./DepositAndWithdrawMoney";
 import FeedbackClass from "./FeedbackClass";
 import ApplyPage from "./ApplyPage";
+import Transaction from "./Transaction";
+import History from "./History";
+import Order from "./Order";
 
 export {
+  History,
+  Transaction,
   TransferMoney,
   ApplyPage,
   FeedbackClass,
@@ -48,4 +54,6 @@ export {
   Login,
   Register,
   RegisterTutor,
+  ManageClassTutor,
+  Order,
 };

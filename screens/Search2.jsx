@@ -23,7 +23,7 @@ const Search2 = () => {
   const [genderValue, setGenderValue] = useState();
   const [academicValue, setAcademicValue] = useState();
   const [levelValue, setLevelValue] = useState();
-  const [subjectValue, setSubjectValue] = useState([]);
+  const [subjectValue, setSubjectValue] = useState();
   const [classValue, setClassValue] = useState();
   const [address, setAddress] = useState();
 
@@ -64,6 +64,32 @@ const Search2 = () => {
   ];
 
   const [searchKey, setSearchKey] = useState("");
+  const search = () => {
+    console.log("Search result");
+    if (subjectValue != undefined) {
+      setSearchKey("subjectValue");
+    }
+    if (genderValue != undefined) {
+      setSearchKey("subjectValue - genderValue");
+    }
+    if (levelValue != undefined) {
+      setSearchKey("subjectValue - genderValue - levelValue");
+    }
+    if (academicValue != undefined) {
+      setSearchKey("subjectValue - genderValue - levelValue - academicValue");
+    }
+    if (classValue != undefined) {
+      setSearchKey(
+        "subjectValue - genderValue - levelValue - academicValue - classValue"
+      );
+    }
+    if (address != undefined) {
+      setSearchKey(
+        "subjectValue - genderValue - levelValue - academicValue - classValue - address"
+      );
+    }
+    console.log(searchKey);
+  };
   const [searchResult, setSearcResult] = useState([]);
   return (
     <ScrollView style={{ padding: 16, marginTop: 40, marginBottom: 100 }}>
@@ -80,9 +106,9 @@ const Search2 = () => {
                 placeholder="Chọn môn học"
                 showTickIcon={true}
                 showArrowIcon={true}
-                multiple={true}
-                min={1}
-                max={4}
+                // multiple={true}
+                // min={1}
+                // max={4}
                 mode="BADGE"
                 zIndex={20}
                 badgeColors={COLORS.secondMain}
@@ -95,7 +121,6 @@ const Search2 = () => {
                 open={genderOpen}
                 setOpen={() => setGenderOpen(!genderOpen)}
                 value={genderValue}
-                lec
                 setValue={(val) => setGenderValue(val)}
                 placeholder="Chọn giới tính"
                 showTickIcon={true}
@@ -146,7 +171,12 @@ const Search2 = () => {
             </View>
           </View>
           <View style={styles.btn}>
-            <TouchableOpacity style={styles.searchBtn} onPress={() => {}}>
+            <TouchableOpacity
+              style={styles.searchBtn}
+              onPress={() => {
+                search();
+              }}
+            >
               <Feather name="search" size={24} color={COLORS.offwhite} />
             </TouchableOpacity>
           </View>

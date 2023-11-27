@@ -18,7 +18,7 @@ import { ActivityIndicator } from "react-native";
 
 const AttendancePage = () => {
   const navigation = useNavigation();
-
+  const [length, setLength] = useState(0);
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
@@ -29,10 +29,9 @@ const AttendancePage = () => {
     }, 2000);
   }, []);
   const route = useRoute();
-  const { item } = route.params;
-  let temp = 0;
+  const { item, user } = route.params;
+  console.log(item);
 
-  // console.log(item);
   useEffect(() => {
     fetchListApply();
   }, []);
@@ -50,6 +49,7 @@ const AttendancePage = () => {
         }
       );
       setData(response.data);
+      setLength(response.data.data.length);
     } catch (error) {
       console.log("error", error);
     } finally {
@@ -57,7 +57,9 @@ const AttendancePage = () => {
     }
   };
 
-  console.log(data);
+  if (length == item.slots) {
+    console.log("Thúc");
+  }
   const majors = ({ item }) => {
     var major = "";
     var classNo = "";
@@ -91,8 +93,7 @@ const AttendancePage = () => {
           {
             text: "Continue",
             onPress: () => {
-              {
-              }
+              navigation.navigate("ManageClass", { user });
             },
           },
           { defaultIndex: 1 },
@@ -107,7 +108,7 @@ const AttendancePage = () => {
           {
             text: "Continue",
             onPress: () => {
-              navigation.navigate("ManageClass", { profileId });
+              navigation.replace("ManageClass", { user });
             },
           },
           { defaultIndex: 1 },
@@ -116,32 +117,7 @@ const AttendancePage = () => {
       });
   };
 
-  // const handleCreateAttendance = () => {
-  //   const attendance = {
-  //     clazzId : item. id,
-  //     tutor: item.tutor.id,
-  //     parent: item.parent,
-  //     createDate: date.getDate() + "/" + month + "/" + date.getFullYear(),
-  //     createTime:
-  //       date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds(),
-  //   };
-
-  //   Alert.alert(
-  //     "Bạn có muốn điểm danh",
-  //     "Thời gian: " + attendance.createDate + " " + attendance.createTime,
-  //     [
-  //       {
-  //         text: "Continue",
-  //         onPress: () => {
-  //           createAttendance(attendance);
-  //           navigation.replace("ManageClass", { profileId });
-  //         },
-  //       },
-  //       { defaultIndex: 1 },
-  //     ]
-  //   );
-  // };
-
+  let temp = 0;
   return (
     <SafeAreaView style={{ marginTop: -20 }}>
       <Heading title={"Điểm danh"} />
@@ -155,13 +131,9 @@ const AttendancePage = () => {
           <View style={styles.infoDetail}>
             <Text style={styles.sup}>Môn học: {majors({ item }).major}</Text>
             <Text style={styles.sup}>{majors({ item }).classNo}</Text>
-            {/* <Text style={styles.sup}>
-              Ngày bắt đầu: {item.request.dateStart}
-            </Text>
-            <Text style={styles.sup}>
-              Ngày kết thúc: {item.request.dateEnd}
-            </Text> */}
-            <Text style={styles.sup}>Gia sư: {item.tutorLevel}</Text>
+            <Text style={styles.sup}>Ngày bắt đầu: {item.dateStart}</Text>
+            <Text style={styles.sup}>Ngày kết thúc: {item.dateEnd}</Text>
+            <Text style={styles.sup}>Gia sư: {item.tutor.name}</Text>
           </View>
         </View>
 
@@ -180,14 +152,16 @@ const AttendancePage = () => {
           ) : (
             <TouchableOpacity style={styles.createAttendance}>
               <Text style={styles.titleText}>
-                {/* Số buổi: {data.data.length}/ {item.slots} */}
+                Số buổi: {length}/{item.slots}
               </Text>
             </TouchableOpacity>
           )}
 
           <TouchableOpacity
             style={styles.createAttendance}
-            onPressIn={() => navigation.navigate("FeedbackClass", { item })}
+            onPressIn={() =>
+              navigation.navigate("FeedbackClass", { item, length, user })
+            }
           >
             <Ionicons name="add-circle" size={20} color={COLORS.main} />
             <Text style={styles.titleText}>Đánh giá chất lượng </Text>
@@ -206,17 +180,19 @@ const AttendancePage = () => {
         <View style={styles.title}>
           <Text style={styles.titleText}>Danh sách điểm danh</Text>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.createAttendance}
             onPress={createAttendance}
           >
             <Ionicons name="add-circle" size={20} color={COLORS.main} />
             <Text style={styles.titleText}>Tạo điểm danh</Text>
-          </TouchableOpacity>
-          {/* {data.data.length === item.slot ? (
+          </TouchableOpacity> */}
+          {length == item.slots ? (
             <TouchableOpacity
               style={styles.createAttendance}
-              onPressIn={() => navigation.navigate("FeedbackClass", { item })}
+              onPressIn={() =>
+                navigation.navigate("FeedbackClass", { item, length })
+              }
             >
               <Ionicons name="add-circle" size={20} color={COLORS.main} />
               <Text style={styles.titleText}>Kết thúc lớp học</Text>
@@ -224,12 +200,12 @@ const AttendancePage = () => {
           ) : (
             <TouchableOpacity
               style={styles.createAttendance}
-              onPress={handleCreateAttendance}
+              onPress={createAttendance}
             >
               <Ionicons name="add-circle" size={20} color={COLORS.main} />
               <Text style={styles.titleText}>Tạo điểm danh</Text>
             </TouchableOpacity>
-          )} */}
+          )}
         </View>
       </View>
       <View style={{ marginTop: 10 }}>
@@ -243,6 +219,22 @@ const AttendancePage = () => {
           )}
           keyExtractor={(item) => item.id}
         />
+      </View>
+
+      <View
+        style={{
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: 40,
+        }}
+      >
+        <TouchableOpacity
+          style={styles.createAttendance}
+          onPressIn={() => navigation.navigate("FeedbackClass", { item })}
+        >
+          <Ionicons name="add-circle" size={20} color={COLORS.main} />
+          <Text style={styles.titleText}>Kết thúc lớp học</Text>
+        </TouchableOpacity>
       </View>
     </SafeAreaView>
   );

@@ -24,11 +24,26 @@ import {
   TransferMoney,
   FeedbackClass,
   ApplyPage,
+  Transaction,
+  History,
+  ManageClassTutor,
+  Order,
 } from "./screens";
+import { useEffect } from "react";
+import { LogBox } from "react-native";
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+  useEffect(() => {
+    LogBox.ignoreLogs([
+      "VirtualizedLists should never be nested",
+      `Each child in a list should have a unique "key" prop`,
+      `Key "cancelled" in the image picker result is deprecated and will be removed in SDK 48, use "canceled" instead`,
+      "Failed prop type: Invalid prop `value` of type `number` supplied to `TextInput`, expected `string`",
+    ]);
+  }, []);
+
   const [fontsLoad] = useFonts({
     bold: require("./assets/fonts/Poppins-Bold.ttf"),
     extrabold: require("./assets/fonts/Poppins-ExtraBold.ttf"),
@@ -148,6 +163,26 @@ export default function App() {
         <Stack.Screen
           name="ApplyPage"
           component={ApplyPage}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Transaction"
+          component={Transaction}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="History"
+          component={History}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ManageClassTutor"
+          component={ManageClassTutor}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="Order"
+          component={Order}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

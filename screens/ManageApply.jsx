@@ -55,7 +55,6 @@ const ManageClass = () => {
 
     fetchUserProfile();
   }, []);
-  console.log(data);
 
   const majors = ({ item }) => {
     var major = "";
@@ -80,7 +79,7 @@ const ManageClass = () => {
 
   const Item = ({ item }) => (
     <View style={styles.requestItem}>
-      <View style={styles.requestInfo}>
+      <View style={{ width: "60%" }}>
         <Text style={styles.requestTitle}>{majors({ item }).major}</Text>
         <Text style={styles.requestSup}>{item.tutorLevel} </Text>
         <Text style={styles.requestSup}>{majors({ item }).classNo}</Text>
@@ -89,7 +88,7 @@ const ManageClass = () => {
         </Text>
         <Text style={styles.requestSup}>{format(item.tuition)} </Text>
       </View>
-      {item.status == 1 && (
+      {item.status == 0 && (
         <TouchableOpacity
           onPress={() => navigation.navigate("AttendancePage")}
           style={styles.requestStatus}
@@ -114,7 +113,7 @@ const ManageClass = () => {
         </TouchableOpacity>
       )}
 
-      {item.status == 2 && (
+      {item.status == 1 && (
         <TouchableOpacity
           onPress={() => navigation.navigate("AttendancePage")}
           style={styles.requestStatus}
@@ -159,11 +158,6 @@ const ManageClass = () => {
           />
         </View>
       )}
-      {/* <View>
-          {data.map((item) => (
-           
-          ))}
-        </View> */}
     </SafeAreaView>
   );
 };

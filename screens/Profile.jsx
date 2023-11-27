@@ -36,33 +36,36 @@ const Profile = () => {
   const checkExitingUser = async () => {
     const token = await AsyncStorage.getItem("token");
     console.log(token);
-    setLoader(true);
-    try {
-      const currentUser = await axios.get(
-        HOST_API.local + `/api/user/authProfile`,
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
+    if (token != null) {
+      setLoader(true);
+      try {
+        const currentUser = await axios.get(
+          HOST_API.local + `/api/user/authProfile`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
+        if (currentUser !== null) {
+          setUserData(currentUser.data.data);
+          setUserLogin(true);
+          setUser(currentUser.data.data.id);
         }
-      );
-      if (currentUser !== null) {
-        setUserData(currentUser.data.data);
-        console.log(userData);
-        setUserLogin(true);
-        setUser(currentUser.data.data.id);
+      } catch (error) {
+        console.log("error", error);
+      } finally {
+        setLoader(false);
       }
-    } catch (error) {
-      console.log("error", error);
-    } finally {
+    } else {
       setLoader(false);
     }
   };
+
   const userLogout = async () => {
     const id = await AsyncStorage.getItem("token");
-
     try {
-      await AsyncStorage.multiRemove(["token"]);
+      await AsyncStorage.removeItem("token");
       navigation.replace("Bottom Navigation");
     } catch (error) {
       console.log("Error retrieving the data: ", error);
@@ -104,7 +107,9 @@ const Profile = () => {
               <Text></Text>
               {userLogin === true ? (
                 <TouchableOpacity
-                  onPressIn={() => navigation.navigate("EditProfile")}
+                  onPressIn={() =>
+                    navigation.navigate("EditProfile", { userData })
+                  }
                 >
                   <Ionicons
                     name="create-outline"
@@ -197,31 +202,50 @@ const Profile = () => {
                     </TouchableOpacity>
                   )}
 
+                  {userData.role === "TUTOR" ? (
+                    <TouchableOpacity
+                      onPressIn={() => navigation.navigate("ManageClassTutor")}
+                    >
+                      <View style={styles.menuItem(0.5)}>
+                        <MaterialCommunityIcons
+                          name="frequently-asked-questions"
+                          size={30}
+                          color={COLORS.main}
+                        />
+                        <Text style={styles.menuItemText}>
+                          Quản lý lớp & Điêm danh gia sư
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  ) : (
+                    <TouchableOpacity
+                      onPressIn={() =>
+                        navigation.navigate("ManageClass", { user })
+                      }
+                    >
+                      <View style={styles.menuItem(0.5)}>
+                        <MaterialCommunityIcons
+                          name="clipboard-text-clock"
+                          size={30}
+                          color={COLORS.main}
+                        />
+                        <Text style={styles.menuItemText}>
+                          Quản lý lớp & Điêm danh
+                        </Text>
+                      </View>
+                    </TouchableOpacity>
+                  )}
+
                   <TouchableOpacity
-                    onPressIn={() =>
-                      navigation.navigate("ManageClass", { user })
-                    }
+                    onPressIn={() => navigation.navigate("Order")}
                   >
                     <View style={styles.menuItem(0.5)}>
                       <MaterialCommunityIcons
-                        name="clipboard-text-clock"
+                        name="perspective-more"
                         size={30}
                         color={COLORS.main}
                       />
-                      <Text style={styles.menuItemText}>
-                        Quản lý lớp & Điêm danh
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-
-                  <TouchableOpacity>
-                    <View style={styles.menuItem(0.5)}>
-                      <AntDesign
-                        name="deleteuser"
-                        size={30}
-                        color={COLORS.main}
-                      />
-                      <Text style={styles.menuItemText}> Xóa tài khoản </Text>
+                      <Text style={styles.menuItemText}> Order </Text>
                     </View>
                   </TouchableOpacity>
 

@@ -13,10 +13,8 @@ import TutorItemApply from "../components/Tutor/TuorItemApply";
 
 const ApplyPage = () => {
   const route = useRoute();
-  const { item } = route.params;
-  console.log(item);
-  const [loader, setLoader] = useState(false);
-  const [data, setData] = useState([]);
+  const { item, user } = route.params;
+  const classID = item;
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -24,10 +22,10 @@ const ApplyPage = () => {
       setRefreshing(false);
     }, 2000);
   }, []);
-
+  const [loader, setLoader] = useState(false);
+  const [data, setData] = useState([]);
   const fetchListApply = async () => {
     const token = await AsyncStorage.getItem("token");
-
     setLoader(true);
     try {
       const response = await axios.get(
@@ -113,7 +111,9 @@ const ApplyPage = () => {
           onRefresh={onRefresh}
           style={{ marginTop: 10, marginHorizontal: 10, marginBottom: 100 }}
           data={data.data}
-          renderItem={({ item }) => <TutorItemApply item={item} />}
+          renderItem={({ item }) => (
+            <TutorItemApply item={item} classID={classID} />
+          )}
           keyExtractor={(item) => item.id}
         />
       )}

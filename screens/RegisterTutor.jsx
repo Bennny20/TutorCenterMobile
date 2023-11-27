@@ -19,8 +19,16 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { LogBox } from "react-native";
 
 const RegisterTutor = () => {
+  useEffect(() => {
+    LogBox.ignoreLogs([
+      "VirtualizedLists should never be nested",
+      ` Each child in a list should have a unique "key" prop`,
+      `Key "cancelled" in the image picker result is deprecated and will be removed in SDK 48, use "canceled" instead`,
+    ]);
+  }, []);
   const steps = [
     { title: "Tài khoản", content: "Info Form" },
     { title: "Thông tin", content: "Chuyen Mon" },
@@ -84,7 +92,6 @@ const RegisterTutor = () => {
   const GioiTinh = [
     { label: "Nam", value: "Nam" },
     { label: "Nữ", value: "Nữ" },
-    { label: "Nam - Nữ", value: "Nam - Nữ" },
   ];
 
   const [imgProfile, setImgProfile] = useState();
@@ -165,9 +172,9 @@ const RegisterTutor = () => {
   const register = async () => {
     const user = {
       email: email,
+      name: name,
       idNumber: 1,
       password: password,
-      fullname: name,
       phone: phone,
       address: address,
       districtId: districtValue,
@@ -192,15 +199,15 @@ const RegisterTutor = () => {
         fullname: user.name,
         phone: user.phone,
         address: user.address,
-        districtId: user.districtValue,
-        gender: user.genderValue,
+        districtId: user.districtId,
+        gender: user.gender,
         university: user.university,
         major: user.major,
         area: user.area,
-        imgCertificate: user.certificate1,
-        imgAvatar: user.imageProfile,
-        imgIdFront: user.certificate2,
-        imdIdBack: user.certificate2,
+        imgCertificate: user.imgIdFront,
+        imgAvatar: user.imgAvatar,
+        imgIdFront: user.imgIdFront,
+        imdIdBack: user.imdIdBack,
 
         // email: "DemoRegisterTutor@gmail.com",
         // idNumber: 1,
@@ -365,7 +372,8 @@ const RegisterTutor = () => {
 
           <Button
             title={"Tiếp túc"}
-            onPress={() => handleCheckEmail(email)}
+            // onPress={() => handleCheckEmail(email)}
+            onPress={() => setCurrentStep(1)}
             isValid={name}
             loader={false}
           />

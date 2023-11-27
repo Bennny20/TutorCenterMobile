@@ -8,9 +8,9 @@ import { Alert } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const TutorItemApply = ({ item }) => {
+const TutorItemApply = ({ item, classID }) => {
   const navigation = useNavigation();
-
+  const [loader, setLoader] = useState(false);
   const [user, setUser] = useState(null);
   useEffect(() => {
     checkExitingUser();
@@ -18,7 +18,6 @@ const TutorItemApply = ({ item }) => {
 
   const checkExitingUser = async () => {
     const token = await AsyncStorage.getItem("token");
-    console.log(token);
     setLoader(true);
     try {
       const currentUser = await axios.get(
@@ -30,7 +29,7 @@ const TutorItemApply = ({ item }) => {
         }
       );
       if (currentUser !== null) {
-        setUser(currentUser.data.data.id);
+        setUser(currentUser.data.data);
       }
     } catch (error) {
       console.log("error", error);
@@ -38,6 +37,7 @@ const TutorItemApply = ({ item }) => {
       setLoader(false);
     }
   };
+  console.log(user);
 
   const handleChoose = async () => {
     const token = await AsyncStorage.getItem("token");
@@ -61,7 +61,7 @@ const TutorItemApply = ({ item }) => {
         {
           text: "Continue",
           onPress: () => {
-            navigation.navigate("ManageClass", { user });
+            navigation.navigate("ManageClass");
           },
         },
         { defaultIndex: 1 },
@@ -116,12 +116,20 @@ const TutorItemApply = ({ item }) => {
         }}
       >
         {item.status == 1 ? (
-          <TouchableOpacity style={styles.btnStatus} onPress={handleChoose}>
+          <View style={styles.btnStatus}>
             <Text style={styles.txtStatus}>Đã chọn gia sư</Text>
-          </TouchableOpacity>
+          </View>
         ) : (
           item.status == 0 && (
-            <TouchableOpacity style={styles.btnStatus} onPress={handleChoose}>
+            // <TouchableOpacity style={styles.btnStatus} onPress={handleChoose}>
+            //   <Text style={styles.txtStatus}>Chọn gia sư</Text>
+            // </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.btnStatus}
+              onPress={() =>
+                navigation.navigate("TransferMoney", { item, user, classID })
+              }
+            >
               <Text style={styles.txtStatus}>Chọn gia sư</Text>
             </TouchableOpacity>
           )

@@ -31,7 +31,7 @@ const Login = () => {
   const navigation = useNavigation();
   const [loader, setLoader] = useState(false);
   const [responseData, setResponseData] = useState(null);
-  const [obsecureText, setObsecureText] = useState(false);
+  const [obscureText, setObscureText] = useState(false);
 
   const inValidForm = () => {
     Alert.alert("Invalid form", "Please provide all require fields", [
@@ -48,8 +48,9 @@ const Login = () => {
   };
 
   const login = async (values) => {
+    setLoader(true);
     console.log(values);
-    fetch("http://192.168.1.203:9000/api/auth/authenticate", {
+    fetch(HOST_API.local + "/api/auth/authenticate", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -63,6 +64,7 @@ const Login = () => {
       .then(async (data) => {
         try {
           console.log(data);
+          setLoader(false);
           if (data == null) {
             Alert.alert(
               "Đăng nhập thất bại",
@@ -99,56 +101,6 @@ const Login = () => {
           ]);
         }
       });
-
-    // setLoader(true);
-    // try {
-    //   const endpoint = HOST_API.local + `/api/auth/authenticaten`;
-    //   console.log(values);
-    //   const response = await axios.post(
-    //     HOST_API.local + `/api/auth/authenticaten`,
-    //     {
-    //       email: values.email,
-    //       password: values.password,
-    //     }
-    //   );
-
-    //   if (response.status === 200) {
-    //     console.log(response.data);
-    //     setResponseData(response.data);
-
-    //     // await AsyncStorage.setItem("token", data.data.access_token);
-
-    //     // await AsyncStorage.setItem(
-    //     //   `user${responseData.user?._id}`,
-    //     //   JSON.stringify(responseData)
-    //     // );
-
-    //     // await AsyncStorage.setItem(
-    //     //   "id",
-    //     //   JSON.stringify(responseData.user?._id)
-    //     // );
-
-    //     // navigation.replace("Bottom Navigation");
-    //     setLoader(false);
-    //   } else {
-    //     Alert.alert("Error Logging im", "Please provide all require fields", [
-    //       {
-    //         text: "Cancel",
-    //         onPress: () => {},
-    //       },
-    //       {
-    //         text: "Continue",
-    //         onPress: () => {},
-    //       },
-    //       { defaultIndex: 1 },
-    //     ]);
-    //   }
-    // } catch (error) {
-    //   console.log(error.message);
-
-    // } finally {
-    //   setLoader(false);
-    // }
   };
 
   return (
@@ -233,7 +185,7 @@ const Login = () => {
                       style={{ marginRight: 10 }}
                     />
                     <TextInput
-                      secureTextEntry={obsecureText}
+                      secureTextEntry={obscureText}
                       placeholder="Enter your password"
                       onFocus={() => {
                         setFieldTouched("password");
@@ -250,11 +202,11 @@ const Login = () => {
 
                     <TouchableOpacity
                       onPress={() => {
-                        setObsecureText(!obsecureText);
+                        setObscureText(!obscureText);
                       }}
                     >
                       <MaterialCommunityIcons
-                        name={obsecureText ? "eye-outline" : "eye-off-outline"}
+                        name={obscureText ? "eye-outline" : "eye-off-outline"}
                         size={18}
                       />
                     </TouchableOpacity>
@@ -294,6 +246,23 @@ const Login = () => {
                     }}
                   >
                     Đăng kí làm gia sư
+                  </Text>
+                </View>
+
+                <View
+                  style={{
+                    flexDirection: "row",
+                    justifyContent: "center",
+                    marginTop: 20,
+                  }}
+                >
+                  <Text
+                    style={styles.registration}
+                    onPress={() => {
+                      navigation.navigate("Register");
+                    }}
+                  >
+                    Bạn quên mật khẩu?
                   </Text>
                 </View>
               </View>

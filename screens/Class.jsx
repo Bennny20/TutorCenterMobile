@@ -63,7 +63,7 @@ const Class = () => {
           <FlatList
             refreshing={refreshing}
             onRefresh={onRefresh}
-            style={{ marginBottom: 40 }}
+            style={{ marginBottom: 70 }}
             data={data.data}
             renderItem={({ item }) => <ClassItem item={item} />}
             keyExtractor={(item) => item.id}

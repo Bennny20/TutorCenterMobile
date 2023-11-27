@@ -79,9 +79,9 @@ const ClassDetail = () => {
 
   const createApply = async () => {
     const token = await AsyncStorage.getItem("token");
-    console.log(token);
-    console.log(classDetail.id);
-    console.log(user);
+    // console.log(token);
+    // console.log(classDetail.id);
+    // console.log(user);
     const url =
       HOST_API.local +
       `/api/tutorApply/create?clazzId=${classDetail.id}&tutorId=${user}`;

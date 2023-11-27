@@ -14,10 +14,14 @@ import Heading from "../components/Heading";
 import * as ImagePicker from "expo-image-picker";
 import Constants from "expo-constants";
 import { userDefault } from "../assets/images/userDefault.png";
-import { COLORS } from "../constants";
+import { COLORS, HOST_API } from "../constants";
 
 import { Formik } from "formik";
 import * as Yup from "yup";
+import { useRoute } from "@react-navigation/native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import axios from "axios";
+import { TextInput } from "react-native";
 
 const validationSchema = Yup.object().shape({
   name: Yup.string().min(8, "Provide your full name").required("Required"),
@@ -30,16 +34,36 @@ const validationSchema = Yup.object().shape({
 const EditProfile = () => {
   const [image, setImage] = useState(null);
   const [isImage, setIsImage] = useState(false);
+  const route = useRoute();
+  const { userData } = route.params;
+  const [loader, setLoader] = useState(false);
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    const fetchUserProfile = async () => {
+      const token = await AsyncStorage.getItem("token");
 
-  // useEffect(async () => {
-  //   if (Platform.OS !== "wed") {
-  //     const { status } =
-  //       await ImagePicker.requestMediaLibraryPermissionsAsync();
-  //     if (status !== "granted") {
-  //       alert("Permisson denird!");
-  //     }
-  //   }
-  // }, []);
+      setLoader(true);
+      try {
+        const response = await axios.get(
+          HOST_API.local + `/api/parent/profile`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
+        setData(response.data);
+      } catch (error) {
+        console.log("error", error);
+      } finally {
+        setLoader(false);
+      }
+    };
+
+    fetchUserProfile();
+  }, []);
+
+  console.log(data);
 
   const pickerImage = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
@@ -57,6 +81,7 @@ const EditProfile = () => {
   return (
     <SafeAreaView>
       <Heading title={"Chỉnh sửa thông tin "} />
+
       <View style={styles.avatar}>
         {isImage === false ? (
           <View style={{ alignItems: "center" }}>
@@ -104,7 +129,18 @@ const EditProfile = () => {
         )}
       </View>
 
-      <View style={styles.info}></View>
+      <View style={styles.info}>
+        <View>
+          <Text style={styles.itemText}>Email </Text>
+          <TextInput
+            keyboardType="email-address"
+            style={styles.input}
+            value={data.data.email}
+            onChangeText={(text) => setEmail(text)}
+            placeholder="Nhập email"
+          />
+        </View>
+      </View>
     </SafeAreaView>
   );
 };

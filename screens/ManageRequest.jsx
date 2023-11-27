@@ -27,7 +27,6 @@ const ManageRequest = () => {
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState([]);
 
-  console.log(user);
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -63,24 +62,6 @@ const ManageRequest = () => {
 
   const [wallet, setWallet] = useState();
 
-  useEffect(() => {
-    const fetchUserProfile = async () => {
-      setLoader(true);
-      try {
-        const response = await axios.get(
-          `https://tutor-center.onrender.com/wallet/${userData?.user._id}`
-        );
-        setWallet(response.data);
-      } catch (error) {
-        console.log("error", error);
-      } finally {
-        setLoader(false);
-      }
-    };
-
-    fetchUserProfile();
-  }, []);
-
   const majors = ({ item }) => {
     var major = "";
     var classNo = "";
@@ -102,7 +83,6 @@ const ManageRequest = () => {
           <Text style={styles.requestTitle}>{majors({ item }).major}</Text>
           <Text style={styles.requestSup}>Giới tính: {item.gender} </Text>
           <Text style={styles.requestSup}>{majors({ item }).classNo} </Text>
-          <Text style={styles.requestSup}>{item.level} </Text>
           <Text style={styles.requestSup}>{item.address} </Text>
           <Text style={styles.requestSup}>{item.tutorLevel}</Text>
         </View>

@@ -7,25 +7,7 @@ import axios from "axios";
 
 const TutorItem = ({ item }) => {
   const navigation = useNavigation();
-  // const userId = item.user;
-  // const [user, setUser] = useState();
 
-  // useEffect(() => {
-  //   const fetchUserProfile = async () => {
-  //     try {
-  //       const response = await axios.get(
-  //         `https://tutor-center.onrender.com/user/${userId}`
-  //       );
-  //       setUser(response.data);
-  //     } catch (error) {
-  //       console.log("error", error);
-  //     }
-  //   };
-
-  //   fetchUserProfile();
-  // }, []);
-
-  // const subjects = item.subject.join(" - ");
   return (
     <View>
       <TouchableOpacity

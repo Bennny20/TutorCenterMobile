@@ -1,20 +1,24 @@
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { COLORS, HOST_API, SIZES } from "../../constants";
 import { useNavigation } from "@react-navigation/native";
 import { ActivityIndicator } from "react-native";
+import axios from "axios";
 
 const ClassItem = ({ item }) => {
   const navigation = useNavigation();
 
+  var major = "";
+  var classNo = "";
+
   for (let index = 0; index < item.subjects.length; index++) {
-    major += item.subjects[index].name + ", ";
     if (index == item.subjects.length - 1) {
       major += item.subjects[index].name;
+    } else {
+      major += item.subjects[index].name + ", ";
     }
     classNo = item.subjects[index].level;
   }
-
   const [classDetail, setClassDetail] = useState();
   const [loader, setLoader] = useState(false);
   useEffect(() => {
@@ -35,7 +39,7 @@ const ClassItem = ({ item }) => {
     }
   };
 
-  console.log(classDetail);
+  // console.log(classDetail);
   const formattedAmount = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",

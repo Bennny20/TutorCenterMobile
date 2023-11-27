@@ -6,6 +6,7 @@ import {
   StyleSheet,
   TouchableOpacity,
   FlatList,
+  LogBox,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { COLORS, SIZES, HOST_API } from "../constants";
@@ -20,6 +21,9 @@ import { Ionicons, Fontisto } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CreateRequestPage = () => {
+  useEffect(() => {
+    LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
+  }, []);
   const navigation = useNavigation();
   const [address, setAddress] = useState("");
   const [slot, setSlot] = useState(0);
@@ -33,7 +37,7 @@ const CreateRequestPage = () => {
 
   //Tỉnh thành
   const [selectProvince, setSelectProvince] = useState(
-    "Chọn tỉnh thành nơi dậy"
+    "Chọn tỉnh thành nơi dạy"
   );
   const [isClickProvince, setIsClickProvince] = useState(false);
   const [province, setProvince] = useState([]);
@@ -57,7 +61,7 @@ const CreateRequestPage = () => {
 
   //Quận huyện
   const [selectDistrict, setSelectDistrict] = useState(
-    "Chọn quận/huyện nơi dậy"
+    "Chọn quận/huyện nơi dạy"
   );
   const [isClickDistrict, setIsClickDistrict] = useState(false);
   const [district, setDistrict] = useState([]);
@@ -103,7 +107,7 @@ const CreateRequestPage = () => {
   ];
 
   //Lớp học
-  const [selectClass, setSelectClass] = useState("Chọn trình độ gia sư");
+  const [selectClass, setSelectClass] = useState("Chọn lớp học");
   const [isClickClass, setIsClickClass] = useState(false);
   const [classValue, setClassValue] = useState("");
   const lopHoc = [
@@ -189,34 +193,16 @@ const CreateRequestPage = () => {
       toggleDatePickerEnd();
     }
   };
-  let tempData = [];
-  let tempName = [];
 
   const onClose = () => {
     setIsClickSubject(!isClickSubject);
   };
+
   const handleCreate = async () => {
     const token = await AsyncStorage.getItem("token");
-    // console.log(token);
-
-    const newRequest = {
-      phone: phone,
-      address: address,
-      listSubjectId: [subjectValue],
-      gender: genderValue,
-      slot: Number(slot),
-      slotsLength: slotLength,
-      tuition: Number(price),
-      note: description,
-      dateStart: dateStartValue,
-      dateEnd: dateEndValue,
-      districtId: districtValue,
-      tutorLevel: levelValue,
-    };
-    console.log(newRequest);
     axios
       .post(
-        "http://192.168.1.203:9000/api/request/create",
+        HOST_API.local + "/api/request/create",
         {
           phone: phone,
           address: address,
@@ -225,7 +211,7 @@ const CreateRequestPage = () => {
           slots: Number(slot),
           slotsLength: slotLength,
           tuition: Number(price),
-          note: description,
+          notes: description,
           dateStart: dateStartValue,
           dateEnd: dateEndValue,
           districtId: districtValue,
@@ -240,6 +226,21 @@ const CreateRequestPage = () => {
       .then((response) => {
         console.log(response.data);
         if (response.data.responseCode == "00") {
+          setSelectProvince("Chọn tỉnh thành nơi dạy");
+          setSelectDistrict("Chọn quận/huyên nơi dạy");
+          setSelectGender("Chọn giới tính gia sư");
+          setSelectSlotLength("Chọn thời gian dạy");
+          setSelectLevel("Chọn trình độ gia sư");
+          setSelectClass("Chọn lớp học");
+          setSelectSubject("Chọn môn học");
+          setSlot(0);
+          setPhone();
+          setPrice(0);
+          setDateStart("");
+          setDateEnd("");
+          setAddress("");
+          setDescription("");
+
           Alert.alert("Tạo yêu cầu thành công", "Quản lý yêu cầu", [
             {
               text: "Cancel",
@@ -250,7 +251,7 @@ const CreateRequestPage = () => {
             {
               text: "Continue",
               onPress: () => {
-                // navigation.navigate("ManageRequest", { profileId });
+                navigation.navigate("ManageRequest");
               },
             },
             { defaultIndex: 1 },
@@ -288,6 +289,7 @@ const CreateRequestPage = () => {
         console.log("Create failed", error);
       });
   };
+
   return (
     <View style={{ padding: 16, marginTop: 40, marginBottom: 80 }}>
       <View style={styles.title}>
@@ -466,11 +468,11 @@ const CreateRequestPage = () => {
         <View>
           <Text style={styles.itemText}>Số điện thoại </Text>
           <TextInput
-            keyboardType="number-pad"
+            keyboardType="phone-pad"
             style={styles.input}
             value={phone}
             onChangeText={(text) => setPhone(text)}
-            placeholder="Số điện thoại "
+            placeholder="Số điện thoại"
           />
         </View>
 
@@ -563,9 +565,9 @@ const CreateRequestPage = () => {
         <View>
           <Text style={styles.itemText}>Chi phí khóa học </Text>
           <TextInput
-            keyboardType="number-pad"
+            keyboardType="phone-pad"
             style={styles.input}
-            value={price}
+            value={String(price)}
             onChangeText={(text) => setPrice(text)}
             placeholder="Chi phí"
           />
@@ -575,9 +577,9 @@ const CreateRequestPage = () => {
         <View>
           <Text style={styles.itemText}>Số buổi </Text>
           <TextInput
-            keyboardType="number-pad"
+            keyboardType="phone-pad"
             style={styles.input}
-            value={slot}
+            value={String(slot)}
             onChangeText={(text) => setSlot(text)}
             placeholder="Số buổi"
           />
@@ -738,6 +740,7 @@ const CreateRequestPage = () => {
             placeholder="Thông tin thêm"
           />
         </View>
+
         <TouchableOpacity onPress={handleCreate}>
           <View style={styles.btn}>
             <Text style={styles.btnText}>Đăng kí</Text>

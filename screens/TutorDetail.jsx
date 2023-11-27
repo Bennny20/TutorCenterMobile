@@ -1,16 +1,24 @@
-import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
-import React from "react";
+import {
+  StyleSheet,
+  ScrollView,
+  TextInput,
+  Text,
+  View,
+  TouchableOpacity,
+  Image,
+} from "react-native";
+import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { COLORS, SIZES } from "../constants";
-import { ScrollView } from "react-native";
-import { TextInput } from "react-native";
+import { COLORS, HOST_API, SIZES } from "../constants";
+import axios from "axios";
 
 const TutorDetail = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { item, user } = route.params;
-  const [tutor, setTutorDetail] = useState();
+  console.log("Item: ", item);
+  const [tutorDetail, setTutorDetail] = useState();
   const [loader, setLoader] = useState(false);
   useEffect(() => {
     setLoader(true);
@@ -19,7 +27,7 @@ const TutorDetail = () => {
         const response = await axios.get(
           HOST_API.local + `/api/tutor/${item.id}`
         );
-        setClassDetail(response.data.data);
+        setTutorDetail(response.data.data);
       } catch (error) {
         console.log("error", error);
       } finally {
@@ -28,7 +36,7 @@ const TutorDetail = () => {
     };
     fetchClassDetail();
   }, []);
-
+  console.log("Tutor Detail: ", tutorDetail);
   return (
     <View>
       <View styles={styles.container}>
@@ -76,30 +84,23 @@ const TutorDetail = () => {
                 flexDirection: "row",
               }}
             >
-              <Image
+              {/* <Image
                 source={{ uri: item.certificate[0] }}
                 style={styles.certificate}
               />
               <Image
                 source={{ uri: item.certificate[1] }}
                 style={styles.certificate}
-              />
+              /> */}
             </View>
           </View>
           <View style={{ marginTop: 10, marginLeft: 10 }}>
             <Text style={styles.name}>Đánh giá: </Text>
-            {/* <View style={styles.rating}>
-              {[1, 2, 3, 4, 5].map((index) => (
-                <Ionicons key={index} name="star" size={30} color="gold" />
-              ))}
-              <Text style={styles.ratingText}>(4.9)</Text>
-            </View> */}
           </View>
 
           <View
             style={{ alignItems: "center", marginTop: 10, marginBottom: 20 }}
           >
-            {/* <Text style={styles.name}>Viết đánh giá: </Text> */}
             <View style={styles.inputWrapper}>
               <TextInput
                 placeholder="Đánh giá của bạn"

@@ -35,17 +35,13 @@ const ManageClass = () => {
   const [data, setData] = useState([]);
   const fetchUserProfile = async () => {
     const token = await AsyncStorage.getItem("token");
-
     setLoader(true);
     try {
-      const response = await axios.get(
-        HOST_API.local + `/api/clazz/parent/${user}`,
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      );
+      const response = await axios.get(HOST_API.local + `/api/clazz/parent`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      });
       setData(response.data);
     } catch (error) {
       console.log("error", error);
@@ -57,7 +53,7 @@ const ManageClass = () => {
     fetchUserProfile();
   }, []);
 
-  console.log(data);
+  // console.log(data);
   const majors = ({ item }) => {
     var major = "";
     var classNo = "";
@@ -75,7 +71,7 @@ const ManageClass = () => {
   const Item = ({ item }) => (
     <View style={styles.requestItem}>
       <TouchableOpacity
-        onPress={() => navigation.navigate("ApplyPage", { item })}
+        onPress={() => navigation.navigate("ApplyPage", { item, user })}
       >
         <View style={styles.requestInfo}>
           <Text style={styles.requestTitle}>{majors({ item }).major}</Text>
@@ -86,7 +82,7 @@ const ManageClass = () => {
       </TouchableOpacity>
       {item.status === 0 ? (
         <TouchableOpacity
-          onPress={() => navigation.navigate("ClassDetail", { item })}
+          onPress={() => navigation.navigate("ApplyPage", { item, user })}
           style={styles.requestStatus}
         >
           <View
@@ -102,7 +98,7 @@ const ManageClass = () => {
         </TouchableOpacity>
       ) : item.status === 1 ? (
         <TouchableOpacity
-          onPress={() => navigation.navigate("AttendancePage", { item })}
+          onPress={() => navigation.navigate("AttendancePage", { item, user })}
           style={styles.requestStatus}
         >
           <View
@@ -118,7 +114,7 @@ const ManageClass = () => {
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
-          onPress={() => navigation.navigate("AttendancePage", { item })}
+          onPress={() => navigation.navigate("AttendancePage", { item, user })}
           style={styles.requestStatus}
         >
           <View
