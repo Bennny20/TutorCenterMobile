@@ -173,7 +173,7 @@ const RegisterTutor = () => {
     const user = {
       email: email,
       name: name,
-      idNumber: 1,
+      idNumber: "",
       password: password,
       phone: phone,
       address: address,
@@ -194,7 +194,7 @@ const RegisterTutor = () => {
       const endpoint = HOST_API.local + "/api/auth/registerTutor";
       const response = await axios.post(endpoint, {
         email: user.email,
-        idNumber: 1,
+        idNumber: "1",
         password: user.password,
         fullname: user.name,
         phone: user.phone,
@@ -208,7 +208,6 @@ const RegisterTutor = () => {
         imgAvatar: user.imgAvatar,
         imgIdFront: user.imgIdFront,
         imdIdBack: user.imdIdBack,
-
         // email: "DemoRegisterTutor@gmail.com",
         // idNumber: 1,
         // password: "1",
@@ -256,7 +255,7 @@ const RegisterTutor = () => {
         ]);
       }
     } catch (error) {
-      console.log(error.message);
+      console.log(error);
       Alert.alert("Error", "error", [
         {
           text: "Cancel",

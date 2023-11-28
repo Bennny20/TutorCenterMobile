@@ -141,6 +141,12 @@ const CreateRequestPage = () => {
     // console.log(subject);
   }
 
+  //Chi phí
+  const [isGetTuition, setIsGetTuition] = useState(false);
+  const getTuition = (value) => {
+    return setPrice(value), setIsGetTuition(true);
+  };
+
   const [date, setDate] = useState(new Date());
   const [showPicker, setShowPicker] = useState(false);
   const [showPickerEnd, setShowPickerEnd] = useState(false);
@@ -288,6 +294,13 @@ const CreateRequestPage = () => {
         ]);
         console.log("Create failed", error);
       });
+  };
+
+  const formattedAmount = (number) => {
+    return Intl.NumberFormat("vi-VN", {
+      style: "currency",
+      currency: "VND",
+    }).format(number);
   };
 
   return (
@@ -548,8 +561,11 @@ const CreateRequestPage = () => {
                       style={[styles.item, { borderColor: COLORS.main }]}
                       onPress={() => {
                         setSelectSubject(item.name);
+                        console.log(item);
                         setIsClickSubject(false);
                         setSubjectValue(item.id);
+                        getTuition(item.pricePerHour);
+                        // getTuition(item.name);
                       }}
                     >
                       <Text>{item.name}</Text>
@@ -564,6 +580,22 @@ const CreateRequestPage = () => {
         {/* Chi phí */}
         <View>
           <Text style={styles.itemText}>Chi phí khóa học </Text>
+          {isGetTuition && (
+            <Text
+              style={[
+                styles.itemText,
+                {
+                  color: COLORS.gray,
+                  fontSize: SIZES.small,
+                  padding: 0,
+                  marginHorizontal: 20,
+                },
+              ]}
+            >
+              Chi phí gợi ý cho một buổi dậy: {formattedAmount(price)}
+            </Text>
+          )}
+
           <TextInput
             keyboardType="phone-pad"
             style={styles.input}

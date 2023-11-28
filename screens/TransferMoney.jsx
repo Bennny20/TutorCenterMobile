@@ -57,39 +57,9 @@ const TransferMoney = () => {
   const handleChoose = async () => {
     createOrder();
     const token = await AsyncStorage.getItem("token");
-    // const item = {
-    //   type: 1,
-    //   amount: classID.tuition,
-    // };
     console.log("payment ", payment);
     console.log("checkPayment ", checkPayment);
     if (checkPayment) {
-      const response = await fetch(
-        HOST_API.local + `/api/tutorApply/acceptTutor/${item.id}`,
-        {
-          method: "PUT",
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      );
-      const result = await response.json();
-      console.log(result);
-      if (result.responseCode == "00") {
-        Alert.alert("Chọn gia sư thành công", "Quản lý lớp", [
-          {
-            text: "Cancel",
-            onPress: () => {},
-          },
-          {
-            text: "Continue",
-            onPress: () => {
-              navigation.navigate("ManageClass", { user });
-            },
-          },
-          { defaultIndex: 1 },
-        ]);
-      }
     } else {
       Alert.alert("Chọn gia sư khoong thành công", "Quản lý lớp", [
         {
@@ -130,14 +100,34 @@ const TransferMoney = () => {
           },
         }
       );
-
+      console.log(response.data);
       if (response.data.responseCode === "00") {
-        console.log(response.data);
-        setCheckPayment(true);
-        setPayment(response.data);
+        const response = await fetch(
+          HOST_API.local + `/api/tutorApply/acceptTutor/${item.id}`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
+        const result = await response.json();
+        if (result.responseCode == "00") {
+          Alert.alert("Chọn gia sư thành công", "Quản lý lớp", [
+            {
+              text: "Cancel",
+              onPress: () => {},
+            },
+            {
+              text: "Continue",
+              onPress: () => {
+                navigation.navigate("ManageClass", { user });
+              },
+            },
+            { defaultIndex: 1 },
+          ]);
+        }
         setLoader(false);
-      } else {
-        setCheckPayment(false);
       }
     } catch (error) {
       console.log(error.message);
@@ -227,7 +217,7 @@ const TransferMoney = () => {
               <Button
                 loader={loader}
                 title={"Thanh toán"}
-                onPress={handleChoose}
+                onPress={createOrder}
                 isValid={{}}
               />
             )}
