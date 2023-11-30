@@ -20,7 +20,6 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ManageClass = () => {
   const navigation = useNavigation();
-
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = React.useCallback(() => {
     setRefreshing(true);
@@ -42,7 +41,7 @@ const ManageClass = () => {
           Authorization: "Bearer " + token,
         },
       });
-      setData(response.data);
+      setData(response.data.data);
     } catch (error) {
       console.log("error", error);
     } finally {
@@ -67,6 +66,9 @@ const ManageClass = () => {
     }
     return { major, classNo };
   };
+
+  // const list = data.sort((a, b) => new Date(b.dob) - new Date(a.dob));
+  // console.log(list);
 
   const Item = ({ item }) => (
     <View style={styles.requestItem}>
@@ -143,7 +145,7 @@ const ManageClass = () => {
             refreshing={refreshing}
             onRefresh={onRefresh}
             style={{ marginTop: 40, marginBottom: 40 }}
-            data={data.data}
+            data={data}
             renderItem={({ item }) => <Item item={item} />}
             keyExtractor={(item) => item.id}
           />

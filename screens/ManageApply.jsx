@@ -137,6 +137,31 @@ const ManageClass = () => {
           </View>
         </TouchableOpacity>
       )}
+
+      {item.status == 2 && (
+        <TouchableOpacity
+          onPress={() => navigation.navigate("AttendancePage")}
+          style={styles.requestStatus}
+        >
+          <View
+            style={{
+              width: "100%",
+              backgroundColor: COLORS.lightWhite,
+              borderRadius: 20,
+              borderWidth: 2,
+              borderColor: COLORS.main,
+              alignItems: "center",
+            }}
+          >
+            <Text
+              style={styles.requestStatusBtn}
+              onPress={() => navigation.navigate("AttendancePage")}
+            >
+              Đã có gia sư
+            </Text>
+          </View>
+        </TouchableOpacity>
+      )}
     </View>
   );
 

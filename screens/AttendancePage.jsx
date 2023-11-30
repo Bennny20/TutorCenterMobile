@@ -188,15 +188,16 @@ const AttendancePage = () => {
             <Text style={styles.titleText}>Tạo điểm danh</Text>
           </TouchableOpacity> */}
           {length == item.slots ? (
-            <TouchableOpacity
-              style={styles.createAttendance}
-              onPressIn={() =>
-                navigation.navigate("FeedbackClass", { item, length })
-              }
-            >
-              <Ionicons name="add-circle" size={20} color={COLORS.main} />
-              <Text style={styles.titleText}>Kết thúc lớp học</Text>
-            </TouchableOpacity>
+            // <TouchableOpacity
+            //   style={styles.createAttendance}
+            //   onPressIn={() =>
+            //     navigation.navigate("FeedbackClass", { item, length })
+            //   }
+            // >
+            //   <Ionicons name="add-circle" size={20} color={COLORS.main} />
+            //   <Text style={styles.titleText}>Kết thúc lớp học</Text>
+            // </TouchableOpacity>
+            <View></View>
           ) : (
             <TouchableOpacity
               style={styles.createAttendance}

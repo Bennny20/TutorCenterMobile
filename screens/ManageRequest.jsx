@@ -80,12 +80,17 @@ const ManageRequest = () => {
     <View>
       <View style={styles.requestItem}>
         <View style={styles.requestInfo}>
-          <Text style={styles.requestTitle}>{majors({ item }).major}</Text>
-          <Text style={styles.requestSup}>Giới tính: {item.gender} </Text>
-          <Text style={styles.requestSup}>{majors({ item }).classNo} </Text>
-          <Text style={styles.requestSup}>{item.address} </Text>
-          <Text style={styles.requestSup}>{item.tutorLevel}</Text>
+          <TouchableOpacity
+            onPressIn={() => navigation.navigate("RequestDetail", { item })}
+          >
+            <Text style={styles.requestTitle}>{majors({ item }).major}</Text>
+            <Text style={styles.requestSup}>Giới tính: {item.gender} </Text>
+            <Text style={styles.requestSup}>{majors({ item }).classNo} </Text>
+            <Text style={styles.requestSup}>{item.address} </Text>
+            <Text style={styles.requestSup}>{item.tutorLevel}</Text>
+          </TouchableOpacity>
         </View>
+
         <View style={styles.requestStatus}>
           <View
             style={{
@@ -101,33 +106,6 @@ const ManageRequest = () => {
               <Text style={styles.requestStatusBtn}>Đã duyệt</Text>
             )}
           </View>
-          {/* {item.status === 1 && (
-            <TouchableOpacity
-              onPressIn={() =>
-                navigation.navigate("TransferMoney", {
-                  item,
-                  userData,
-                  wallet,
-                })
-              }
-            >
-              <View
-                style={{
-                  marginTop: 10,
-                  backgroundColor: COLORS.main,
-                  borderRadius: 20,
-                  borderWidth: 2,
-                  borderColor: COLORS.white,
-                }}
-              >
-                <Text
-                  style={[styles.requestStatusBtn, { color: COLORS.white }]}
-                >
-                  Thanh toán
-                </Text>
-              </View>
-            </TouchableOpacity>
-          )} */}
         </View>
       </View>
     </View>

@@ -26,8 +26,12 @@ import ApplyPage from "./ApplyPage";
 import Transaction from "./Transaction";
 import History from "./History";
 import Order from "./Order";
+import Verification from "./Verification";
+import RequestDetail from "./RequestDetail";
 
 export {
+  RequestDetail,
+  Verification,
   History,
   Transaction,
   TransferMoney,

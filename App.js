@@ -28,6 +28,8 @@ import {
   History,
   ManageClassTutor,
   Order,
+  Verification,
+  RequestDetail,
 } from "./screens";
 import { useEffect } from "react";
 import { LogBox } from "react-native";
@@ -183,6 +185,18 @@ export default function App() {
         <Stack.Screen
           name="Order"
           component={Order}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="Verification"
+          component={Verification}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="RequestDetail"
+          component={RequestDetail}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

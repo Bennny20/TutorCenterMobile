@@ -7,6 +7,7 @@ import { useEffect } from "react";
 import { useState } from "react";
 import axios from "axios";
 import { ActivityIndicator } from "react-native";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 const ClassCardView = ({ item }) => {
   const navigation = useNavigation();
   const [error, setError] = useState();
@@ -15,11 +16,38 @@ const ClassCardView = ({ item }) => {
   const [loader, setLoader] = useState(false);
   useEffect(() => {
     fetchClassDetail();
+    checkExitingUser();
   }, []);
+
+  const [userData, setUserData] = useState(null);
+  const [user, setUser] = useState(null);
+  const checkExitingUser = async () => {
+    const token = await AsyncStorage.getItem("token");
+    if (token !== null) {
+      setLoader(true);
+      try {
+        const currentUser = await axios.get(
+          HOST_API.local + `/api/user/authProfile`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
+        if (currentUser !== null) {
+          setUserData(currentUser.data.data);
+          setUser(currentUser.data.data.id);
+        }
+      } catch (error) {
+        console.log("Get user data error", error);
+      } finally {
+        setLoader(false);
+      }
+    }
+  };
 
   const fetchClassDetail = async () => {
     setLoader(true);
-
     try {
       const response = await axios.get(
         HOST_API.local + `/api/clazz/${item.id}`
@@ -55,7 +83,12 @@ const ClassCardView = ({ item }) => {
       ) : (
         <TouchableOpacity
           onPress={() =>
-            navigation.navigate("ClassDetail", { item, classDetail })
+            navigation.navigate("ClassDetail", {
+              item,
+              classDetail,
+              user,
+              userData,
+            })
           }
         >
           <View style={styles.container}>

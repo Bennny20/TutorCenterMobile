@@ -208,21 +208,6 @@ const RegisterTutor = () => {
         imgAvatar: user.imgAvatar,
         imgIdFront: user.imgIdFront,
         imdIdBack: user.imdIdBack,
-        // email: "DemoRegisterTutor@gmail.com",
-        // idNumber: 1,
-        // password: "1",
-        // fullname: "Demo Register Tutor",
-        // phone: "0838228607",
-        // address: "123 Demo",
-        // districtId: 2,
-        // gender: "Nam",
-        // university: "FPT University",
-        // major: "Công Nghệ Thông Tin",
-        // area: "Quận Hoàn Kiếm, Thành phố Hà Nội",
-        // imgCertificate: "IMG_3329.jpg",
-        // imgAvatar: "IMG_3556.jpg",
-        // imgIdFront: "IMG_3329.jpg",
-        // imdIdBack: "IMG_3198.JPG",
       });
       console.log(response.data);
       if (response.data.responseCode === "00") {

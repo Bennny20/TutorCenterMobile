@@ -45,6 +45,7 @@ const ManageClassTutor = () => {
         },
       });
       setData(response.data);
+      console.log(response.data);
     } catch (error) {
       console.log("error", error);
     } finally {
@@ -54,7 +55,6 @@ const ManageClassTutor = () => {
   useEffect(() => {
     fetchClass();
   }, []);
-  console.log(data);
   const majors = ({ item }) => {
     var major = "";
     var classNo = "";
@@ -74,29 +74,13 @@ const ManageClassTutor = () => {
         onPress={() => navigation.navigate("ClassDetail", { item })}
       >
         <View style={styles.requestInfo}>
-          <Text style={styles.requestTitle}>{majors(item).major}</Text>
+          {/* <Text style={styles.requestTitle}>{majors(item).major}</Text> */}
           <Text style={styles.requestSup}>{item.tutorLevel} </Text>
-          <Text style={styles.requestSup}>{majors(item).major}</Text>
+          {/* <Text style={styles.requestSup}>{majors(item).major}</Text> */}
           <Text style={styles.requestSup}>{item.address} </Text>
         </View>
       </TouchableOpacity>
-      {item.status == 0 ? (
-        <TouchableOpacity
-          onPress={() => navigation.navigate("ClassDetail", { item })}
-          style={styles.requestStatus}
-        >
-          <View
-            style={{
-              backgroundColor: COLORS.lightWhite,
-              borderRadius: 20,
-              borderWidth: 2,
-              borderColor: COLORS.main,
-            }}
-          >
-            <Text style={styles.requestStatusBtn}>Chọn gia sư</Text>
-          </View>
-        </TouchableOpacity>
-      ) : item.status == 1 ? (
+      {item.status == 1 ? (
         <TouchableOpacity
           onPress={() => navigation.navigate("AttendancePage", { item })}
           style={styles.requestStatus}
@@ -113,21 +97,23 @@ const ManageClassTutor = () => {
           </View>
         </TouchableOpacity>
       ) : (
-        <TouchableOpacity
-          onPress={() => navigation.navigate("AttendancePage", { item })}
-          style={styles.requestStatus}
-        >
-          <View
-            style={{
-              backgroundColor: COLORS.lightWhite,
-              borderRadius: 20,
-              borderWidth: 2,
-              borderColor: COLORS.main,
-            }}
+        item.status == 2 && (
+          <TouchableOpacity
+            onPress={() => navigation.navigate("AttendancePage", { item })}
+            style={styles.requestStatus}
           >
-            <Text style={styles.requestStatusBtn}>Hoàn thành</Text>
-          </View>
-        </TouchableOpacity>
+            <View
+              style={{
+                backgroundColor: COLORS.lightWhite,
+                borderRadius: 20,
+                borderWidth: 2,
+                borderColor: COLORS.main,
+              }}
+            >
+              <Text style={styles.requestStatusBtn}>Hoàn thành</Text>
+            </View>
+          </TouchableOpacity>
+        )
       )}
     </View>
   );

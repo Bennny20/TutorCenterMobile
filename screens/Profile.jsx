@@ -23,19 +23,18 @@ import axios from "axios";
 
 const Profile = () => {
   const navigation = useNavigation();
-
   const [loader, setLoader] = useState(false);
-
   const [userData, setUserData] = useState(null);
   const [user, setUser] = useState(null);
   const [userLogin, setUserLogin] = useState(false);
+  const [userTutor, setUserTutor] = useState(null);
+
   useEffect(() => {
     checkExitingUser();
   }, []);
 
   const checkExitingUser = async () => {
     const token = await AsyncStorage.getItem("token");
-    console.log(token);
     if (token != null) {
       setLoader(true);
       try {
@@ -51,14 +50,26 @@ const Profile = () => {
           setUserData(currentUser.data.data);
           setUserLogin(true);
           setUser(currentUser.data.data.id);
+          if (currentUser.data.data.role === "TUTOR") {
+            const dataTutor = await axios.get(
+              HOST_API.local + `/api/tutor/profile`,
+              {
+                headers: {
+                  Authorization: "Bearer " + token,
+                },
+              }
+            );
+            if (dataTutor !== null) {
+              setUserTutor(dataTutor.data.data);
+              console.log(dataTutor.data.data);
+            }
+          }
         }
       } catch (error) {
         console.log("error", error);
       } finally {
         setLoader(false);
       }
-    } else {
-      setLoader(false);
     }
   };
 
@@ -88,7 +99,7 @@ const Profile = () => {
   return (
     <SafeAreaView>
       <View style={styles.heading}>
-        <Text style={styles.headingText}> Thong tin ca nhan</Text>
+        <Text style={styles.headingText}> Thông tin cá nhân</Text>
         <View style={{ alignItems: "flex-end", marginRight: 10 }}>
           <View style={styles.cartCount}>
             <Text style={styles.cartNumber}>8</Text>
@@ -142,6 +153,19 @@ const Profile = () => {
               ) : (
                 <View style={styles.loginBtn}>
                   <Text style={styles.email}>{userData.fullName}</Text>
+                  {userTutor !== null && userTutor.status == 0 && (
+                    <TouchableOpacity
+                      onPressIn={() =>
+                        navigation.navigate("Verification", {
+                          userData,
+                          userTutor,
+                        })
+                      }
+                    >
+                      <Text style={styles.supplier}>Xác minh tài khoản</Text>
+                    </TouchableOpacity>
+                  )}
+
                   <Text style={styles.supplier}>{userData.role}</Text>
                 </View>
               )}

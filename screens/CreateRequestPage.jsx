@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   FlatList,
   LogBox,
+  ActivityIndicator,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { COLORS, SIZES, HOST_API } from "../constants";
@@ -22,8 +23,48 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CreateRequestPage = () => {
   useEffect(() => {
+    checkExitingUser();
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
   }, []);
+
+  const [userData, setUserData] = useState(null);
+  const [user, setUser] = useState(null);
+  const checkExitingUser = async () => {
+    const token = await AsyncStorage.getItem("token");
+    if (token != null) {
+      setLoader(true);
+      try {
+        const currentUser = await axios.get(
+          HOST_API.local + `/api/user/authProfile`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
+        if (currentUser !== null) {
+          setUserData(currentUser.data.data);
+          setUser(currentUser.data.data.id);
+        }
+      } catch (error) {
+        console.log("error", error);
+      } finally {
+        setLoader(false);
+      }
+    } else {
+      Alert.alert("Bạn chưa đăng nhập", "Đăng nhập ngay", [
+        {
+          text: "Cancel",
+          onPress: () => navigation.replace("Bottom Navigation"),
+        },
+        {
+          text: "Continue",
+          onPress: () => navigation.navigate("Login"),
+        },
+      ]);
+    }
+  };
+
   const navigation = useNavigation();
   const [address, setAddress] = useState("");
   const [slot, setSlot] = useState(0);
@@ -143,8 +184,9 @@ const CreateRequestPage = () => {
 
   //Chi phí
   const [isGetTuition, setIsGetTuition] = useState(false);
+  const [getTuitionValue, setGetTuitionValue] = useState(false);
   const getTuition = (value) => {
-    return setPrice(value), setIsGetTuition(true);
+    return setGetTuitionValue(value), setIsGetTuition(true);
   };
 
   const [date, setDate] = useState(new Date());
@@ -205,7 +247,23 @@ const CreateRequestPage = () => {
   };
 
   const handleCreate = async () => {
+    const request = {
+      phone: phone,
+      address: address,
+      listSubjectId: [subjectValue],
+      gender: genderValue,
+      slots: Number(slot),
+      slotsLength: slotLength,
+      tuition: Number(price),
+      notes: description,
+      dateStart: dateStartValue,
+      dateEnd: dateEndValue,
+      districtId: districtValue,
+      tutorLevel: levelValue,
+    };
+    console.log(request);
     const token = await AsyncStorage.getItem("token");
+    console.log(token);
     axios
       .post(
         HOST_API.local + "/api/request/create",
@@ -239,6 +297,7 @@ const CreateRequestPage = () => {
           setSelectLevel("Chọn trình độ gia sư");
           setSelectClass("Chọn lớp học");
           setSelectSubject("Chọn môn học");
+          setIsGetTuition(false);
           setSlot(0);
           setPhone();
           setPrice(0);
@@ -257,7 +316,10 @@ const CreateRequestPage = () => {
             {
               text: "Continue",
               onPress: () => {
-                navigation.navigate("ManageRequest");
+                navigation.navigate("ManageRequest", {
+                  user,
+                  userData,
+                });
               },
             },
             { defaultIndex: 1 },
@@ -577,6 +639,18 @@ const CreateRequestPage = () => {
           )}
         </View>
 
+        {/* Số buổi */}
+        <View>
+          <Text style={styles.itemText}>Số buổi </Text>
+          <TextInput
+            keyboardType="phone-pad"
+            style={styles.input}
+            value={String(slot)}
+            onChangeText={(text) => setSlot(text)}
+            placeholder="Số buổi"
+          />
+        </View>
+
         {/* Chi phí */}
         <View>
           <Text style={styles.itemText}>Chi phí khóa học </Text>
@@ -592,7 +666,8 @@ const CreateRequestPage = () => {
                 },
               ]}
             >
-              Chi phí gợi ý cho một buổi dậy: {formattedAmount(price)}
+              Chi phí gợi ý cho khóa học:
+              {formattedAmount(getTuitionValue * slot)}
             </Text>
           )}
 
@@ -602,18 +677,6 @@ const CreateRequestPage = () => {
             value={String(price)}
             onChangeText={(text) => setPrice(text)}
             placeholder="Chi phí"
-          />
-        </View>
-
-        {/* Số buổi */}
-        <View>
-          <Text style={styles.itemText}>Số buổi </Text>
-          <TextInput
-            keyboardType="phone-pad"
-            style={styles.input}
-            value={String(slot)}
-            onChangeText={(text) => setSlot(text)}
-            placeholder="Số buổi"
           />
         </View>
 
@@ -773,11 +836,15 @@ const CreateRequestPage = () => {
           />
         </View>
 
-        <TouchableOpacity onPress={handleCreate}>
-          <View style={styles.btn}>
-            <Text style={styles.btnText}>Đăng kí</Text>
-          </View>
-        </TouchableOpacity>
+        {loader ? (
+          <ActivityIndicator size={500} color={COLORS.main} />
+        ) : (
+          <TouchableOpacity onPress={handleCreate}>
+            <View style={styles.btn}>
+              <Text style={styles.btnText}>Đăng kí</Text>
+            </View>
+          </TouchableOpacity>
+        )}
       </KeyboardAwareScrollView>
     </View>
   );

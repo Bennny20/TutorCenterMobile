@@ -61,7 +61,7 @@ const TransferMoney = () => {
     console.log("checkPayment ", checkPayment);
     if (checkPayment) {
     } else {
-      Alert.alert("Chọn gia sư khoong thành công", "Quản lý lớp", [
+      Alert.alert("Chọn gia sư không thành công", "Quản lý lớp", [
         {
           text: "Cancel",
           onPress: () => {},
@@ -83,7 +83,7 @@ const TransferMoney = () => {
     const order = {
       clazzId: classID.id,
       amount: classID.tuition,
-      type: 1,
+      type: "Chuyen",
     };
     setLoader(true);
     try {
@@ -113,7 +113,7 @@ const TransferMoney = () => {
         );
         const result = await response.json();
         if (result.responseCode == "00") {
-          Alert.alert("Chọn gia sư thành công", "Quản lý lớp", [
+          Alert.alert("Chọn gia sư thành công va", "Quản lý lớp", [
             {
               text: "Cancel",
               onPress: () => {},
@@ -121,7 +121,7 @@ const TransferMoney = () => {
             {
               text: "Continue",
               onPress: () => {
-                navigation.navigate("ManageClass", { user });
+                navigation.navigate("Profile");
               },
             },
             { defaultIndex: 1 },

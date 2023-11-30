@@ -4,6 +4,7 @@ import { COLORS, HOST_API, SIZES } from "../../constants";
 import { useNavigation } from "@react-navigation/native";
 import { ActivityIndicator } from "react-native";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ClassItem = ({ item }) => {
   const navigation = useNavigation();
@@ -19,11 +20,40 @@ const ClassItem = ({ item }) => {
     }
     classNo = item.subjects[index].level;
   }
+
   const [classDetail, setClassDetail] = useState();
   const [loader, setLoader] = useState(false);
   useEffect(() => {
     fetchClassDetail();
+    checkExitingUser();
   }, []);
+
+  const [userData, setUserData] = useState(null);
+  const [user, setUser] = useState(null);
+  const checkExitingUser = async () => {
+    const token = await AsyncStorage.getItem("token");
+    if (token !== null) {
+      setLoader(true);
+      try {
+        const currentUser = await axios.get(
+          HOST_API.local + `/api/user/authProfile`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
+        if (currentUser !== null) {
+          setUserData(currentUser.data.data);
+          setUser(currentUser.data.data.id);
+        }
+      } catch (error) {
+        console.log("Get user data error", error);
+      } finally {
+        setLoader(false);
+      }
+    }
+  };
 
   const fetchClassDetail = async () => {
     setLoader(true);
@@ -39,7 +69,6 @@ const ClassItem = ({ item }) => {
     }
   };
 
-  // console.log(classDetail);
   const formattedAmount = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
@@ -61,7 +90,12 @@ const ClassItem = ({ item }) => {
         <TouchableOpacity
           style={styles.content}
           onPress={() =>
-            navigation.navigate("ClassDetail", { item, classDetail })
+            navigation.navigate("ClassDetail", {
+              item,
+              classDetail,
+              user,
+              userData,
+            })
           }
         >
           <View style={styles.title}>

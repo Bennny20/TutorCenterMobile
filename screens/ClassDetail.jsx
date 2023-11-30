@@ -7,54 +7,84 @@ import {
   Alert,
 } from "react-native";
 import React from "react";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { COLORS, HOST_API, SIZES } from "../constants";
-import { ScrollView } from "react-native";
-import TutorItemApply from "../components/Tutor/TuorItemApply";
 import { useState, useCallback } from "react";
 import axios from "axios";
 import { useEffect } from "react";
 import { ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import { Image } from "react-native";
-import { RefreshControl } from "react-native";
-import CurrencyFormatter from "../components/CurrencyFormatter ";
-import { FlatList } from "react-native";
 
 const ClassDetail = () => {
   const navigation = useNavigation();
 
   const route = useRoute();
-  const { item, classDetail } = route.params;
+  const { item, classDetail, user, userData } = route.params;
   const [loader, setLoader] = useState(false);
-  // console.log(item);
-  const [userData, setUserData] = useState(null);
-  const [user, setUser] = useState(null);
   useEffect(() => {
-    checkExitingUser();
+    checkExitingApply();
+    checkRoleTutor();
   }, []);
 
-  const checkExitingUser = async () => {
+  const [userTutor, setUserTutor] = useState(null);
+  const checkRoleTutor = async () => {
     const token = await AsyncStorage.getItem("token");
-    setLoader(true);
-    try {
-      const currentUser = await axios.get(
-        HOST_API.local + `/api/user/authProfile`,
-        {
+    if (userData?.role === "TUTOR") {
+      setLoader(true);
+      try {
+        const dataTutor = await axios.get(
+          HOST_API.local + `/api/tutor/profile`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
+        if (dataTutor !== null) {
+          setUserTutor(dataTutor.data.data);
+          console.log("tutor: ", dataTutor.data.data);
+        }
+      } catch (error) {
+        console.log("Get tutor data error", error);
+      } finally {
+        setLoader(false);
+      }
+    }
+  };
+
+  const [listApply, setListApply] = useState([]);
+  const [checkApply, setCheckApply] = useState(false);
+  const checkExitingApply = async () => {
+    const token = await AsyncStorage.getItem("token");
+    if (token !== "" || token !== null) {
+      setLoader(true);
+      try {
+        const list = await axios.get(HOST_API.local + `/api/tutorApply/tutor`, {
           headers: {
             Authorization: "Bearer " + token,
           },
+        });
+        if (list !== null) {
+          setListApply(list.data.data);
+          // console.log("list apply", list.data.data);
+          checkApplied(list.data.data);
         }
-      );
-      if (currentUser !== null) {
-        setUserData(currentUser.data.data);
-        setUser(currentUser.data.data.id);
+      } catch (error) {
+        console.log("Get user data error", error);
+      } finally {
+        setLoader(false);
       }
-    } catch (error) {
-      console.log("Get user data error", error);
-    } finally {
-      setLoader(false);
+    }
+  };
+
+  const checkApplied = (list) => {
+    for (let index = 0; index < list.length; index++) {
+      if (list[index].clazzId === item.id) {
+        // console.log("item ", list[index]);
+        setCheckApply(true);
+        break;
+      }
     }
   };
 
@@ -79,9 +109,6 @@ const ClassDetail = () => {
 
   const createApply = async () => {
     const token = await AsyncStorage.getItem("token");
-    // console.log(token);
-    // console.log(classDetail.id);
-    // console.log(user);
     const url =
       HOST_API.local +
       `/api/tutorApply/create?clazzId=${classDetail.id}&tutorId=${user}`;
@@ -123,7 +150,6 @@ const ClassDetail = () => {
           },
           { defaultIndex: 1 },
         ]);
-        G;
       }
     }
   };
@@ -306,43 +332,66 @@ const ClassDetail = () => {
         </View>
       )}
 
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        {userData == null && (
-          <TouchableOpacity style={styles.btnApply} onPress={createApply}>
-            <Ionicons name="receipt-outline" size={30} color={COLORS.black} />
-            <Text
-              style={{
-                marginLeft: 5,
-                fontFamily: "bold",
-                fontSize: SIZES.large,
-              }}
-            >
-              Apply
-            </Text>
-          </TouchableOpacity>
-        )}
-        {userData?.role === "TUTOR" ? (
-          <TouchableOpacity style={styles.btnApply} onPress={createApply}>
-            <Ionicons name="receipt-outline" size={30} color={COLORS.black} />
-            <Text
-              style={{
-                marginLeft: 5,
-                fontFamily: "bold",
-                fontSize: SIZES.large,
-              }}
-            >
-              Apply
-            </Text>
-          </TouchableOpacity>
-        ) : (
-          userData?.role === "PARENT" && <View></View>
-        )}
-      </View>
+      {loader ? (
+        <ActivityIndicator size={500} color={COLORS.main} />
+      ) : (
+        <View
+          style={{
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          {userData == null && (
+            <TouchableOpacity style={styles.btnApply} onPress={createApply}>
+              <Ionicons name="receipt-outline" size={30} color={COLORS.black} />
+              <Text
+                style={{
+                  marginLeft: 5,
+                  fontFamily: "bold",
+                  fontSize: SIZES.large,
+                }}
+              >
+                Apply
+              </Text>
+            </TouchableOpacity>
+          )}
+          {userData?.role === "TUTOR" &&
+          userTutor?.status == 2 &&
+          !checkApply ? (
+            <TouchableOpacity style={styles.btnApply} onPress={createApply}>
+              <Ionicons name="receipt-outline" size={30} color={COLORS.black} />
+              <Text
+                style={{
+                  marginLeft: 5,
+                  fontFamily: "bold",
+                  fontSize: SIZES.large,
+                }}
+              >
+                Apply
+              </Text>
+            </TouchableOpacity>
+          ) : checkApply ? (
+            <View style={styles.btnApply}>
+              <MaterialCommunityIcons
+                name="bookmark-check"
+                size={30}
+                color={COLORS.black}
+              />
+              <Text
+                style={{
+                  marginLeft: 5,
+                  fontFamily: "bold",
+                  fontSize: SIZES.large,
+                }}
+              >
+                Đã apply
+              </Text>
+            </View>
+          ) : (
+            userData?.role === "PARENT" && <View></View>
+          )}
+        </View>
+      )}
     </SafeAreaView>
   );
 };
@@ -493,10 +542,10 @@ const styles = StyleSheet.create({
   },
 
   price: {
-    width: 250,
-    borderColor: COLORS.main,
+    width: 350,
+    // borderColor: COLORS.main,
     borderRadius: 20,
-    borderWidth: 1,
+    // borderWidth: 1,
     alignItems: "center",
     backgroundColor: COLORS.lightWhite,
   },
