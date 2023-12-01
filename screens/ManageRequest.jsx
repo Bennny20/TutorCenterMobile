@@ -26,6 +26,7 @@ const ManageRequest = () => {
   const { user, userData } = route.params;
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState([]);
+  console.log(data);
 
   const [refreshing, setRefreshing] = useState(false);
   const onRefresh = React.useCallback(() => {
@@ -59,8 +60,6 @@ const ManageRequest = () => {
 
     fetchUserProfile();
   }, []);
-
-  const [wallet, setWallet] = useState();
 
   const majors = ({ item }) => {
     var major = "";

@@ -41,6 +41,7 @@ const RegisterTutor = () => {
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [idNumber, setIdNumber] = useState();
 
   const [address, setAddress] = useState();
   const [phone, setPhone] = useState();
@@ -173,7 +174,7 @@ const RegisterTutor = () => {
     const user = {
       email: email,
       name: name,
-      idNumber: "",
+      idNumber: idNumber,
       password: password,
       phone: phone,
       address: address,
@@ -194,7 +195,7 @@ const RegisterTutor = () => {
       const endpoint = HOST_API.local + "/api/auth/registerTutor";
       const response = await axios.post(endpoint, {
         email: user.email,
-        idNumber: "1",
+        idNumber: user.idNumber,
         password: user.password,
         fullname: user.name,
         phone: user.phone,
@@ -331,7 +332,7 @@ const RegisterTutor = () => {
               />
             </View>
             <View>
-              <Text style={styles.itemText}>Password </Text>
+              <Text style={styles.itemText}>Mật khẩu </Text>
               <TextInput
                 style={styles.input}
                 value={password}
@@ -341,11 +342,20 @@ const RegisterTutor = () => {
             </View>
 
             <View>
-              <Text style={styles.itemText}>Fullname </Text>
+              <Text style={styles.itemText}>Họ và tên </Text>
               <TextInput
                 style={styles.input}
                 value={name}
                 onChangeText={(text) => setName(text)}
+                placeholder="Nhập họ và tên"
+              />
+            </View>
+            <View>
+              <Text style={styles.itemText}>CCCD/CMND </Text>
+              <TextInput
+                style={styles.input}
+                value={idNumber}
+                onChangeText={(text) => setIdNumber(text)}
                 placeholder="Nhập họ và tên"
               />
             </View>

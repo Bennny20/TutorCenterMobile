@@ -7,12 +7,13 @@ import axios from "axios";
 
 const TutorItem = ({ item }) => {
   const navigation = useNavigation();
+  const idTutor = item.id;
 
   return (
     <View>
       <TouchableOpacity
         style={styles.container}
-        onPress={() => navigation.navigate("TutorDetail", { item })}
+        onPress={() => navigation.navigate("TutorDetail", { idTutor })}
       >
         <View style={styles.image}>
           <Image

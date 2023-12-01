@@ -15,7 +15,9 @@ const TutorItemApply = ({ item, classID }) => {
   useEffect(() => {
     checkExitingUser();
   }, []);
+  const idTutor = item.tutorId;
 
+  console.log(item);
   const checkExitingUser = async () => {
     const token = await AsyncStorage.getItem("token");
     setLoader(true);
@@ -37,7 +39,6 @@ const TutorItemApply = ({ item, classID }) => {
       setLoader(false);
     }
   };
-  console.log(user);
 
   const handleChoose = async () => {
     const token = await AsyncStorage.getItem("token");
@@ -91,7 +92,10 @@ const TutorItemApply = ({ item, classID }) => {
         justifyContent: "space-around",
       }}
     >
-      <TouchableOpacity style={styles.container}>
+      <TouchableOpacity
+        style={styles.container}
+        onPress={() => navigation.navigate("TutorDetail", { idTutor })}
+      >
         <View style={styles.image}>
           <Image
             source={{
@@ -102,7 +106,6 @@ const TutorItemApply = ({ item, classID }) => {
         </View>
         <View style={styles.textContent}>
           <Text style={styles.name}>{item.tutorName}</Text>
-          {/* <Text style={styles.supplier}>{item.major}</Text> */}
           <Text style={styles.supplier}>{item.tutorUniversity}</Text>
           <Text style={styles.supplier}>{item.tutorUniversity}</Text>
           <Text style={styles.supplier}>{item.tutorAddress}</Text>
@@ -121,9 +124,6 @@ const TutorItemApply = ({ item, classID }) => {
           </View>
         ) : (
           item.status == 0 && (
-            // <TouchableOpacity style={styles.btnStatus} onPress={handleChoose}>
-            //   <Text style={styles.txtStatus}>Chọn gia sư</Text>
-            // </TouchableOpacity>
             <TouchableOpacity
               style={styles.btnStatus}
               onPress={() =>

@@ -61,7 +61,7 @@ const Profile = () => {
             );
             if (dataTutor !== null) {
               setUserTutor(dataTutor.data.data);
-              console.log(dataTutor.data.data);
+              // console.log(dataTutor.data.data);
             }
           }
         }
@@ -153,7 +153,7 @@ const Profile = () => {
               ) : (
                 <View style={styles.loginBtn}>
                   <Text style={styles.email}>{userData.fullName}</Text>
-                  {userTutor !== null && userTutor.status == 0 && (
+                  {userTutor !== null && userTutor.status == 0 ? (
                     <TouchableOpacity
                       onPressIn={() =>
                         navigation.navigate("Verification", {
@@ -164,9 +164,22 @@ const Profile = () => {
                     >
                       <Text style={styles.supplier}>Xác minh tài khoản</Text>
                     </TouchableOpacity>
+                  ) : userTutor !== null && userTutor.status == 1 ? (
+                    <TouchableOpacity
+                      onPressIn={() =>
+                        navigation.navigate("Verification", {
+                          userData,
+                          userTutor,
+                        })
+                      }
+                    >
+                      <Text style={styles.supplier}>
+                        Đang xác minh tài khoản
+                      </Text>
+                    </TouchableOpacity>
+                  ) : (
+                    <Text style={styles.supplier}>{userData.role}</Text>
                   )}
-
-                  <Text style={styles.supplier}>{userData.role}</Text>
                 </View>
               )}
               {userLogin === false ? (

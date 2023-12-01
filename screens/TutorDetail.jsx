@@ -6,18 +6,20 @@ import {
   View,
   TouchableOpacity,
   Image,
+  FlatList,
 } from "react-native";
 import React, { useState, useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import { COLORS, HOST_API, SIZES } from "../constants";
 import axios from "axios";
+import { ActivityIndicator } from "react-native";
 
 const TutorDetail = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { item, user } = route.params;
-  console.log("Item: ", item);
+  const { idTutor } = route.params;
+  // console.log("Item: ", item);
   const [tutorDetail, setTutorDetail] = useState();
   const [loader, setLoader] = useState(false);
   useEffect(() => {
@@ -25,7 +27,7 @@ const TutorDetail = () => {
     const fetchClassDetail = async () => {
       try {
         const response = await axios.get(
-          HOST_API.local + `/api/tutor/${item.id}`
+          HOST_API.local + `/api/tutor/${idTutor}`
         );
         setTutorDetail(response.data.data);
       } catch (error) {
@@ -36,7 +38,6 @@ const TutorDetail = () => {
     };
     fetchClassDetail();
   }, []);
-  console.log("Tutor Detail: ", tutorDetail);
   return (
     <View>
       <View styles={styles.container}>
@@ -52,39 +53,52 @@ const TutorDetail = () => {
             <Text style={styles.heading}>Thông tin của gia su </Text>
           </View>
         </View>
-        <ScrollView style={{ marginTop: 60 }}>
-          <View style={styles.tutorInfo}>
-            <View style={styles.info}>
-              <View style={{ alignItems: "center" }}>
-                <Image
-                  source={require("../assets/images/profile.jpeg")}
-                  style={styles.profileImg}
-                />
-              </View>
-              <View style={{ marginHorizontal: 20, marginVertical: 10 }}>
-                <Text style={styles.name}>{item.tutorName} </Text>
-                <Text style={styles.sup}>Giới tính: {item.gender} </Text>
-                <Text style={styles.sup}>Địa chỉ: {item.address} </Text>
-                <Text style={styles.sup}>
-                  {item.districtName}, {item.provinceName}
-                </Text>
-                <Text style={styles.sup}>Sinh viên </Text>
-                <Text style={styles.sup}>Trường đại học:{item.gender}</Text>
-                <Text style={styles.sup}>Chuyên môn: {item.major}</Text>
-                <Text style={styles.sup}>Kinh nghiệm: {item.major}</Text>
+        {loader ? (
+          <ActivityIndicator size={500} color={COLORS.main} />
+        ) : (
+          <ScrollView style={{ marginTop: 60 }}>
+            <View style={styles.tutorInfo}>
+              <View style={styles.info}>
+                <View style={{ alignItems: "center" }}>
+                  <Image
+                    source={require("../assets/images/profile.jpeg")}
+                    style={styles.profileImg}
+                  />
+                </View>
+                <View style={{ marginHorizontal: 20, marginVertical: 10 }}>
+                  <Text style={styles.name}>{tutorDetail?.tutorName} </Text>
+                  <Text style={styles.sup}>
+                    Giới tính: {tutorDetail?.gender}
+                  </Text>
+                  <Text style={styles.sup}>
+                    Địa chỉ: {tutorDetail?.address}
+                  </Text>
+                  <Text style={styles.sup}>
+                    {tutorDetail?.districtName}, {tutorDetail?.provinceName}
+                  </Text>
+                  <Text style={styles.sup}>Sinh viên </Text>
+                  <Text style={styles.sup}>
+                    Trường đại học:{tutorDetail?.gender}
+                  </Text>
+                  <Text style={styles.sup}>
+                    Chuyên môn: {tutorDetail?.major}
+                  </Text>
+                  <Text style={styles.sup}>
+                    Kinh nghiệm: {tutorDetail?.major}
+                  </Text>
+                </View>
               </View>
             </View>
-          </View>
-          <View style={{ marginTop: 10, marginLeft: 10 }}>
-            <Text style={styles.name}>Bằng cấp, thông tin liên quan</Text>
-            <View
-              style={{
-                alignItems: "center",
-                justifyContent: "space-between",
-                flexDirection: "row",
-              }}
-            >
-              {/* <Image
+            <View style={{ marginTop: 10, marginLeft: 10 }}>
+              <Text style={styles.name}>Bằng cấp, thông tin liên quan</Text>
+              <View
+                style={{
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                  flexDirection: "row",
+                }}
+              >
+                {/* <Image
                 source={{ uri: item.certificate[0] }}
                 style={styles.certificate}
               />
@@ -92,32 +106,26 @@ const TutorDetail = () => {
                 source={{ uri: item.certificate[1] }}
                 style={styles.certificate}
               /> */}
+              </View>
             </View>
-          </View>
-          <View style={{ marginTop: 10, marginLeft: 10 }}>
-            <Text style={styles.name}>Đánh giá: </Text>
-          </View>
 
-          <View
-            style={{ alignItems: "center", marginTop: 10, marginBottom: 20 }}
-          >
-            <View style={styles.inputWrapper}>
-              <TextInput
-                placeholder="Đánh giá của bạn"
-                multiline
-                numberOfLines={10}
-              ></TextInput>
+            <View
+              style={{ alignItems: "center", marginTop: 10, marginBottom: 20 }}
+            >
+              <TouchableOpacity
+                onPressIn={() =>
+                  navigation.navigate("FeedbackTutor", { tutorDetail, idTutor })
+                }
+                style={styles.btnStyle}
+              >
+                <Text style={styles.btnText}>Xem đánh giá</Text>
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity onPress={{}} style={styles.btnStyle}>
-              <Text style={styles.btnText}>Gửi đánh giá</Text>
-            </TouchableOpacity>
-          </View>
-          <View>
-            <Text></Text>
-            <Text></Text>
-            <Text></Text>
-          </View>
-        </ScrollView>
+            <View>
+              <FlatList />
+            </View>
+          </ScrollView>
+        )}
       </View>
     </View>
   );

@@ -28,8 +28,10 @@ import History from "./History";
 import Order from "./Order";
 import Verification from "./Verification";
 import RequestDetail from "./RequestDetail";
+import FeedbackTutor from "./FeedbackTutor";
 
 export {
+  FeedbackTutor,
   RequestDetail,
   Verification,
   History,

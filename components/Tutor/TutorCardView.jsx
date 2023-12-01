@@ -9,10 +9,10 @@ import { useState } from "react";
 
 const TutorCartView = ({ item }) => {
   const navigation = useNavigation();
-
+  const idTutor = item.id;
   return (
     <TouchableOpacity
-      onPress={() => navigation.navigate("TutorDetail", { item })}
+      onPress={() => navigation.navigate("TutorDetail", { idTutor })}
     >
       <View style={styles.container}>
         <View style={styles.imageContainer}>

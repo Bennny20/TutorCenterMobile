@@ -62,6 +62,7 @@ const Login = () => {
     })
       .then((res) => res.json())
       .then(async (data) => {
+        console.log(data);
         try {
           console.log(data);
           setLoader(false);
@@ -101,6 +102,7 @@ const Login = () => {
           ]);
         }
       });
+    setLoader(false);
   };
 
   return (
