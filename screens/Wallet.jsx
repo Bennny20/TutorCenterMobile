@@ -31,26 +31,6 @@ const Wallet = () => {
   const [activeDeposit, setActiveDeposit] = useState(false);
   const [activeWithdraw, setActiveWithdraw] = useState(false);
 
-  const handelAll = () => {
-    setCurrentStep(0);
-    setActiveAll(true);
-    setActiveDeposit(false);
-    setActiveWithdraw(false);
-  };
-
-  const handelDeposit = () => {
-    setCurrentStep(1);
-    setActiveAll(false);
-    setActiveDeposit(true);
-    setActiveWithdraw(false);
-  };
-  const handelWithdraw = () => {
-    setCurrentStep(2);
-    setActiveAll(false);
-    setActiveDeposit(false);
-    setActiveWithdraw(true);
-  };
-
   const fetchBalance = async () => {
     const token = await AsyncStorage.getItem("token");
     setLoader(true);
@@ -119,6 +99,26 @@ const Wallet = () => {
       currency: "VND",
     }).format(value);
     return amount;
+  };
+
+  const handelAll = () => {
+    setCurrentStep(0);
+    setActiveAll(true);
+    setActiveDeposit(false);
+    setActiveWithdraw(false);
+  };
+
+  const handelDeposit = () => {
+    setCurrentStep(1);
+    setActiveAll(false);
+    setActiveDeposit(true);
+    setActiveWithdraw(false);
+  };
+  const handelWithdraw = () => {
+    setCurrentStep(2);
+    setActiveAll(false);
+    setActiveDeposit(false);
+    setActiveWithdraw(true);
   };
   const Item = ({ item }) => (
     <View style={styles.requestItem}>
@@ -328,24 +328,6 @@ const Wallet = () => {
         <Text style={styles.titleHistory}>Lịch sử giao dịch:</Text>
       </View>
       <View style={styles.search}>
-        {/* <View style={styles.searchContainer}>
-          <View style={styles.searchWrapper}>
-            <TextInput
-              style={styles.searchInput}
-              value={searchKey}
-              onChangeText={setSearchKey}
-              placeholder="What are you looking for "
-            />
-          </View>
-          <View>
-            <TouchableOpacity
-              style={styles.searchBtn}
-              onPress={() => handleSearch()}
-            >
-              <Feather name="search" size={24} color={COLORS.offwhite} />
-            </TouchableOpacity>
-          </View>
-        </View> */}
         <View style={styles.listButton}>
           <TouchableOpacity onPress={handelAll}>
             <View style={styles.btn(COLORS.secondMain)}>

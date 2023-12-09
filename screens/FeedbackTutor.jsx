@@ -33,6 +33,22 @@ const FeedbackTutor = () => {
     fetchClassDetail();
   }, []);
 
+  const subject = (item) => {
+    let major = " ";
+    let classNo = " ";
+    // console.log(item.subjects);
+    for (let index = 0; index < item.subjects.length; index++) {
+      console.log("item ", item.subjects[index].name);
+      if (index == item.subjects.length - 1) {
+        major += item.subjects[index].name;
+      } else {
+        major += item.subjects[index].name + ", ";
+      }
+      classNo = item.subjects[index].level;
+    }
+    return { major, classNo };
+  };
+
   const Item = ({ item }) => (
     <View style={styles.feedback}>
       <View style={styles.feedbackInfo}>
@@ -49,6 +65,15 @@ const FeedbackTutor = () => {
         <Text style={styles.sup}>
           Người đánh giá:
           <Text style={{ color: COLORS.black }}> {item.parentName}</Text>
+        </Text>
+
+        <Text style={styles.sup}>
+          Môn học:
+          <Text style={{ color: COLORS.black }}> {subject(item).major}</Text>
+        </Text>
+        <Text style={styles.sup}>
+          Lớp học:
+          <Text style={{ color: COLORS.black }}> {subject(item).classNo}</Text>
         </Text>
         <Text style={styles.sup}>
           Nội dung: <Text style={{ color: COLORS.black }}> {item.content}</Text>

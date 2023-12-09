@@ -56,7 +56,7 @@ const TutorDetail = () => {
         {loader ? (
           <ActivityIndicator size={500} color={COLORS.main} />
         ) : (
-          <ScrollView style={{ marginTop: 60 }}>
+          <View style={{ marginTop: 60 }}>
             <View style={styles.tutorInfo}>
               <View style={styles.info}>
                 <View style={{ alignItems: "center" }}>
@@ -121,10 +121,8 @@ const TutorDetail = () => {
                 <Text style={styles.btnText}>Xem đánh giá</Text>
               </TouchableOpacity>
             </View>
-            <View>
-              <FlatList />
-            </View>
-          </ScrollView>
+            <View></View>
+          </View>
         )}
       </View>
     </View>

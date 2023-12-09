@@ -261,7 +261,8 @@ const Login = () => {
                   <Text
                     style={styles.registration}
                     onPress={() => {
-                      navigation.navigate("Register");
+                      // navigation.navigate("Register");
+                      navigation.navigate("RequestDetail");
                     }}
                   >
                     Bạn quên mật khẩu?

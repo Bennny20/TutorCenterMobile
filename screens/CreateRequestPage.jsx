@@ -178,8 +178,12 @@ const CreateRequestPage = () => {
     );
     await response.json().then((data) => {
       setSubject(data.data);
+      let newArray = data.data.map((item) => {
+        return { label: item.name, value: item.id };
+      });
+      setSubject2(newArray);
+      console.log(subject2);
     });
-    // console.log(subject);
   }
 
   //Chi phí
@@ -250,7 +254,7 @@ const CreateRequestPage = () => {
     const request = {
       phone: phone,
       address: address,
-      listSubjectId: [subjectValue],
+      listSubjectId: subjectValue2,
       gender: genderValue,
       slots: Number(slot),
       slotsLength: slotLength,
@@ -263,99 +267,98 @@ const CreateRequestPage = () => {
     };
     console.log(request);
     const token = await AsyncStorage.getItem("token");
-    console.log(token);
-    axios
-      .post(
-        HOST_API.local + "/api/request/create",
-        {
-          phone: phone,
-          address: address,
-          listSubjectId: [subjectValue],
-          gender: genderValue,
-          slots: Number(slot),
-          slotsLength: slotLength,
-          tuition: Number(price),
-          notes: description,
-          dateStart: dateStartValue,
-          dateEnd: dateEndValue,
-          districtId: districtValue,
-          tutorLevel: levelValue,
-        },
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      )
-      .then((response) => {
-        console.log(response.data);
-        if (response.data.responseCode == "00") {
-          setSelectProvince("Chọn tỉnh thành nơi dạy");
-          setSelectDistrict("Chọn quận/huyên nơi dạy");
-          setSelectGender("Chọn giới tính gia sư");
-          setSelectSlotLength("Chọn thời gian dạy");
-          setSelectLevel("Chọn trình độ gia sư");
-          setSelectClass("Chọn lớp học");
-          setSelectSubject("Chọn môn học");
-          setIsGetTuition(false);
-          setSlot(0);
-          setPhone();
-          setPrice(0);
-          setDateStart("");
-          setDateEnd("");
-          setAddress("");
-          setDescription("");
+    // axios
+    //   .post(
+    //     HOST_API.local + "/api/request/create",
+    //     {
+    //       phone: phone,
+    //       address: address,
+    //       listSubjectId: [subjectValue],
+    //       gender: genderValue,
+    //       slots: Number(slot),
+    //       slotsLength: slotLength,
+    //       tuition: Number(price),
+    //       notes: description,
+    //       dateStart: dateStartValue,
+    //       dateEnd: dateEndValue,
+    //       districtId: districtValue,
+    //       tutorLevel: levelValue,
+    //     },
+    //     {
+    //       headers: {
+    //         Authorization: "Bearer " + token,
+    //       },
+    //     }
+    //   )
+    //   .then((response) => {
+    //     console.log(response.data);
+    //     if (response.data.responseCode == "00") {
+    //       setSelectProvince("Chọn tỉnh thành nơi dạy");
+    //       setSelectDistrict("Chọn quận/huyên nơi dạy");
+    //       setSelectGender("Chọn giới tính gia sư");
+    //       setSelectSlotLength("Chọn thời gian dạy");
+    //       setSelectLevel("Chọn trình độ gia sư");
+    //       setSelectClass("Chọn lớp học");
+    //       setSelectSubject("Chọn môn học");
+    //       setIsGetTuition(false);
+    //       setSlot(0);
+    //       setPhone();
+    //       setPrice(0);
+    //       setDateStart("");
+    //       setDateEnd("");
+    //       setAddress("");
+    //       setDescription("");
 
-          Alert.alert("Tạo yêu cầu thành công", "Quản lý yêu cầu", [
-            {
-              text: "Cancel",
-              onPress: () => {
-                // navigation.navigate("ManageRequest");
-              },
-            },
-            {
-              text: "Continue",
-              onPress: () => {
-                navigation.navigate("ManageRequest", {
-                  user,
-                  userData,
-                });
-              },
-            },
-            { defaultIndex: 1 },
-          ]);
-        } else {
-          Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
-            {
-              text: "Cancel",
-              onPress: () => {},
-            },
-            {
-              text: "Continue",
-              onPress: () => {
-                // navigation.navigate("ManageRequest", { profileId });
-              },
-            },
-            { defaultIndex: 1 },
-          ]);
-        }
-      })
-      .catch((error) => {
-        Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
-          {
-            text: "Cancel",
-            onPress: () => {},
-          },
-          {
-            text: "Continue",
-            onPress: () => {
-              // navigation.navigate("ManageRequest", { profileId });
-            },
-          },
-          { defaultIndex: 1 },
-        ]);
-        console.log("Create failed", error);
-      });
+    //       Alert.alert("Tạo yêu cầu thành công", "Quản lý yêu cầu", [
+    //         {
+    //           text: "Cancel",
+    //           onPress: () => {
+    //             // navigation.navigate("ManageRequest");
+    //           },
+    //         },
+    //         {
+    //           text: "Continue",
+    //           onPress: () => {
+    //             navigation.navigate("ManageRequest", {
+    //               user,
+    //               userData,
+    //             });
+    //           },
+    //         },
+    //         { defaultIndex: 1 },
+    //       ]);
+    //     } else {
+    //       Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
+    //         {
+    //           text: "Cancel",
+    //           onPress: () => {},
+    //         },
+    //         {
+    //           text: "Continue",
+    //           onPress: () => {
+    //             // navigation.navigate("ManageRequest", { profileId });
+    //           },
+    //         },
+    //         { defaultIndex: 1 },
+    //       ]);
+    //     }
+    //   })
+    //   .catch((error) => {
+    //     Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
+    //       {
+    //         text: "Cancel",
+    //         onPress: () => {},
+    //       },
+    //       {
+    //         text: "Continue",
+    //         onPress: () => {
+    //           // navigation.navigate("ManageRequest", { profileId });
+    //         },
+    //       },
+    //       { defaultIndex: 1 },
+    //     ]);
+    //     console.log("Create failed", error);
+    //   });
   };
 
   const formattedAmount = (number) => {
@@ -365,6 +368,20 @@ const CreateRequestPage = () => {
     }).format(number);
   };
 
+  const monHoc = [
+    { label: "Toán", value: "Toán" },
+    { label: "Ly", value: "Ly" },
+    { label: "Hóa", value: "Hóa" },
+    { label: "Văn", value: "Văn" },
+    { label: "Anh văn", value: "Anh văn" },
+    { label: "Tin học", value: "Tin học" },
+    { label: "Đánh đàn", value: "Đánh đàn" },
+    { label: "Báo bai", value: "Báo bai" },
+    { label: "Khác", value: "Khác" },
+  ];
+  const [isOpen, setIsOpen] = useState(false);
+  const [subjectValue2, setSubjectValue2] = useState([]);
+  const [subject2, setSubject2] = useState([]);
   return (
     <View style={{ padding: 16, marginTop: 40, marginBottom: 80 }}>
       <View style={styles.title}>
@@ -589,6 +606,28 @@ const CreateRequestPage = () => {
               />
             </View>
           )}
+        </View>
+
+        <View style={{ zIndex: 20 }}>
+          <Text style={styles.itemText}>Môn học</Text>
+          <DropDownPicker
+            style={styles.dropdownSelector}
+            items={subject2}
+            open={isOpen}
+            setOpen={() => setIsOpen(!isOpen)}
+            value={subjectValue2}
+            setValue={(val) => setSubjectValue2(val)}
+            placeholder="Chọn môn học"
+            showTickIcon={true}
+            showArrowIcon={true}
+            multiple={true}
+            min={1}
+            max={4}
+            mode="BADGE"
+            zIndex={20}
+            badgeColors={COLORS.secondMain}
+            badgeDotColors={["white"]}
+          />
         </View>
 
         {/* Môn học */}

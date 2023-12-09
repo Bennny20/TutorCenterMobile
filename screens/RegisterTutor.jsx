@@ -22,6 +22,8 @@ import { useNavigation } from "@react-navigation/native";
 import { LogBox } from "react-native";
 
 const RegisterTutor = () => {
+  const [obscureText, setObscureText] = useState(true);
+
   useEffect(() => {
     LogBox.ignoreLogs([
       "VirtualizedLists should never be nested",
@@ -41,6 +43,7 @@ const RegisterTutor = () => {
   const [name, setName] = useState();
   const [email, setEmail] = useState();
   const [password, setPassword] = useState();
+  const [rePassword, setRePassword] = useState();
   const [idNumber, setIdNumber] = useState();
 
   const [address, setAddress] = useState();
@@ -109,24 +112,58 @@ const RegisterTutor = () => {
     if (!result.canceled) {
       setIsImage(true);
       setImageProfile(result.assets[0].uri);
-      setImgProfile(result.assets[0].fileName);
+      const formData = new FormData();
+      formData.append("image", {
+        uri: result.assets[0].uri,
+        type: result.assets[0].type,
+        name: result.assets[0].fileName,
+      });
+      axios
+        .post("http://192.168.1.203:9000/api/user/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data; ",
+          },
+        })
+        .then((response) => {
+          setImgProfile(response.data);
+        })
+        .catch((error) => {
+          console.log("Create failed", error);
+        });
     }
   };
 
   const [imgCertificate1, setImgCertificate1] = useState(null);
   const [certificate1, setCertificate1] = useState(null);
   const pickerCeti1 = async () => {
-    let result = await ImagePicker.launchImageLibraryAsync({
+    let result2 = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
       aspect: [1, 1],
       quality: 1,
     });
-    console.log(result);
-    if (!result.canceled) {
+    console.log(result2);
+    if (!result2.canceled) {
       setIsImage(true);
-      setCertificate1(result.assets[0].uri);
-      setImgCertificate1(result.assets[0].fileName);
+      setCertificate1(result2.assets[0].uri);
+      const formData = new FormData();
+      formData.append("image", {
+        uri: result2.assets[0].uri,
+        type: result2.assets[0].type,
+        name: result2.assets[0].fileName,
+      });
+      axios
+        .post("http://192.168.1.203:9000/api/user/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data; ",
+          },
+        })
+        .then((response) => {
+          setImgCertificate1(response.data);
+        })
+        .catch((error) => {
+          console.log("Create failed", error);
+        });
     }
   };
 
@@ -143,31 +180,61 @@ const RegisterTutor = () => {
     if (!result.canceled) {
       setIsImage(true);
       setCertificate2(result.assets[0].uri);
-      setImgCertificate2(result.assets[0].fileName);
+      const formData = new FormData();
+      formData.append("image", {
+        uri: result.assets[0].uri,
+        type: result.assets[0].type,
+        name: result.assets[0].fileName,
+      });
+      axios
+        .post("http://192.168.1.203:9000/api/user/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data; ",
+          },
+        })
+        .then((response) => {
+          setImgCertificate2(response.data);
+        })
+        .catch((error) => {
+          console.log("Create failed", error);
+        });
     }
   };
 
   const [checkEmail, setCheckEmail] = useState(false);
   const handleCheckEmail = async (email) => {
     console.log(email);
-    await axios
-      .get(HOST_API.local + `/api/auth/emailExist/${email}`)
-      .then((response) => {
-        console.log(response.data);
-        setCheckEmail(response.data);
-        if (checkEmail.data == true) {
-          Alert.alert("Email đã được đăng kí", "Nhập lại email", [
-            {
-              text: "Cancel",
-              onPress: () => {},
-            },
-            { defaultIndex: 1 },
-          ]);
-          setEmail("");
-        } else {
-          setCurrentStep(1);
-        }
-      });
+
+    if (password === rePassword) {
+      setCurrentStep(1);
+    } else {
+      Alert.alert("Xác nhập mật khẩu không đúng", "Nhập lại mật khẩu", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+        },
+        { defaultIndex: 1 },
+      ]);
+      setPassword(""), setRePassword("");
+    }
+    // await axios
+    //   .get(HOST_API.local + `/api/auth/emailExist/${email}`)
+    //   .then((response) => {
+    //     console.log(response.data);
+    //     setCheckEmail(response.data);
+    //     if (checkEmail.data == true) {
+    //       Alert.alert("Email đã được đăng kí", "Nhập lại email", [
+    //         {
+    //           text: "Cancel",
+    //           onPress: () => {},
+    //         },
+    //         { defaultIndex: 1 },
+    //       ]);
+    //       setEmail("");
+    //     } else {
+
+    //     }
+    //   });
   };
 
   const register = async () => {
@@ -191,71 +258,71 @@ const RegisterTutor = () => {
     console.log("Value: ", user);
 
     setLoader(true);
-    try {
-      const endpoint = HOST_API.local + "/api/auth/registerTutor";
-      const response = await axios.post(endpoint, {
-        email: user.email,
-        idNumber: user.idNumber,
-        password: user.password,
-        fullname: user.name,
-        phone: user.phone,
-        address: user.address,
-        districtId: user.districtId,
-        gender: user.gender,
-        university: user.university,
-        major: user.major,
-        area: user.area,
-        imgCertificate: user.imgIdFront,
-        imgAvatar: user.imgAvatar,
-        imgIdFront: user.imgIdFront,
-        imdIdBack: user.imdIdBack,
-      });
-      console.log(response.data);
-      if (response.data.responseCode === "00") {
-        console.log(response.data);
-        Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
-          {
-            text: "Cancel",
-            onPress: () => {},
-          },
-          {
-            text: "Continue",
-            onPress: () => {
-              navigation.replace("Login");
-            },
-          },
-          { defaultIndex: 1 },
-        ]);
-        setLoader(false);
-      } else {
-        Alert.alert("Error Logging im", "Please provide all require fields", [
-          {
-            text: "Cancel",
-            onPress: () => {},
-          },
-          {
-            text: "Continue",
-            onPress: () => {},
-          },
-          { defaultIndex: 1 },
-        ]);
-      }
-    } catch (error) {
-      console.log(error);
-      Alert.alert("Error", "error", [
-        {
-          text: "Cancel",
-          onPress: () => {},
-        },
-        {
-          text: "Continue",
-          onPress: () => {},
-        },
-        { defaultIndex: 1 },
-      ]);
-    } finally {
-      setLoader(false);
-    }
+    // try {
+    //   const endpoint = HOST_API.local + "/api/auth/registerTutor";
+    //   const response = await axios.post(endpoint, {
+    //     email: user.email,
+    //     idNumber: user.idNumber,
+    //     password: user.password,
+    //     fullname: user.name,
+    //     phone: user.phone,
+    //     address: user.address,
+    //     districtId: user.districtId,
+    //     gender: user.gender,
+    //     university: user.university,
+    //     major: user.major,
+    //     area: user.area,
+    //     imgCertificate: user.imgIdFront,
+    //     imgAvatar: user.imgAvatar,
+    //     imgIdFront: user.imgIdFront,
+    //     imdIdBack: user.imdIdBack,
+    //   });
+    //   console.log(response.data);
+    //   if (response.data.responseCode === "00") {
+    //     console.log(response.data);
+    //     Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
+    //       {
+    //         text: "Cancel",
+    //         onPress: () => {},
+    //       },
+    //       {
+    //         text: "Continue",
+    //         onPress: () => {
+    //           navigation.replace("Login");
+    //         },
+    //       },
+    //       { defaultIndex: 1 },
+    //     ]);
+    //     setLoader(false);
+    //   } else {
+    //     Alert.alert("Error Logging im", "Please provide all require fields", [
+    //       {
+    //         text: "Cancel",
+    //         onPress: () => {},
+    //       },
+    //       {
+    //         text: "Continue",
+    //         onPress: () => {},
+    //       },
+    //       { defaultIndex: 1 },
+    //     ]);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    //   Alert.alert("Error", "error", [
+    //     {
+    //       text: "Cancel",
+    //       onPress: () => {},
+    //     },
+    //     {
+    //       text: "Continue",
+    //       onPress: () => {},
+    //     },
+    //     { defaultIndex: 1 },
+    //   ]);
+    // } finally {
+    //   setLoader(false);
+    // }
   };
 
   return (
@@ -334,10 +401,22 @@ const RegisterTutor = () => {
             <View>
               <Text style={styles.itemText}>Mật khẩu </Text>
               <TextInput
+                secureTextEntry={obscureText}
                 style={styles.input}
                 value={password}
                 onChangeText={(text) => setPassword(text)}
                 placeholder="Nhập password"
+              />
+            </View>
+
+            <View>
+              <Text style={styles.itemText}>Nhập lại mật khẩu </Text>
+              <TextInput
+                secureTextEntry={obscureText}
+                style={styles.input}
+                value={rePassword}
+                onChangeText={(text) => setRePassword(text)}
+                placeholder="Nhập lại password"
               />
             </View>
 
@@ -366,8 +445,8 @@ const RegisterTutor = () => {
 
           <Button
             title={"Tiếp túc"}
-            // onPress={() => handleCheckEmail(email)}
-            onPress={() => setCurrentStep(1)}
+            onPress={() => handleCheckEmail(email)}
+            // onPress={() => setCurrentStep(1)}
             isValid={name}
             loader={false}
           />
