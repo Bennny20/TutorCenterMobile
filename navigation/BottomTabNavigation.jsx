@@ -10,11 +10,12 @@ import {
   BlogPage,
   SearchForTutor,
 } from "../screens";
-import { COLORS } from "../constants/index";
-import Search2 from "../screens/Search2";
+import { COLORS, HOST_API } from "../constants/index";
+import Search2 from "../screens/Search";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import { useNavigation } from "@react-navigation/native";
+import axios from "axios";
 
 const Tab = createBottomTabNavigator();
 
@@ -36,27 +37,40 @@ const BottomTabNavigation = () => {
   const navigation = useNavigation();
   const [userData, setUserData] = useState(null);
   const [userLogin, setUserLogin] = useState(false);
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
     checkExitingUser();
   }, []);
 
   const checkExitingUser = async () => {
-    const id = await AsyncStorage.getItem("id");
-    const userId = `user${JSON.parse(id)}`;
-
-    try {
-      const currentUser = await AsyncStorage.getItem(userId);
-      if (currentUser !== null) {
-        const parsedData = JSON.parse(currentUser);
-        setUserData(parsedData);
-        setUserLogin(true);
+    const token = await AsyncStorage.getItem("token");
+    if (token != null) {
+      setLoader(true);
+      try {
+        const currentUser = await axios.get(
+          HOST_API.local + `/api/user/authProfile`,
+          {
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
+        if (currentUser !== null) {
+          setUserLogin(true);
+          setUserData(currentUser.data.data);
+          if (currentUser.data.data.role === "TUTOR") {
+            console.log("TUTOR");
+          }
+        }
+      } catch (error) {
+        console.log("error", error);
+      } finally {
+        setLoader(false);
       }
-    } catch (error) {
-      console.log("Error retrieving the data: ", error);
     }
   };
-
+  console.log(userData);
   return (
     <Tab.Navigator screenOptions={screenOptions}>
       <Tab.Screen
@@ -74,68 +88,82 @@ const BottomTabNavigation = () => {
           },
         }}
       />
-      {userLogin === true && userData.user.role === "USER_TUTOR" ? (
+
+      <Tab.Screen
+        name="Search"
+        component={Search}
+        options={{
+          tabBarIcon: ({ focused }) => {
+            return (
+              <Ionicons
+                name={"search-sharp"}
+                size={24}
+                color={focused ? COLORS.primary : COLORS.gray2}
+              />
+            );
+          },
+        }}
+      />
+
+      {userLogin == true && userData?.role === "TUTOR" ? (
         <Tab.Screen
-          name="Search"
+          name="SearchForTutor"
           component={SearchForTutor}
           options={{
             tabBarIcon: ({ focused }) => {
               return (
-                <Ionicons
-                  name={"search-sharp"}
-                  size={24}
-                  color={focused ? COLORS.primary : COLORS.gray2}
-                />
+                <View
+                  style={{
+                    position: "absolute",
+                    bottom: -10, // space from bottombar
+                    height: 60,
+                    width: 70,
+                    borderRadius: 58,
+                    backgroundColor: COLORS.main,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <MaterialCommunityIcons
+                    name={"text-search"}
+                    size={30}
+                    color={focused ? COLORS.white : COLORS.lightWhite}
+                  />
+                </View>
               );
             },
           }}
         />
       ) : (
         <Tab.Screen
-          name="Search"
-          component={Search2}
+          name="Create"
+          component={CreateRequestPage}
           options={{
             tabBarIcon: ({ focused }) => {
               return (
-                <Ionicons
-                  name={"search-sharp"}
-                  size={24}
-                  color={focused ? COLORS.primary : COLORS.gray2}
-                />
+                <View
+                  style={{
+                    position: "absolute",
+                    bottom: -10, // space from bottombar
+                    height: 60,
+                    width: 70,
+                    borderRadius: 58,
+                    backgroundColor: COLORS.main,
+                    justifyContent: "center",
+                    alignItems: "center",
+                  }}
+                >
+                  <Ionicons
+                    name={"add-circle-outline"}
+                    size={30}
+                    color={focused ? COLORS.white : COLORS.lightWhite}
+                  />
+                </View>
               );
             },
           }}
         />
       )}
-
-      <Tab.Screen
-        name="Create"
-        component={CreateRequestPage}
-        options={{
-          tabBarIcon: ({ focused }) => {
-            return (
-              <View
-                style={{
-                  position: "absolute",
-                  bottom: -10, // space from bottombar
-                  height: 60,
-                  width: 70,
-                  borderRadius: 58,
-                  backgroundColor: COLORS.main,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Ionicons
-                  name={"add-circle-outline"}
-                  size={30}
-                  color={focused ? COLORS.white : COLORS.lightWhite}
-                />
-              </View>
-            );
-          },
-        }}
-      />
 
       <Tab.Screen
         name="Blog"

@@ -20,6 +20,7 @@ import axios from "axios";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { LogBox } from "react-native";
+import DropDownPicker from "react-native-dropdown-picker";
 
 const RegisterTutor = () => {
   const [obscureText, setObscureText] = useState(true);
@@ -50,6 +51,24 @@ const RegisterTutor = () => {
   const [phone, setPhone] = useState();
   const [university, setUniversity] = useState();
   const [major, setMajor] = useState();
+
+  const [isClassOpen, setIsClassOpen] = useState(false);
+  const [classValue, setClassValue] = useState([]);
+  const lopHoc = [
+    { label: "Lớp 1", value: "Lớp 1" },
+    { label: "Lớp 2", value: "Lớp 2" },
+    { label: "Lớp 3", value: "Lớp 3" },
+    { label: "Lớp 4", value: "Lớp 4" },
+    { label: "Lớp 5", value: "Lớp 5" },
+    { label: "Lớp 6", value: "Lớp 6" },
+    { label: "Lớp 7", value: "Lớp 7" },
+    { label: "Lớp 8", value: "Lớp 8" },
+    { label: "Lớp 9", value: "Lớp 9" },
+    { label: "Lớp 10", value: "Lớp 10" },
+    { label: "Lớp 11", value: "Lớp 11" },
+    { label: "Lớp 12", value: "Lớp 12" },
+    { label: "Khác", value: "Order" },
+  ];
 
   //Tỉnh thành
   const [selectProvince, setSelectProvince] = useState(
@@ -98,6 +117,24 @@ const RegisterTutor = () => {
     { label: "Nữ", value: "Nữ" },
   ];
 
+  useEffect(() => {
+    const fetchProvince = async () => {
+      const response = await fetch(
+        HOST_API.local + `/api/subject/level?level=Lớp 12`
+      );
+      await response.json().then((data) => {
+        let newArray = data.data.map((item) => {
+          return { label: item.name, value: item.id };
+        });
+        setSubject2(newArray);
+      });
+    };
+    fetchProvince();
+  }, []);
+  const [isOpen, setIsOpen] = useState(false);
+  const [subjectValue2, setSubjectValue2] = useState([]);
+  const [subject2, setSubject2] = useState([]);
+
   const [imgProfile, setImgProfile] = useState();
   const [imageProfile, setImageProfile] = useState();
   const [isImage, setIsImage] = useState(false);
@@ -108,7 +145,6 @@ const RegisterTutor = () => {
       aspect: [4, 3],
       quality: 1,
     });
-    console.log(result);
     if (!result.canceled) {
       setIsImage(true);
       setImageProfile(result.assets[0].uri);
@@ -126,6 +162,7 @@ const RegisterTutor = () => {
         })
         .then((response) => {
           setImgProfile(response.data);
+          console.log(response.data);
         })
         .catch((error) => {
           console.log("Create failed", error);
@@ -142,7 +179,6 @@ const RegisterTutor = () => {
       aspect: [1, 1],
       quality: 1,
     });
-    console.log(result2);
     if (!result2.canceled) {
       setIsImage(true);
       setCertificate1(result2.assets[0].uri);
@@ -160,6 +196,7 @@ const RegisterTutor = () => {
         })
         .then((response) => {
           setImgCertificate1(response.data);
+          console.log(response.data);
         })
         .catch((error) => {
           console.log("Create failed", error);
@@ -176,7 +213,6 @@ const RegisterTutor = () => {
       aspect: [1, 1],
       quality: 1,
     });
-    console.log(result);
     if (!result.canceled) {
       setIsImage(true);
       setCertificate2(result.assets[0].uri);
@@ -194,6 +230,7 @@ const RegisterTutor = () => {
         })
         .then((response) => {
           setImgCertificate2(response.data);
+          console.log(response.data);
         })
         .catch((error) => {
           console.log("Create failed", error);
@@ -203,9 +240,17 @@ const RegisterTutor = () => {
 
   const [checkEmail, setCheckEmail] = useState(false);
   const handleCheckEmail = async (email) => {
-    console.log(email);
-
-    if (password === rePassword) {
+    const temp = email.toLowerCase();
+    console.log(idNumber);
+    if (idNumber == "" || name == "") {
+      Alert.alert("Hãy điền đầy đủ thông tin", "", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+        },
+        { defaultIndex: 1 },
+      ]);
+    } else if (password === rePassword) {
       setCurrentStep(1);
     } else {
       Alert.alert("Xác nhập mật khẩu không đúng", "Nhập lại mật khẩu", [
@@ -218,7 +263,7 @@ const RegisterTutor = () => {
       setPassword(""), setRePassword("");
     }
     // await axios
-    //   .get(HOST_API.local + `/api/auth/emailExist/${email}`)
+    //   .get(HOST_API.local + `/api/auth/emailExist/${temp}`)
     //   .then((response) => {
     //     console.log(response.data);
     //     setCheckEmail(response.data);
@@ -240,9 +285,9 @@ const RegisterTutor = () => {
   const register = async () => {
     const user = {
       email: email,
-      name: name,
       idNumber: idNumber,
       password: password,
+      fullname: name,
       phone: phone,
       address: address,
       districtId: districtValue,
@@ -253,82 +298,90 @@ const RegisterTutor = () => {
       imgCertificate: imgCertificate1,
       imgAvatar: imgProfile,
       imgIdFront: imgCertificate1,
-      imdIdBack: imgCertificate2,
+      imgIdBack: imgCertificate2,
+      subjects: subjectValue2,
     };
     console.log("Value: ", user);
 
     setLoader(true);
-    // try {
-    //   const endpoint = HOST_API.local + "/api/auth/registerTutor";
-    //   const response = await axios.post(endpoint, {
-    //     email: user.email,
-    //     idNumber: user.idNumber,
-    //     password: user.password,
-    //     fullname: user.name,
-    //     phone: user.phone,
-    //     address: user.address,
-    //     districtId: user.districtId,
-    //     gender: user.gender,
-    //     university: user.university,
-    //     major: user.major,
-    //     area: user.area,
-    //     imgCertificate: user.imgIdFront,
-    //     imgAvatar: user.imgAvatar,
-    //     imgIdFront: user.imgIdFront,
-    //     imdIdBack: user.imdIdBack,
-    //   });
-    //   console.log(response.data);
-    //   if (response.data.responseCode === "00") {
-    //     console.log(response.data);
-    //     Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
-    //       {
-    //         text: "Cancel",
-    //         onPress: () => {},
-    //       },
-    //       {
-    //         text: "Continue",
-    //         onPress: () => {
-    //           navigation.replace("Login");
-    //         },
-    //       },
-    //       { defaultIndex: 1 },
-    //     ]);
-    //     setLoader(false);
-    //   } else {
-    //     Alert.alert("Error Logging im", "Please provide all require fields", [
-    //       {
-    //         text: "Cancel",
-    //         onPress: () => {},
-    //       },
-    //       {
-    //         text: "Continue",
-    //         onPress: () => {},
-    //       },
-    //       { defaultIndex: 1 },
-    //     ]);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    //   Alert.alert("Error", "error", [
-    //     {
-    //       text: "Cancel",
-    //       onPress: () => {},
-    //     },
-    //     {
-    //       text: "Continue",
-    //       onPress: () => {},
-    //     },
-    //     { defaultIndex: 1 },
-    //   ]);
-    // } finally {
-    //   setLoader(false);
-    // }
+    try {
+      const endpoint = HOST_API.local + "/api/auth/registerTutor";
+      const response = await axios.post(endpoint, {
+        email: user.email,
+        idNumber: user.idNumber,
+        password: user.password,
+        fullname: user.fullname,
+        phone: user.phone,
+        address: user.address,
+        districtId: user.districtId,
+        gender: user.gender,
+        university: user.university,
+        major: user.major,
+        area: user.area,
+        imgCertificate: user.imgIdFront,
+        imgAvatar: user.imgAvatar,
+        imgIdFront: user.imgIdFront,
+        imgIdBack: user.imgIdBack,
+        subjects: user.subjects,
+      });
+      console.log(response);
+      if (response.data.responseCode === "00") {
+        console.log(response.data);
+        Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {
+              navigation.replace("Login");
+            },
+          },
+          { defaultIndex: 1 },
+        ]);
+        setLoader(false);
+      } else {
+        Alert.alert("Error Logging im", "Please provide all require fields", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {},
+          },
+          { defaultIndex: 1 },
+        ]);
+      }
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "error", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+        },
+        {
+          text: "Continue",
+          onPress: () => {},
+        },
+        { defaultIndex: 1 },
+      ]);
+    } finally {
+      setLoader(false);
+    }
   };
 
   return (
     <ScrollView style={{ marginTop: 30, marginBottom: 20 }}>
       <Heading title={"Đăng kí gia sư"} />
-      <View style={{ flex: 1, paddingHorizontal: 20, paddingTop: 30 }}>
+      <View
+        style={{
+          marginTop: 10,
+          paddingHorizontal: 20,
+          paddingTop: 30,
+        }}
+      >
         <View
           style={{
             flexDirection: "row",
@@ -388,56 +441,58 @@ const RegisterTutor = () => {
             Thông tin tài khoản
           </Text>
           <Pressable>
-            <View>
-              <Text style={styles.itemText}>Email </Text>
-              <TextInput
-                keyboardType="email-address"
-                style={styles.input}
-                value={email}
-                onChangeText={(text) => setEmail(text)}
-                placeholder="Nhập email"
-              />
-            </View>
-            <View>
-              <Text style={styles.itemText}>Mật khẩu </Text>
-              <TextInput
-                secureTextEntry={obscureText}
-                style={styles.input}
-                value={password}
-                onChangeText={(text) => setPassword(text)}
-                placeholder="Nhập password"
-              />
-            </View>
+            <KeyboardAwareScrollView extraScrollHeight={-50}>
+              <View>
+                <Text style={styles.itemText}>Email </Text>
+                <TextInput
+                  keyboardType="email-address"
+                  style={styles.input}
+                  value={email}
+                  onChangeText={(text) => setEmail(text)}
+                  placeholder="Nhập email"
+                />
+              </View>
+              <View>
+                <Text style={styles.itemText}>Mật khẩu </Text>
+                <TextInput
+                  secureTextEntry={obscureText}
+                  style={styles.input}
+                  value={password}
+                  onChangeText={(text) => setPassword(text)}
+                  placeholder="Nhập password"
+                />
+              </View>
 
-            <View>
-              <Text style={styles.itemText}>Nhập lại mật khẩu </Text>
-              <TextInput
-                secureTextEntry={obscureText}
-                style={styles.input}
-                value={rePassword}
-                onChangeText={(text) => setRePassword(text)}
-                placeholder="Nhập lại password"
-              />
-            </View>
+              <View>
+                <Text style={styles.itemText}>Nhập lại mật khẩu </Text>
+                <TextInput
+                  secureTextEntry={obscureText}
+                  style={styles.input}
+                  value={rePassword}
+                  onChangeText={(text) => setRePassword(text)}
+                  placeholder="Nhập lại password"
+                />
+              </View>
 
-            <View>
-              <Text style={styles.itemText}>Họ và tên </Text>
-              <TextInput
-                style={styles.input}
-                value={name}
-                onChangeText={(text) => setName(text)}
-                placeholder="Nhập họ và tên"
-              />
-            </View>
-            <View>
-              <Text style={styles.itemText}>CCCD/CMND </Text>
-              <TextInput
-                style={styles.input}
-                value={idNumber}
-                onChangeText={(text) => setIdNumber(text)}
-                placeholder="Nhập họ và tên"
-              />
-            </View>
+              <View>
+                <Text style={styles.itemText}>Họ và tên </Text>
+                <TextInput
+                  style={styles.input}
+                  value={name}
+                  onChangeText={(text) => setName(text)}
+                  placeholder="Nhập họ và tên"
+                />
+              </View>
+              <View>
+                <Text style={styles.itemText}>CCCD/CMND </Text>
+                <TextInput
+                  style={styles.input}
+                  value={idNumber}
+                  onChangeText={(text) => setIdNumber(text)}
+                  placeholder="Nhập họ và tên"
+                />
+              </View>
+            </KeyboardAwareScrollView>
           </Pressable>
           {/* {email != null && password != null && name != null && (
            
@@ -675,7 +730,51 @@ const RegisterTutor = () => {
             Thông tin chuyên môn
           </Text>
           <Pressable>
-            <KeyboardAwareScrollView extraScrollHeight={-150}>
+            <KeyboardAwareScrollView extraScrollHeight={-300}>
+              <View style={{ zIndex: 20 }}>
+                <Text style={styles.itemText}>Lớp học</Text>
+                <DropDownPicker
+                  style={styles.dropdownSelector}
+                  items={lopHoc}
+                  open={isClassOpen}
+                  setOpen={() => setIsClassOpen(!isClassOpen)}
+                  value={classValue}
+                  setValue={(val) => setClassValue(val)}
+                  placeholder="Chọn lớp học"
+                  showTickIcon={true}
+                  multiple={true}
+                  min={1}
+                  max={3}
+                  mode="BADGE"
+                  zIndex={20}
+                  badgeColors={COLORS.secondMain}
+                  badgeDotColors={["white"]}
+                />
+              </View>
+
+              <View style={{ zIndex: 15 }}>
+                <Text style={styles.itemText}>Môn học</Text>
+                <DropDownPicker
+                  style={styles.dropdownSelector}
+                  items={subject2}
+                  open={isOpen}
+                  setOpen={() => setIsOpen(!isOpen)}
+                  value={subjectValue2}
+                  setValue={(val) => setSubjectValue2(val)}
+                  placeholder="Chọn môn học"
+                  showTickIcon={true}
+                  showArrowIcon={true}
+                  multiple={true}
+                  min={1}
+                  max={4}
+                  mode="BADGE"
+                  zIndex={20}
+                  badgeColors={COLORS.secondMain}
+                  badgeDotColors={["white"]}
+                  backgroundColor=""
+                />
+              </View>
+
               <View>
                 <Text style={styles.itemText}>Trương đại học </Text>
                 <TextInput
@@ -695,19 +794,8 @@ const RegisterTutor = () => {
                   placeholder="Nhập ngành học"
                 />
               </View>
-
-              <View>
-                <Text style={styles.itemText}>Chuyên môn (Môn dạy): </Text>
-                <TextInput
-                  style={styles.input}
-                  value={major}
-                  onChangeText={(text) => setMajor(text)}
-                  placeholder="Nhập họ và tên"
-                />
-              </View>
             </KeyboardAwareScrollView>
           </Pressable>
-
           <Button
             title={"Trở lại"}
             onPress={() => setCurrentStep(1)}
@@ -726,7 +814,7 @@ const RegisterTutor = () => {
       {currentStep == 3 && (
         <View style={{ marginHorizontal: 20 }}>
           <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-            Thông tin bằng cấp
+            Upload ảnh thông tin
           </Text>
           <Pressable>
             <KeyboardAwareScrollView extraScrollHeight={-150}>
@@ -887,6 +975,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 15,
+    backgroundColor: COLORS.white,
   },
   itemText: {
     padding: 10,
@@ -906,6 +995,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 15,
+    backgroundColor: COLORS.lightWhite,
   },
 
   dropdownArea: {

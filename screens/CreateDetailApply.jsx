@@ -7,10 +7,9 @@ import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { COLORS, HOST_API, SIZES } from "../constants";
 import axios from "axios";
 
-const RequestDetail = () => {
+const ClassDetailApply = () => {
   const route = useRoute();
   const { item } = route.params;
-  console.log(item);
 
   var major = "";
   var classNo = "";
@@ -23,19 +22,18 @@ const RequestDetail = () => {
     }
     classNo = item.subjects[index].level;
   }
-
-  const [requestDetail, setRequestDetail] = useState();
+  const [classDetail, setClassDetail] = useState();
   const [loader, setLoader] = useState(false);
   useEffect(() => {
-    fetchRequestDetail();
+    fetchClassDetail();
   }, []);
-  const fetchRequestDetail = async () => {
+  const fetchClassDetail = async () => {
     setLoader(true);
     try {
       const response = await axios.get(
-        HOST_API.local + `/api/request/${item.id}`
+        HOST_API.local + `/api/clazz/${item.clazzId}`
       );
-      setRequestDetail(response.data.data);
+      setClassDetail(response.data.data);
       setLoader(false);
     } catch (error) {
       console.log("error", error);
@@ -43,40 +41,30 @@ const RequestDetail = () => {
       setLoader(false);
     }
   };
-  console.log(requestDetail);
-
+  console.log(classDetail);
   const formattedAmount = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   }).format(item.tuition);
   return (
     <SafeAreaView>
-      <Heading title={"Yêu cầu chi tiết "} />
+      <Heading title={"Thông tin lớp chi tiết "} />
 
       {loader ? (
         <ActivityIndicator size={500} color={COLORS.main} />
       ) : (
-        <View style={{ marginHorizontal: 10 }}>
-          <View style={styles.header}>
-            {/* <MaterialCommunityIcons
-              name="chevron-double-right"
-              size={30}
-              color={COLORS.gray}
-              style={{ marginRight: 10 }}
-            /> */}
-          </View>
-
+        <View style={{ marginHorizontal: 10, marginTop: 30 }}>
           <View style={styles.itemContext}>
             <MaterialCommunityIcons
-              name="card-account-phone"
+              name="account"
               size={30}
               color={COLORS.gray}
               style={{ marginRight: 10 }}
             />
 
             <Text style={styles.title}>
-              Số điện thoại:{" "}
-              <Text style={styles.sup}> {requestDetail?.phone}</Text>
+              Phụ huynh{" "}
+              <Text style={styles.sup}> {classDetail?.parentName}</Text>
             </Text>
           </View>
 
@@ -127,30 +115,6 @@ const RequestDetail = () => {
 
           <View style={styles.itemContext}>
             <MaterialCommunityIcons
-              name="calendar-today"
-              size={30}
-              color={COLORS.gray}
-              style={{ marginRight: 10 }}
-            />
-
-            <Text style={styles.title}>
-              Ngày trong tuần: <Text style={styles.sup}>{item.daysOfWeek}</Text>
-            </Text>
-          </View>
-          <View style={styles.itemContext}>
-            <MaterialCommunityIcons
-              name="clock-time-eight"
-              size={30}
-              color={COLORS.gray}
-              style={{ marginRight: 10 }}
-            />
-
-            <Text style={styles.title}>
-              Giờ dạy: <Text style={styles.sup}>{item.time}</Text>
-            </Text>
-          </View>
-          <View style={styles.itemContext}>
-            <MaterialCommunityIcons
               name="calendar-text"
               size={30}
               color={COLORS.gray}
@@ -164,7 +128,7 @@ const RequestDetail = () => {
 
           <View style={styles.itemContext}>
             <MaterialCommunityIcons
-              name="timer"
+              name="calendar-clock"
               size={30}
               color={COLORS.gray}
               style={{ marginRight: 10 }}
@@ -227,7 +191,7 @@ const RequestDetail = () => {
 
             <Text style={styles.title}>
               Ngày bắt đầu:{" "}
-              <Text style={styles.sup}> {requestDetail?.dateStart}</Text>
+              <Text style={styles.sup}> {classDetail?.dateStart}</Text>
             </Text>
           </View>
 
@@ -241,39 +205,31 @@ const RequestDetail = () => {
 
             <Text style={styles.title}>
               Ngày kết thúc:{" "}
-              <Text style={styles.sup}>{requestDetail?.dateEnd}</Text>
-            </Text>
-          </View>
-
-          <View style={styles.itemContext}>
-            <MaterialCommunityIcons
-              name="clipboard-text-clock"
-              size={30}
-              color={COLORS.gray}
-              style={{ marginRight: 10 }}
-            />
-
-            <Text style={styles.title}>
-              Thời gian đăng kí:{" "}
-              <Text style={styles.sup}> {item?.creatDate}</Text>
+              <Text style={styles.sup}>{classDetail?.dateEnd}</Text>
             </Text>
           </View>
           {item.status == 0 ? (
             <View style={{ alignItems: "center" }}>
-              <View style={[styles.status, { backgroundColor: COLORS.gray2 }]}>
-                <Text style={styles.sup}>Đang xác nhận</Text>
+              <View
+                style={[styles.status, { backgroundColor: COLORS.secondMain }]}
+              >
+                <Text style={styles.sup}>Đã apply</Text>
               </View>
             </View>
           ) : item.status == 1 ? (
             <View style={{ alignItems: "center" }}>
-              <View style={styles.status}>
-                <Text style={styles.sup}>Đã xác nhận</Text>
+              <View
+                style={[styles.status, { backgroundColor: COLORS.secondMain }]}
+              >
+                <Text style={styles.sup}>Đã chọn bạn</Text>
               </View>
             </View>
           ) : (
             <View style={{ alignItems: "center" }}>
-              <View style={[styles.status, { backgroundColor: COLORS.red }]}>
-                <Text style={styles.sup}>Yêu cầu không hợp lệ</Text>
+              <View
+                style={[styles.status, { backgroundColor: COLORS.secondMain }]}
+              >
+                <Text style={styles.sup}>Đã có gia sư</Text>
               </View>
             </View>
           )}
@@ -283,7 +239,7 @@ const RequestDetail = () => {
   );
 };
 
-export default RequestDetail;
+export default ClassDetailApply;
 
 const styles = StyleSheet.create({
   header: {

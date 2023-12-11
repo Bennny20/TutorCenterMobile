@@ -167,6 +167,35 @@ const CreateRequestPage = () => {
     { label: "Khác", value: "Order" },
   ];
 
+  const [dayOfWeekOpen, setDayOfWeekOpen] = useState(false);
+  const [dayOfWeekValue, setDayOfWeekValue] = useState([]);
+  const ngayTrongTuan = [
+    { label: "Thứ 2", value: "Thứ 2" },
+    { label: "Thứ 3", value: "Thứ 3" },
+    { label: "Thứ 4", value: "Thứ 4" },
+    { label: "Thứ 5", value: "Thứ 5" },
+    { label: "Thứ 6", value: "Thứ 6" },
+    { label: "Lớp 7", value: "Thứ 7" },
+    { label: "Chủ nhật", value: "Chủ nhật" },
+  ];
+
+  const [selectTime, setSelectTime] = useState("Chọn thời gian dạy");
+  const [timeOpen, setTimeOpen] = useState(false);
+  const [timeValue, setTimeValue] = useState([]);
+  const time = [
+    { label: "Buổi sáng", value: "Buổi sáng" },
+    { label: "Buổi chiều", value: "Buổi chiều" },
+    { label: "Buổi tối", value: "Buổi tối" },
+    { label: "17h00-18h30", value: "17h00-18h30" },
+    { label: "17h30-19h00", value: "17h30-19h00" },
+    { label: "18h00-19h30", value: "18h00-19h30" },
+    { label: "18h30-20h00", value: "18h30-20h00" },
+    { label: "19h00-20h30", value: "19h00-20h30" },
+    { label: "19h30-21h00", value: "19h30-21h00" },
+    { label: "20h00-21h30", value: "20h00-21h30" },
+    { label: "20h30-22h00", value: "20h30-22h00" },
+  ];
+
   //Môn học
   const [selectSubject, setSelectSubject] = useState("Chọn môn học");
   const [isClickSubject, setIsClickSubject] = useState(false);
@@ -186,6 +215,9 @@ const CreateRequestPage = () => {
     });
   }
 
+  const [isOpen, setIsOpen] = useState(false);
+  const [subjectValue2, setSubjectValue2] = useState([]);
+  const [subject2, setSubject2] = useState([]);
   //Chi phí
   const [isGetTuition, setIsGetTuition] = useState(false);
   const [getTuitionValue, setGetTuitionValue] = useState(false);
@@ -256,6 +288,8 @@ const CreateRequestPage = () => {
       address: address,
       listSubjectId: subjectValue2,
       gender: genderValue,
+      daysOfWeek: dayOfWeekValue.join(", "),
+      time: timeValue,
       slots: Number(slot),
       slotsLength: slotLength,
       tuition: Number(price),
@@ -267,98 +301,100 @@ const CreateRequestPage = () => {
     };
     console.log(request);
     const token = await AsyncStorage.getItem("token");
-    // axios
-    //   .post(
-    //     HOST_API.local + "/api/request/create",
-    //     {
-    //       phone: phone,
-    //       address: address,
-    //       listSubjectId: [subjectValue],
-    //       gender: genderValue,
-    //       slots: Number(slot),
-    //       slotsLength: slotLength,
-    //       tuition: Number(price),
-    //       notes: description,
-    //       dateStart: dateStartValue,
-    //       dateEnd: dateEndValue,
-    //       districtId: districtValue,
-    //       tutorLevel: levelValue,
-    //     },
-    //     {
-    //       headers: {
-    //         Authorization: "Bearer " + token,
-    //       },
-    //     }
-    //   )
-    //   .then((response) => {
-    //     console.log(response.data);
-    //     if (response.data.responseCode == "00") {
-    //       setSelectProvince("Chọn tỉnh thành nơi dạy");
-    //       setSelectDistrict("Chọn quận/huyên nơi dạy");
-    //       setSelectGender("Chọn giới tính gia sư");
-    //       setSelectSlotLength("Chọn thời gian dạy");
-    //       setSelectLevel("Chọn trình độ gia sư");
-    //       setSelectClass("Chọn lớp học");
-    //       setSelectSubject("Chọn môn học");
-    //       setIsGetTuition(false);
-    //       setSlot(0);
-    //       setPhone();
-    //       setPrice(0);
-    //       setDateStart("");
-    //       setDateEnd("");
-    //       setAddress("");
-    //       setDescription("");
+    axios
+      .post(
+        HOST_API.local + "/api/request/create",
+        {
+          phone: phone,
+          address: address,
+          listSubjectId: subjectValue2,
+          gender: genderValue,
+          daysOfWeek: dayOfWeekValue.join(", "),
+          time: timeValue,
+          slots: Number(slot),
+          slotsLength: slotLength,
+          tuition: Number(price),
+          notes: description,
+          dateStart: dateStartValue,
+          dateEnd: dateEndValue,
+          districtId: districtValue,
+          tutorLevel: levelValue,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.responseCode == "00") {
+          setSelectProvince("Chọn tỉnh thành nơi dạy");
+          setSelectDistrict("Chọn quận/huyên nơi dạy");
+          setSelectGender("Chọn giới tính gia sư");
+          setSelectSlotLength("Chọn thời gian dạy");
+          setSelectLevel("Chọn trình độ gia sư");
+          setSelectClass("Chọn lớp học");
+          setSelectSubject("Chọn môn học");
+          setIsGetTuition(false);
+          setSlot(0);
+          setPhone();
+          setPrice(0);
+          setDateStart("");
+          setDateEnd("");
+          setAddress("");
+          setDescription("");
 
-    //       Alert.alert("Tạo yêu cầu thành công", "Quản lý yêu cầu", [
-    //         {
-    //           text: "Cancel",
-    //           onPress: () => {
-    //             // navigation.navigate("ManageRequest");
-    //           },
-    //         },
-    //         {
-    //           text: "Continue",
-    //           onPress: () => {
-    //             navigation.navigate("ManageRequest", {
-    //               user,
-    //               userData,
-    //             });
-    //           },
-    //         },
-    //         { defaultIndex: 1 },
-    //       ]);
-    //     } else {
-    //       Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
-    //         {
-    //           text: "Cancel",
-    //           onPress: () => {},
-    //         },
-    //         {
-    //           text: "Continue",
-    //           onPress: () => {
-    //             // navigation.navigate("ManageRequest", { profileId });
-    //           },
-    //         },
-    //         { defaultIndex: 1 },
-    //       ]);
-    //     }
-    //   })
-    //   .catch((error) => {
-    //     Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
-    //       {
-    //         text: "Cancel",
-    //         onPress: () => {},
-    //       },
-    //       {
-    //         text: "Continue",
-    //         onPress: () => {
-    //           // navigation.navigate("ManageRequest", { profileId });
-    //         },
-    //       },
-    //       { defaultIndex: 1 },
-    //     ]);
-    //     console.log("Create failed", error);
-    //   });
+          Alert.alert("Tạo yêu cầu thành công", "Quản lý yêu cầu", [
+            {
+              text: "Cancel",
+              onPress: () => {
+                // navigation.navigate("ManageRequest");
+              },
+            },
+            {
+              text: "Continue",
+              onPress: () => {
+                navigation.navigate("ManageRequest", {
+                  user,
+                  userData,
+                });
+              },
+            },
+            { defaultIndex: 1 },
+          ]);
+        } else {
+          Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
+            {
+              text: "Cancel",
+              onPress: () => {},
+            },
+            {
+              text: "Continue",
+              onPress: () => {
+                // navigation.navigate("ManageRequest", { profileId });
+              },
+            },
+            { defaultIndex: 1 },
+          ]);
+        }
+      })
+      .catch((error) => {
+        Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {
+              // navigation.navigate("ManageRequest", { profileId });
+            },
+          },
+          { defaultIndex: 1 },
+        ]);
+        console.log("Create failed", error);
+      });
   };
 
   const formattedAmount = (number) => {
@@ -368,20 +404,6 @@ const CreateRequestPage = () => {
     }).format(number);
   };
 
-  const monHoc = [
-    { label: "Toán", value: "Toán" },
-    { label: "Ly", value: "Ly" },
-    { label: "Hóa", value: "Hóa" },
-    { label: "Văn", value: "Văn" },
-    { label: "Anh văn", value: "Anh văn" },
-    { label: "Tin học", value: "Tin học" },
-    { label: "Đánh đàn", value: "Đánh đàn" },
-    { label: "Báo bai", value: "Báo bai" },
-    { label: "Khác", value: "Khác" },
-  ];
-  const [isOpen, setIsOpen] = useState(false);
-  const [subjectValue2, setSubjectValue2] = useState([]);
-  const [subject2, setSubject2] = useState([]);
   return (
     <View style={{ padding: 16, marginTop: 40, marginBottom: 80 }}>
       <View style={styles.title}>
@@ -608,6 +630,7 @@ const CreateRequestPage = () => {
           )}
         </View>
 
+        {/* Môn học */}
         <View style={{ zIndex: 20 }}>
           <Text style={styles.itemText}>Môn học</Text>
           <DropDownPicker
@@ -627,7 +650,77 @@ const CreateRequestPage = () => {
             zIndex={20}
             badgeColors={COLORS.secondMain}
             badgeDotColors={["white"]}
+            backgroundColor=""
           />
+        </View>
+
+        {/* Ngày học trong tuần */}
+        <View style={{ zIndex: 18 }}>
+          <Text style={styles.itemText}>Ngày học trong tuần</Text>
+          <DropDownPicker
+            style={styles.dropdownSelector}
+            items={ngayTrongTuan}
+            open={dayOfWeekOpen}
+            setOpen={() => setDayOfWeekOpen(!dayOfWeekOpen)}
+            value={dayOfWeekValue}
+            setValue={(val) => setDayOfWeekValue(val)}
+            placeholder="Ngày học trong tuần"
+            showTickIcon={true}
+            showArrowIcon={true}
+            multiple={true}
+            min={1}
+            max={7}
+            mode="BADGE"
+            zIndex={20}
+            badgeColors={COLORS.secondMain}
+            badgeDotColors={["white"]}
+            backgroundColor=""
+          />
+        </View>
+
+        {/* Thời gian dạy */}
+        <View>
+          <Text style={styles.itemText}>Thời gian dạy</Text>
+          <TouchableOpacity
+            style={styles.dropdownSelector}
+            onPress={() => {
+              setTimeOpen(!timeOpen);
+            }}
+          >
+            <Text>{selectTime}</Text>
+            {timeOpen ? (
+              <Ionicons name="chevron-down-outline" size={24} />
+            ) : (
+              <TouchableOpacity
+                onPress={() => {
+                  onClose;
+                }}
+              >
+                <Ionicons name="chevron-up-outline" size={24} />
+              </TouchableOpacity>
+            )}
+          </TouchableOpacity>
+          {timeOpen && (
+            <View style={styles.dropdownArea}>
+              <FlatList
+                data={time}
+                renderItem={({ item, index }) => {
+                  return (
+                    <TouchableOpacity
+                      style={[styles.item, { borderColor: COLORS.main }]}
+                      onPress={() => {
+                        setSelectTime(item.label);
+                        setTimeOpen(false);
+                        setTimeValue(item.value);
+                      }}
+                    >
+                      <Text>{item.label}</Text>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+          )}
         </View>
 
         {/* Môn học */}
@@ -767,7 +860,7 @@ const CreateRequestPage = () => {
               display="spinner"
               value={date}
               onChange={onChangeStart}
-              style={styles.datePicker}
+              style={{ backgroundColor: COLORS.lightWhite }}
               minimumDate={new Date("2020-1-1")}
             />
           )}
@@ -935,6 +1028,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 15,
+    backgroundColor: COLORS.lightWhite,
   },
 
   input: {
@@ -949,6 +1043,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 15,
+    backgroundColor: COLORS.lightWhite,
   },
   itemText: {
     padding: 10,
@@ -981,6 +1076,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     paddingHorizontal: 15,
+    backgroundColor: COLORS.lightWhite,
   },
 
   dropdownArea: {

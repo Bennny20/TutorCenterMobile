@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   SafeAreaView,
   Alert,
+  ScrollView,
 } from "react-native";
 import React from "react";
 import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
@@ -159,7 +160,7 @@ const ClassDetail = () => {
     currency: "VND",
   }).format(item.tuition);
   return (
-    <SafeAreaView style={{ marginBottom: 350 }}>
+    <SafeAreaView style={{}}>
       <View styles={styles.container}>
         <View style={styles.wrapper}>
           <View style={styles.upperRow}>
@@ -174,224 +175,233 @@ const ClassDetail = () => {
           </View>
         </View>
       </View>
-
-      {loader ? (
-        <ActivityIndicator size={500} color={COLORS.main} />
-      ) : (
-        <View>
-          <View style={styles.headingInfo}>
-            <View style={styles.headingName}>
-              <Text style={styles.name}>{major}</Text>
+      <ScrollView style={{ marginTop: 20 }}>
+        {loader ? (
+          <ActivityIndicator size={500} color={COLORS.main} />
+        ) : (
+          <View>
+            <View style={styles.headingInfo}>
+              <View style={styles.headingName}>
+                <Text style={styles.name}>{major}</Text>
+              </View>
             </View>
-          </View>
-          <View style={styles.info}>
-            <View style={styles.infoDetail}>
-              <Text style={styles.title}>
-                <Ionicons
-                  name="caret-forward-outline"
-                  size={20}
-                  color={COLORS.main}
-                />
-                Môn học:
-              </Text>
-              <Text style={styles.sup}>{major}</Text>
-              <Text style={styles.title}>
-                <Ionicons
-                  name="caret-forward-outline"
-                  size={20}
-                  color={COLORS.main}
-                />
-                Lớp học:
-              </Text>
-              <Text style={styles.sup}>{classNo}</Text>
-              <Text style={styles.title}>
-                <Ionicons
-                  name="caret-forward-outline"
-                  size={20}
-                  color={COLORS.main}
-                />
-                Giới tính:
-              </Text>
-              <Text style={styles.sup}>{item.gender}</Text>
-              <Text style={styles.title}>
-                <Ionicons
-                  name="caret-forward-outline"
-                  size={20}
-                  color={COLORS.main}
-                />
-                Địa điểm:
-              </Text>
-              <Text style={styles.sup}>
-                {item.address} , {item.provinceName}, {item.provinceName}
-              </Text>
-              <Text style={styles.title}>
-                <Ionicons
-                  name="caret-forward-outline"
-                  size={20}
-                  color={COLORS.main}
-                />
-                Thời gian:
-              </Text>
-              <View
-                style={{
-                  justifyContent: "space-around",
-                  flexDirection: "row",
-                }}
-              >
-                <View style={styles.dateForm}>
-                  <Text style={styles.date}>{classDetail.dateStart}</Text>
-                </View>
+            <View style={styles.info}>
+              <View style={styles.infoDetail}>
+                <Text style={styles.title}>
+                  <Ionicons
+                    name="caret-forward-outline"
+                    size={20}
+                    color={COLORS.main}
+                  />
+                  Môn học:
+                </Text>
+                <Text style={styles.sup}>{major}</Text>
+                <Text style={styles.title}>
+                  <Ionicons
+                    name="caret-forward-outline"
+                    size={20}
+                    color={COLORS.main}
+                  />
+                  Lớp học:
+                </Text>
+                <Text style={styles.sup}>{classNo}</Text>
+                <Text style={styles.title}>
+                  <Ionicons
+                    name="caret-forward-outline"
+                    size={20}
+                    color={COLORS.main}
+                  />
+                  Giới tính:
+                </Text>
+                <Text style={styles.sup}>{item.gender}</Text>
+                <Text style={styles.title}>
+                  <Ionicons
+                    name="caret-forward-outline"
+                    size={20}
+                    color={COLORS.main}
+                  />
+                  Địa điểm:
+                </Text>
+                <Text style={styles.sup}>
+                  {item.address} , {item.provinceName}, {item.provinceName}
+                </Text>
+                <Text style={styles.title}>
+                  <Ionicons
+                    name="caret-forward-outline"
+                    size={20}
+                    color={COLORS.main}
+                  />
+                  Thời gian:
+                </Text>
                 <View
                   style={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginBottom: 10,
+                    justifyContent: "space-around",
+                    flexDirection: "row",
                   }}
                 >
-                  <Ionicons name="send" size={24} color={COLORS.main} />
+                  <View style={styles.dateForm}>
+                    <Text style={styles.date}>{classDetail.dateStart}</Text>
+                  </View>
+                  <View
+                    style={{
+                      justifyContent: "center",
+                      alignItems: "center",
+                      marginBottom: 10,
+                    }}
+                  >
+                    <Ionicons name="send" size={24} color={COLORS.main} />
+                  </View>
+                  <View style={styles.dateForm}>
+                    <Text style={styles.date}>{classDetail.dateEnd}</Text>
+                  </View>
                 </View>
-                <View style={styles.dateForm}>
-                  <Text style={styles.date}>{classDetail.dateEnd}</Text>
-                </View>
-              </View>
-              <Text style={styles.title}>
-                <Ionicons
-                  name="caret-forward-outline"
-                  size={20}
-                  color={COLORS.main}
-                />
-                Trình độ:
-              </Text>
-              <Text style={styles.sup}>{item.tutorLevel}</Text>
-              <Text style={styles.title}>
-                <Ionicons
-                  name="caret-forward-outline"
-                  size={20}
-                  color={COLORS.main}
-                />
-                Số buổi:
-              </Text>
-              <Text style={styles.sup}> {item.slots} buổi</Text>
-              {item.status == 0 && (
-                <View style={{ marginLeft: 5 }}>
-                  <Text style={styles.title}>
-                    <Ionicons
-                      name="caret-forward-outline"
-                      size={20}
-                      color={COLORS.main}
-                    />
-                    Trạng thái:
-                  </Text>
-                  <Text style={styles.sup}>Chưa có gia sư</Text>
-                </View>
-              )}
-              {item.status == 1 && (
-                <View>
-                  <Text style={styles.title}>
-                    <Ionicons
-                      name="caret-forward-outline"
-                      size={20}
-                      color={COLORS.main}
-                    />
-                    Trạng thái:
-                  </Text>
-                  <Text style={[styles.sup, { color: COLORS.red }]}>
-                    Đã có gia sư
-                  </Text>
-                </View>
-              )}
-              {item.status == 2 && (
-                <View>
-                  <Text style={styles.title}>
-                    <Ionicons
-                      name="caret-forward-outline"
-                      size={20}
-                      color={COLORS.main}
-                    />
-                    Trạng thái:
-                  </Text>
-                  <Text style={styles.sup}> Hoàn thành</Text>
-                </View>
-              )}
-            </View>
-
-            <View style={styles.priceInfo}>
-              <View style={styles.price}>
-                <Text style={styles.priceTxt}>Học phí</Text>
-                <Text
-                  style={[
-                    styles.priceTxt,
-                    { paddingTop: 0, color: COLORS.red },
-                  ]}
-                >
-                  {formattedAmount}
+                <Text style={styles.title}>
+                  <Ionicons
+                    name="caret-forward-outline"
+                    size={20}
+                    color={COLORS.main}
+                  />
+                  Trình độ:
                 </Text>
+                <Text style={styles.sup}>{item.tutorLevel}</Text>
+                <Text style={styles.title}>
+                  <Ionicons
+                    name="caret-forward-outline"
+                    size={20}
+                    color={COLORS.main}
+                  />
+                  Số buổi:
+                </Text>
+                <Text style={styles.sup}> {item.slots} buổi</Text>
+                {item.status == 0 && (
+                  <View style={{ marginLeft: 5 }}>
+                    <Text style={styles.title}>
+                      <Ionicons
+                        name="caret-forward-outline"
+                        size={20}
+                        color={COLORS.main}
+                      />
+                      Trạng thái:
+                    </Text>
+                    <Text style={styles.sup}>Chưa có gia sư</Text>
+                  </View>
+                )}
+                {item.status == 1 && (
+                  <View>
+                    <Text style={styles.title}>
+                      <Ionicons
+                        name="caret-forward-outline"
+                        size={20}
+                        color={COLORS.main}
+                      />
+                      Trạng thái:
+                    </Text>
+                    <Text style={[styles.sup, { color: COLORS.red }]}>
+                      Đã có gia sư
+                    </Text>
+                  </View>
+                )}
+                {item.status == 2 && (
+                  <View>
+                    <Text style={styles.title}>
+                      <Ionicons
+                        name="caret-forward-outline"
+                        size={20}
+                        color={COLORS.main}
+                      />
+                      Trạng thái:
+                    </Text>
+                    <Text style={styles.sup}> Hoàn thành</Text>
+                  </View>
+                )}
+              </View>
+
+              <View style={styles.priceInfo}>
+                <View style={styles.price}>
+                  <Text style={styles.priceTxt}>Học phí</Text>
+                  <Text
+                    style={[
+                      styles.priceTxt,
+                      { paddingTop: 0, color: COLORS.red },
+                    ]}
+                  >
+                    {formattedAmount}
+                  </Text>
+                </View>
               </View>
             </View>
           </View>
-        </View>
-      )}
+        )}
 
-      {loader ? (
-        <ActivityIndicator size={500} color={COLORS.main} />
-      ) : (
-        <View
-          style={{
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          {userData == null && (
-            <TouchableOpacity style={styles.btnApply} onPress={createApply}>
-              <Ionicons name="receipt-outline" size={30} color={COLORS.black} />
-              <Text
-                style={{
-                  marginLeft: 5,
-                  fontFamily: "bold",
-                  fontSize: SIZES.large,
-                }}
-              >
-                Apply
-              </Text>
-            </TouchableOpacity>
-          )}
-          {userData?.role === "TUTOR" &&
-          userTutor?.status == 2 &&
-          !checkApply ? (
-            <TouchableOpacity style={styles.btnApply} onPress={createApply}>
-              <Ionicons name="receipt-outline" size={30} color={COLORS.black} />
-              <Text
-                style={{
-                  marginLeft: 5,
-                  fontFamily: "bold",
-                  fontSize: SIZES.large,
-                }}
-              >
-                Apply
-              </Text>
-            </TouchableOpacity>
-          ) : checkApply ? (
-            <View style={styles.btnApply}>
-              <MaterialCommunityIcons
-                name="bookmark-check"
-                size={30}
-                color={COLORS.black}
-              />
-              <Text
-                style={{
-                  marginLeft: 5,
-                  fontFamily: "bold",
-                  fontSize: SIZES.large,
-                }}
-              >
-                Đã apply
-              </Text>
-            </View>
-          ) : (
-            userData?.role === "PARENT" && <View></View>
-          )}
-        </View>
-      )}
+        {loader ? (
+          <ActivityIndicator size={500} color={COLORS.main} />
+        ) : (
+          <View
+            style={{
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            {userData == null && (
+              <TouchableOpacity style={styles.btnApply} onPress={createApply}>
+                <Ionicons
+                  name="receipt-outline"
+                  size={30}
+                  color={COLORS.black}
+                />
+                <Text
+                  style={{
+                    marginLeft: 5,
+                    fontFamily: "bold",
+                    fontSize: SIZES.large,
+                  }}
+                >
+                  Apply
+                </Text>
+              </TouchableOpacity>
+            )}
+            {userData?.role === "TUTOR" &&
+            userTutor?.status == 2 &&
+            !checkApply ? (
+              <TouchableOpacity style={styles.btnApply} onPress={createApply}>
+                <Ionicons
+                  name="receipt-outline"
+                  size={30}
+                  color={COLORS.black}
+                />
+                <Text
+                  style={{
+                    marginLeft: 5,
+                    fontFamily: "bold",
+                    fontSize: SIZES.large,
+                  }}
+                >
+                  Apply
+                </Text>
+              </TouchableOpacity>
+            ) : checkApply ? (
+              <View style={styles.btnApply}>
+                <MaterialCommunityIcons
+                  name="bookmark-check"
+                  size={30}
+                  color={COLORS.black}
+                />
+                <Text
+                  style={{
+                    marginLeft: 5,
+                    fontFamily: "bold",
+                    fontSize: SIZES.large,
+                  }}
+                >
+                  Đã apply
+                </Text>
+              </View>
+            ) : (
+              userData?.role === "PARENT" && <View></View>
+            )}
+          </View>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -558,7 +568,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: -9,
     backgroundColor: COLORS.secondMain,
-    zIndex: 10,
+    // zIndex: 10,
   },
 
   headingInfo: {
@@ -586,7 +596,6 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.primary,
     borderRadius: SIZES.large,
     top: SIZES.large,
-    zIndex: 999,
   },
 
   wrapper: {

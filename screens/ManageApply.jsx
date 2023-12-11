@@ -58,6 +58,7 @@ const ManageClass = () => {
 
   const majors = ({ item }) => {
     var major = "";
+    console.log(item);
     var classNo = "";
     for (let index = 0; index < item.subjects.length; index++) {
       if (index == item.subjects.length - 1) {
@@ -79,15 +80,20 @@ const ManageClass = () => {
 
   const Item = ({ item }) => (
     <View style={styles.requestItem}>
-      <View style={{ width: "60%" }}>
-        <Text style={styles.requestTitle}>{majors({ item }).major}</Text>
-        <Text style={styles.requestSup}>{item.tutorLevel} </Text>
-        <Text style={styles.requestSup}>{majors({ item }).classNo}</Text>
-        <Text style={styles.requestSup}>
-          {item.address}, {item.districtName}
-        </Text>
-        <Text style={styles.requestSup}>{format(item.tuition)} </Text>
-      </View>
+      <TouchableOpacity
+        onPress={() => navigation.navigate("CreateDetailApply", { item })}
+      >
+        <View style={{ width: "60%" }}>
+          <Text style={styles.requestTitle}>{majors({ item }).major}</Text>
+          <Text style={styles.requestSup}>{item.tutorLevel} </Text>
+          <Text style={styles.requestSup}>{majors({ item }).classNo}</Text>
+          <Text style={styles.requestSup}>
+            {item.address}, {item.districtName}
+          </Text>
+          <Text style={styles.requestSup}>{format(item.tuition)} </Text>
+        </View>
+      </TouchableOpacity>
+
       {item.status == 0 && (
         <TouchableOpacity
           onPress={() => navigation.navigate("AttendancePage")}

@@ -67,9 +67,6 @@ const ManageClass = () => {
     return { major, classNo };
   };
 
-  // const list = data.sort((a, b) => new Date(b.dob) - new Date(a.dob));
-  // console.log(list);
-
   const Item = ({ item }) => (
     <View style={styles.requestItem}>
       <TouchableOpacity

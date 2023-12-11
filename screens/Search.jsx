@@ -14,7 +14,7 @@ import { TouchableOpacity } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { FlatList } from "react-native-gesture-handler";
 
-const Search2 = () => {
+const Search = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isClassOpen, setIsClassOpen] = useState(false);
   const [levelOpen, setLevelOpen] = useState(false);
@@ -205,7 +205,7 @@ const Search2 = () => {
   );
 };
 
-export default Search2;
+export default Search;
 
 const styles = StyleSheet.create({
   searchImage: {

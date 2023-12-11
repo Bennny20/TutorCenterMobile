@@ -39,7 +39,6 @@ const ClassCardView = ({ item }) => {
           setUser(currentUser.data.data.id);
         }
       } catch (error) {
-        console.log("Get user data error", error);
       } finally {
         setLoader(false);
       }

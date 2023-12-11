@@ -31,6 +31,8 @@ import {
   Verification,
   RequestDetail,
   FeedbackTutor,
+  ClassDetailForTutor,
+  CreateDetailApply,
 } from "./screens";
 import { useEffect } from "react";
 import { LogBox } from "react-native";
@@ -204,6 +206,17 @@ export default function App() {
         <Stack.Screen
           name="FeedbackTutor"
           component={FeedbackTutor}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="ClassDetailForTutor"
+          component={ClassDetailForTutor}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="CreateDetailApply"
+          component={CreateDetailApply}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

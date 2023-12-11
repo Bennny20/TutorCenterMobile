@@ -15,7 +15,6 @@ import { COLORS, HOST_API, SIZES } from "../constants";
 import { useState } from "react";
 import axios from "axios";
 import { ActivityIndicator } from "react-native";
-import { RefreshControl } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ManageClassTutor = () => {
@@ -31,7 +30,7 @@ const ManageClassTutor = () => {
   }, []);
 
   const route = useRoute();
-  // const { user } = route.params;
+  const { user } = route.params;
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState([]);
   const fetchClass = async () => {
@@ -45,7 +44,7 @@ const ManageClassTutor = () => {
         },
       });
       setData(response.data);
-      console.log(response.data);
+      console.log(response.data.data);
     } catch (error) {
       console.log("error", error);
     } finally {
@@ -55,7 +54,7 @@ const ManageClassTutor = () => {
   useEffect(() => {
     fetchClass();
   }, []);
-  const majors = ({ item }) => {
+  const majors = (item) => {
     var major = "";
     var classNo = "";
     for (let index = 0; index < item.subjects.length; index++) {
@@ -65,24 +64,25 @@ const ManageClassTutor = () => {
       }
       classNo = item.subjects[index].level;
     }
+
     return { major, classNo };
   };
 
   const Item = ({ item }) => (
     <View style={styles.requestItem}>
       <TouchableOpacity
-        onPress={() => navigation.navigate("ClassDetail", { item })}
+        onPress={() => navigation.navigate("ClassDetailForTutor", { item })}
       >
         <View style={styles.requestInfo}>
-          {/* <Text style={styles.requestTitle}>{majors(item).major}</Text> */}
+          <Text style={styles.requestTitle}>{majors(item).major}</Text>
           <Text style={styles.requestSup}>{item.tutorLevel} </Text>
-          {/* <Text style={styles.requestSup}>{majors(item).major}</Text> */}
+          <Text style={styles.requestSup}>{majors(item).classNo}</Text>
           <Text style={styles.requestSup}>{item.address} </Text>
         </View>
       </TouchableOpacity>
       {item.status == 1 ? (
         <TouchableOpacity
-          onPress={() => navigation.navigate("AttendancePage", { item })}
+          onPress={() => navigation.navigate("AttendancePage", { item, user })}
           style={styles.requestStatus}
         >
           <View
@@ -97,23 +97,21 @@ const ManageClassTutor = () => {
           </View>
         </TouchableOpacity>
       ) : (
-        item.status == 2 && (
-          <TouchableOpacity
-            onPress={() => navigation.navigate("AttendancePage", { item })}
-            style={styles.requestStatus}
+        <TouchableOpacity
+          onPress={() => navigation.navigate("AttendancePage", { item })}
+          style={styles.requestStatus}
+        >
+          <View
+            style={{
+              backgroundColor: COLORS.lightWhite,
+              borderRadius: 20,
+              borderWidth: 2,
+              borderColor: COLORS.main,
+            }}
           >
-            <View
-              style={{
-                backgroundColor: COLORS.lightWhite,
-                borderRadius: 20,
-                borderWidth: 2,
-                borderColor: COLORS.main,
-              }}
-            >
-              <Text style={styles.requestStatusBtn}>Hoàn thành</Text>
-            </View>
-          </TouchableOpacity>
-        )
+            <Text style={styles.requestStatusBtn}>Hoàn thành</Text>
+          </View>
+        </TouchableOpacity>
       )}
     </View>
   );

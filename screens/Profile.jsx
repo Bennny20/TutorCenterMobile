@@ -50,7 +50,7 @@ const Profile = () => {
           setUserData(currentUser.data.data);
           setUserLogin(true);
           setUser(currentUser.data.data.id);
-          console.log(currentUser.data.data.id);
+          // console.log(currentUser.data.data.id);
           if (currentUser.data.data.role === "TUTOR") {
             const dataTutor = await axios.get(
               HOST_API.local + `/api/tutor/profile`,
@@ -242,7 +242,9 @@ const Profile = () => {
 
                   {userData.role === "TUTOR" ? (
                     <TouchableOpacity
-                      onPressIn={() => navigation.navigate("ManageClassTutor")}
+                      onPressIn={() =>
+                        navigation.navigate("ManageClassTutor", { user })
+                      }
                     >
                       <View style={styles.menuItem(0.5)}>
                         <MaterialCommunityIcons

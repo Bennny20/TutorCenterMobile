@@ -18,6 +18,7 @@ import BlogPage from "./BlogPage";
 import BlogDetail from "./BlogDetail";
 import EditProfile from "./EditProfile";
 import SearchForTutor from "./SearchForTutor";
+import Search from "./Search";
 import ManageApply from "./ManageApply";
 import TransferMoney from "./TransferMoney";
 import DepositAndWithdrawMoney from "./DepositAndWithdrawMoney";
@@ -29,8 +30,13 @@ import Order from "./Order";
 import Verification from "./Verification";
 import RequestDetail from "./RequestDetail";
 import FeedbackTutor from "./FeedbackTutor";
+import ClassDetailForTutor from "./ClassDetailForTutor";
+import CreateDetailApply from "./CreateDetailApply";
 
 export {
+  Search,
+  CreateDetailApply,
+  ClassDetailForTutor,
   FeedbackTutor,
   RequestDetail,
   Verification,

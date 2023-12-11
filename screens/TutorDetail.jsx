@@ -40,19 +40,19 @@ const TutorDetail = () => {
   }, []);
   return (
     <View>
-      <View styles={styles.container}>
-        <View style={styles.wrapper}>
-          <View style={styles.upperRow}>
-            <TouchableOpacity onPress={() => navigation.goBack()}>
-              <Ionicons
-                name="chevron-back-circle"
-                size={40}
-                color={COLORS.lightWhite}
-              />
-            </TouchableOpacity>
-            <Text style={styles.heading}>Thông tin của gia su </Text>
-          </View>
+      <View style={styles.wrapper}>
+        <View style={styles.upperRow}>
+          <TouchableOpacity onPress={() => navigation.goBack()}>
+            <Ionicons
+              name="chevron-back-circle"
+              size={40}
+              color={COLORS.lightWhite}
+            />
+          </TouchableOpacity>
+          <Text style={styles.heading}>Thông tin của gia su </Text>
         </View>
+      </View>
+      <ScrollView style={{ marginBottom: 80 }}>
         {loader ? (
           <ActivityIndicator size={500} color={COLORS.main} />
         ) : (
@@ -94,27 +94,30 @@ const TutorDetail = () => {
               <View
                 style={{
                   alignItems: "center",
-                  justifyContent: "space-between",
-                  flexDirection: "row",
                 }}
               >
-                {/* <Image
-                source={{ uri: item.certificate[0] }}
-                style={styles.certificate}
-              />
-              <Image
-                source={{ uri: item.certificate[1] }}
-                style={styles.certificate}
-              /> */}
+                <Image
+                  source={{
+                    uri: "http://192.168.1.203:9000/api/user/image/7214c55a-c2eb-41c3-976b-2fe68c0a5811IMG_3719.JPG",
+                  }}
+                  style={styles.certificate}
+                />
               </View>
             </View>
 
             <View
-              style={{ alignItems: "center", marginTop: 10, marginBottom: 20 }}
+              style={{
+                alignItems: "center",
+                marginTop: 10,
+                marginBottom: 20,
+              }}
             >
               <TouchableOpacity
                 onPressIn={() =>
-                  navigation.navigate("FeedbackTutor", { tutorDetail, idTutor })
+                  navigation.navigate("FeedbackTutor", {
+                    tutorDetail,
+                    idTutor,
+                  })
                 }
                 style={styles.btnStyle}
               >
@@ -124,7 +127,7 @@ const TutorDetail = () => {
             <View></View>
           </View>
         )}
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -172,8 +175,8 @@ const styles = StyleSheet.create({
   },
   certificate: {
     marginRight: 10,
-    height: 155,
-    width: 190,
+    height: 300,
+    width: 390,
     borderRadius: 20,
     borderColor: COLORS.primary,
     borderWidth: 2,
@@ -202,7 +205,7 @@ const styles = StyleSheet.create({
   },
 
   info: {
-    marginTop: 30,
+    marginTop: -50,
     borderColor: COLORS.main,
     borderRadius: 30,
     borderWidth: 2,
@@ -223,16 +226,13 @@ const styles = StyleSheet.create({
     marginHorizontal: SIZES.large,
     flexDirection: "row",
     alignItems: "center",
-    position: "absolute",
     backgroundColor: COLORS.primary,
     borderRadius: SIZES.large,
-    top: SIZES.large,
-    zIndex: 1,
+    marginTop: 30,
   },
 
   wrapper: {
     marginTop: 30,
-    flex: 1,
     backgroundColor: COLORS.lightWhite,
   },
 });

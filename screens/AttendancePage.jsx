@@ -30,7 +30,6 @@ const AttendancePage = () => {
   }, []);
   const route = useRoute();
   const { item, user } = route.params;
-  console.log(item);
 
   useEffect(() => {
     fetchListApply();
@@ -57,9 +56,6 @@ const AttendancePage = () => {
     }
   };
 
-  if (length == item.slots) {
-    console.log("Thúc");
-  }
   const majors = ({ item }) => {
     var major = "";
     var classNo = "";
@@ -133,7 +129,9 @@ const AttendancePage = () => {
             <Text style={styles.sup}>{majors({ item }).classNo}</Text>
             <Text style={styles.sup}>Ngày bắt đầu: {item.dateStart}</Text>
             <Text style={styles.sup}>Ngày kết thúc: {item.dateEnd}</Text>
-            <Text style={styles.sup}>Gia sư: {item.tutor.name}</Text>
+            <Text style={styles.sup}>
+              Gia sư: {item.tutor?.name} {item?.tutorName}
+            </Text>
           </View>
         </View>
 

@@ -1,5 +1,6 @@
 import {
   Alert,
+  Image,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -18,6 +19,17 @@ const Verification = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { userData, userTutor } = route.params;
+
+  var major = " ";
+  var classNo = " ";
+  for (let index = 0; index < userTutor.subjects.length; index++) {
+    if (index == userTutor.subjects.length - 1) {
+      major += userTutor.subjects[index].name;
+    } else {
+      major += userTutor.subjects[index].name + ", ";
+    }
+    classNo = userTutor.subjects[index].level;
+  }
   console.log("user: ", userData);
   console.log("userTutor: ", userTutor);
   const createAttendance = async () => {
@@ -69,84 +81,118 @@ const Verification = () => {
   };
 
   return (
-    <SafeAreaView style={{ marginTop: 20, marginBottom: 20 }}>
+    <SafeAreaView style={{ marginTop: -20, marginBottom: 20 }}>
       <Heading title={"Xác minh tài khoản"} />
 
-      <View style={styles.info}>
-        <Text style={styles.sup}>
-          Email:
-          <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
-            {userTutor.email}
-          </Text>
-        </Text>
-        <Text style={styles.sup}>
-          Họ và tên:
-          <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
-            {" "}
-            {userData.fullName}
-          </Text>
-        </Text>
-        <Text style={styles.sup}>
-          Địa chỉ:
-          <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
-            {" "}
-            {userTutor.address}
-          </Text>
-        </Text>
-        <Text style={styles.sup}>
-          Khu vực:
-          <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
-            {" "}
-            {userTutor.districtName}, {userTutor.provinceName}
-          </Text>
-        </Text>
-        <Text style={styles.sup}>
-          Giới tính:
-          <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
-            {" "}
-            {userTutor.gender}
-          </Text>
-        </Text>
-        <Text style={styles.sup}>
-          Trường đại học:
-          <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
-            {" "}
-            {userTutor.university}
-          </Text>
-        </Text>
-        <Text style={styles.sup}>
-          CCCD/CMND:
-          <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
-            {" "}
-            {userTutor.idNumber}
-          </Text>
-        </Text>
-        <Text style={styles.sup}>
-          Chuyên môn:
-          <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
-            {" "}
-            {userTutor.major}
-          </Text>
-        </Text>
-        <Text style={styles.sup}>
-          Phone:{" "}
-          <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
-            {" "}
-            {userTutor.phone}
-          </Text>
-        </Text>
-      </View>
-      {userTutor.status == 0 && (
-        <TouchableOpacity style={styles.btn} onPress={createAttendance}>
-          <Text>Xác minh tài khoản</Text>
-        </TouchableOpacity>
-      )}
+      <ScrollView style={{ marginTop: 20 }}>
+        <View style={styles.info}>
+          <View style={{ alignItems: "center" }}>
+            <Image
+              source={{
+                uri: HOST_API.local + "/api/user/image/" + userTutor.imgAvatar,
+              }}
+              style={styles.profileImg}
+            />
+          </View>
 
-      {userTutor.status == 1 && (
-        <View style={styles.btn}>
-          <Text>Đang xác minh tài khoản</Text>
+          <Text style={styles.sup}>
+            Email:
+            <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
+              {userTutor.email}
+            </Text>
+          </Text>
+          <Text style={styles.sup}>
+            Họ và tên:
+            <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
+              {" "}
+              {userData.fullName}
+            </Text>
+          </Text>
+          <Text style={styles.sup}>
+            Địa chỉ:
+            <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
+              {" "}
+              {userTutor.address}
+            </Text>
+          </Text>
+          <Text style={styles.sup}>
+            Khu vực:
+            <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
+              {" "}
+              {userTutor.districtName}, {userTutor.provinceName}
+            </Text>
+          </Text>
+          <Text style={styles.sup}>
+            Giới tính:
+            <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
+              {" "}
+              {userTutor.gender}
+            </Text>
+          </Text>
+          <Text style={styles.sup}>
+            Môn dạy:
+            <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
+              {" "}
+              {major}
+            </Text>
+          </Text>
+          <Text style={styles.sup}>
+            Trường đại học:
+            <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
+              {" "}
+              {userTutor.university}
+            </Text>
+          </Text>
+          <Text style={styles.sup}>
+            CCCD/CMND:
+            <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
+              {" "}
+              {userTutor.idNumber}
+            </Text>
+          </Text>
+          <Text style={styles.sup}>
+            Chuyên môn:
+            <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
+              {" "}
+              {userTutor.major}
+            </Text>
+          </Text>
+          <Text style={styles.sup}>
+            Phone:{" "}
+            <Text style={{ color: COLORS.black, fontSize: SIZES.medium + 2 }}>
+              {" "}
+              {userTutor.phone}
+            </Text>
+          </Text>
+
+          <View
+            style={{
+              alignItems: "center",
+            }}
+          >
+            <Image
+              source={{
+                uri:
+                  HOST_API.local +
+                  "/api/user/image/" +
+                  userTutor.imgCertificate,
+              }}
+              style={styles.certificate}
+            />
+          </View>
         </View>
-      )}
+        {userTutor.status == 0 && (
+          <TouchableOpacity style={styles.btn} onPress={createAttendance}>
+            <Text>Xác minh tài khoản</Text>
+          </TouchableOpacity>
+        )}
+
+        {userTutor.status == 1 && (
+          <View style={styles.btn}>
+            <Text>Đang xác minh tài khoản</Text>
+          </View>
+        )}
+      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -154,6 +200,17 @@ const Verification = () => {
 export default Verification;
 
 const styles = StyleSheet.create({
+  certificate: {
+    marginRight: 10,
+    height: 300,
+    width: 390,
+    borderRadius: 20,
+    borderColor: COLORS.primary,
+    borderWidth: 2,
+    resizeMode: "cover",
+    marginTop: 10,
+  },
+
   info: {
     marginTop: 20,
     marginHorizontal: 20,
@@ -176,5 +233,14 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     backgroundColor: COLORS.secondMain,
     marginTop: 10,
+  },
+  profileImg: {
+    height: 155,
+    width: 155,
+    borderRadius: 999,
+    borderColor: COLORS.primary,
+    borderWidth: 2,
+    resizeMode: "cover",
+    marginTop: -20,
   },
 });
