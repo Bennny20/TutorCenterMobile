@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   ScrollView,
   TextInput,
@@ -6,13 +6,18 @@ import {
   Image,
   Text,
   StyleSheet,
+  ActivityIndicator,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
-import { COLORS, SIZES } from "../constants";
+import { COLORS, HOST_API, SIZES } from "../constants";
 import { SafeAreaView } from "react-native";
 import { TouchableOpacity } from "react-native";
 import { Ionicons, Feather } from "@expo/vector-icons";
 import { FlatList } from "react-native-gesture-handler";
+import useFetch from "../hook/Class/useFetch";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import ClassItem from "../components/Class/ClassItem";
+import axios from "axios";
 
 const Search = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,12 +34,15 @@ const Search = () => {
 
   const GioiTinh = [
     { label: "Nam", value: "Nam" },
-    { label: "Nữ", value: "Nu" },
+    { label: "Nữ", value: "Nữ" },
+    { label: "Nam - Nữ", value: "Nam - Nữ" },
   ];
 
   const trinhDo = [
-    { label: "Dại học", value: "Student" },
-    { label: "Giáo viên", value: "Teacher" },
+    { label: "Sinh viên", value: "Sinh viên" },
+    { label: "Giáo viên", value: "Giáo viên" },
+    { label: "Sinh viên - Giáo viên", value: "Sinh viên - Giáo viên" },
+    { label: "hhh", value: "HHH" },
   ];
 
   const hocLuc = [
@@ -55,45 +63,175 @@ const Search = () => {
   ];
 
   const lopHoc = [
-    { label: "1", value: "Toan" },
-    { label: "2", value: "Ly" },
-    { label: "3", value: "Hóa" },
-    { label: "4", value: "Văn" },
-    { label: "5", value: "Anh văn" },
-    { label: "6", value: "Báo bai" },
+    { label: "Lớp 1", value: "Lớp 1" },
+    { label: "Lớp 2", value: "Lớp 2" },
+    { label: "Lớp 3", value: "Lớp 3" },
+    { label: "Lớp 4", value: "Lớp 4" },
+    { label: "Lớp 5", value: "Lớp 5" },
+    { label: "Lớp 6", value: "Lớp 6" },
+    { label: "Lớp 7", value: "Lớp 7" },
+    { label: "Lớp 8", value: "Lớp 8" },
+    { label: "Lớp 9", value: "Lớp 9" },
+    { label: "Lớp 10", value: "Lớp 10" },
+    { label: "Lớp 11", value: "Lớp 11" },
+    { label: "Lớp 12", value: "Lớp 12" },
+    { label: "Khác", value: "Order" },
   ];
+  const [searchTemp, setSearchTemp] = useState();
+  const [isLoading, setIsLoading] = useState(false);
 
-  const [searchKey, setSearchKey] = useState("");
-  const search = () => {
-    console.log("Search result");
-    if (subjectValue != undefined) {
-      setSearchKey("subjectValue");
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const res = await axios.get(HOST_API.local + `/api/clazz`);
+      setSearchTemp(res.data.data);
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
     }
-    if (genderValue != undefined) {
-      setSearchKey("subjectValue - genderValue");
-    }
-    if (levelValue != undefined) {
-      setSearchKey("subjectValue - genderValue - levelValue");
-    }
-    if (academicValue != undefined) {
-      setSearchKey("subjectValue - genderValue - levelValue - academicValue");
-    }
-    if (classValue != undefined) {
-      setSearchKey(
-        "subjectValue - genderValue - levelValue - academicValue - classValue"
-      );
-    }
-    if (address != undefined) {
-      setSearchKey(
-        "subjectValue - genderValue - levelValue - academicValue - classValue - address"
-      );
-    }
-    console.log(searchKey);
   };
-  const [searchResult, setSearcResult] = useState([]);
+  useEffect(() => {
+    fetchData();
+  }, []);
+
+  const [searchValue, setSearchValue] = useState([]);
+  const search = async () => {
+    setSearchValue([]);
+    if (genderValue === undefined && levelValue === undefined) {
+      setSearchValue(searchTemp);
+    }
+
+    // if (searchValue.length > 0) {
+    //   console.log("searchValue");
+
+    //   if (genderValue !== undefined) {
+    //     const newArray = [];
+    //     console.log(searchTemp);
+    //     for (let index = 0; index < searchValue.length; index++) {
+    //       if (genderValue === "Nam") {
+    //         if (
+    //           searchTemp[index].gender === "Nam" ||
+    //           searchTemp[index].gender === "Nam - Nữ"
+    //         ) {
+    //           // console.log(searchTemp[index]);
+    //           newArray.push(searchTemp[index]);
+    //         }
+    //       }
+
+    //       if (genderValue === "Nữ") {
+    //         if (
+    //           searchTemp[index].gender === "Nữ" ||
+    //           searchTemp[index].gender === "Nam - Nữ"
+    //         ) {
+    //           // console.log(searchTemp[index]);
+    //           newArray.push(searchTemp[index]);
+    //         }
+    //       }
+
+    //       if (genderValue === "Nam - Nữ") {
+    //         newArray.push(searchTemp[index]);
+    //       }
+    //     }
+    //     setSearchValue(newArray);
+    //   }
+
+    //   if (levelValue !== undefined) {
+    //     const newArray = [];
+    //     for (let index = 0; index < searchValue.length; index++) {
+    //       if (levelValue === "Sinh viên") {
+    //         if (
+    //           searchTemp[index].gender === "Sinh viên" ||
+    //           searchTemp[index].gender === "Sinh viên - Giáo viên"
+    //         ) {
+    //           // console.log(searchTemp[index]);
+    //           newArray.push(searchTemp[index]);
+    //         }
+    //       }
+
+    //       if (levelValue === "Giáo viên") {
+    //         if (
+    //           searchTemp[index].gender === "Giáo viên" ||
+    //           searchTemp[index].gender === "Sinh viên - Giáo viên"
+    //         ) {
+    //           // console.log(searchTemp[index]);
+    //           newArray.push(searchTemp[index]);
+    //         }
+    //       }
+
+    //       if (levelValue === "Sinh viên - Giáo viên") {
+    //         newArray.push(searchTemp[index]);
+    //       }
+    //     }
+    //     setSearchValue(newArray);
+    //   }
+    // }
+
+    if (genderValue !== undefined) {
+      const newArray = [];
+      for (let index = 0; index < searchTemp.length; index++) {
+        if (genderValue === "Nam") {
+          if (
+            searchTemp[index].gender === "Nam" ||
+            searchTemp[index].gender === "Nam - Nữ"
+          ) {
+            // console.log(searchTemp[index]);
+            newArray.push(searchTemp[index]);
+          }
+        }
+
+        if (genderValue === "Nữ") {
+          if (
+            searchTemp[index].gender === "Nữ" ||
+            searchTemp[index].gender === "Nam - Nữ"
+          ) {
+            // console.log(searchTemp[index]);
+            newArray.push(searchTemp[index]);
+          }
+        }
+
+        if (genderValue === "Nam - Nữ") {
+          newArray.push(searchTemp[index]);
+        }
+      }
+      setSearchValue(newArray);
+    }
+
+    if (levelValue !== undefined) {
+      const newArray = [];
+      for (let index = 0; index < searchTemp.length; index++) {
+        if (levelValue === "Sinh viên") {
+          if (
+            searchTemp[index].tutorLevel === "Sinh viên" ||
+            searchTemp[index].tutorLevel === "Sinh viên - Giáo viên"
+          ) {
+            console.log(searchTemp[index]);
+            newArray.push(searchTemp[index]);
+          }
+        }
+
+        if (levelValue === "Giáo viên") {
+          if (
+            searchTemp[index].tutorLevel === "Giáo viên" ||
+            searchTemp[index].tutorLevel === "Sinh viên - Giáo viên"
+          ) {
+            console.log(searchTemp[index]);
+            newArray.push(searchTemp[index]);
+          }
+        }
+
+        if (levelValue === "Sinh viên - Giáo viên") {
+          newArray.push(searchTemp[index]);
+        }
+      }
+      setSearchValue(newArray);
+    }
+
+    // console.log("Search: ", searchValue);
+  };
   return (
-    <ScrollView style={{ padding: 16, marginTop: 40, marginBottom: 100 }}>
-      <SafeAreaView>
+    <GestureHandlerRootView style={{ flex: 1 }}>
+      <View style={{ padding: 16, marginTop: 40, marginBottom: 100 }}>
         <View style={styles.formSearch}>
           <View style={styles.fieldSearch}>
             <View style={{ flexDirection: "column", padding: 10, width: 190 }}>
@@ -171,18 +309,13 @@ const Search = () => {
             </View>
           </View>
           <View style={styles.btn}>
-            <TouchableOpacity
-              style={styles.searchBtn}
-              onPress={() => {
-                search();
-              }}
-            >
+            <TouchableOpacity style={styles.searchBtn} onPress={search}>
               <Feather name="search" size={24} color={COLORS.offwhite} />
             </TouchableOpacity>
           </View>
         </View>
 
-        {searchResult.length === 0 ? (
+        {searchValue?.length == 0 ? (
           <View style={{ flex: 1 }}>
             <Image
               source={require("../assets/images/Pose23.png")}
@@ -190,18 +323,20 @@ const Search = () => {
             />
           </View>
         ) : (
-          <FlatList
-            data={searchResult}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => {
-              {
-              }
-            }}
-            style={{ marginHorizontal: 12 }}
-          />
+          <View style={{ marginBottom: 450 }}>
+            {isLoading ? (
+              <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primarys} />
+            ) : (
+              <FlatList
+                data={searchValue}
+                keyExtractor={(item) => item._id}
+                renderItem={({ item }) => <ClassItem item={item} />}
+              />
+            )}
+          </View>
         )}
-      </SafeAreaView>
-    </ScrollView>
+      </View>
+    </GestureHandlerRootView>
   );
 };
 

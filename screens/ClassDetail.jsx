@@ -125,7 +125,7 @@ const ClassDetail = () => {
       const result = await response.json();
       if (result.responseCode === "00") {
         console.log(response.data);
-        Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
+        Alert.alert("Chúc mừng ", "Bạn đã apply thành công", [
           {
             text: "Cancel",
             onPress: () => {},
@@ -140,7 +140,7 @@ const ClassDetail = () => {
         ]);
         setLoader(false);
       } else {
-        Alert.alert("Error Logging im", "Please provide all require fields", [
+        Alert.alert("Bạn đã apply không thành công", [
           {
             text: "Cancel",
             onPress: () => {},

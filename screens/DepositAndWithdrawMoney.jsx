@@ -31,6 +31,7 @@ const DepositAndWithdrawMoney = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { userData, data } = route.params;
+  console.log(userData);
   const cart = [
     { id: 1, name: "TP Bank", cartNumber: "012345678" },
     { id: 2, name: "ACB Bank", cartNumber: "012345678" },

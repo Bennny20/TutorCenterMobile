@@ -145,6 +145,7 @@ const RegisterTutor = () => {
       aspect: [4, 3],
       quality: 1,
     });
+    console.log(result);
     if (!result.canceled) {
       setIsImage(true);
       setImageProfile(result.assets[0].uri);
@@ -155,13 +156,47 @@ const RegisterTutor = () => {
         name: result.assets[0].fileName,
       });
       axios
-        .post("http://192.168.1.203:9000/api/user/upload", formData, {
+        .post(HOST_API.local + "/api/user/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data; ",
           },
         })
         .then((response) => {
           setImgProfile(response.data);
+          console.log(response.data);
+        })
+        .catch((error) => {
+          console.log("Create failed", error);
+        });
+    }
+  };
+
+  const [imgIdBack, setImgIdBack] = useState(null);
+  const [imageIDBack, setImageIDBack] = useState(null);
+  const pickerIDBack = async () => {
+    let result2 = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+    if (!result2.canceled) {
+      setIsImage(true);
+      setImageIDBack(result2.assets[0].uri);
+      const formData = new FormData();
+      formData.append("image", {
+        uri: result2.assets[0].uri,
+        type: result2.assets[0].type,
+        name: result2.assets[0].fileName,
+      });
+      axios
+        .post(HOST_API.local + "/api/user/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data; ",
+          },
+        })
+        .then((response) => {
+          setImgIdBack(response.data);
           console.log(response.data);
         })
         .catch((error) => {
@@ -189,7 +224,7 @@ const RegisterTutor = () => {
         name: result2.assets[0].fileName,
       });
       axios
-        .post("http://192.168.1.203:9000/api/user/upload", formData, {
+        .post(HOST_API.local + "/api/user/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data; ",
           },
@@ -223,7 +258,7 @@ const RegisterTutor = () => {
         name: result.assets[0].fileName,
       });
       axios
-        .post("http://192.168.1.203:9000/api/user/upload", formData, {
+        .post(HOST_API.local + "/api/user/upload", formData, {
           headers: {
             "Content-Type": "multipart/form-data; ",
           },
@@ -295,85 +330,85 @@ const RegisterTutor = () => {
       university: university,
       major: major,
       area: selectDistrict + ", " + selectProvince,
-      imgCertificate: imgCertificate1,
+      imgCertificate: imgCertificate2,
       imgAvatar: imgProfile,
       imgIdFront: imgCertificate1,
-      imgIdBack: imgCertificate2,
+      imgIdBack: imageIDBack,
       subjects: subjectValue2,
     };
     console.log("Value: ", user);
 
     setLoader(true);
-    try {
-      const endpoint = HOST_API.local + "/api/auth/registerTutor";
-      const response = await axios.post(endpoint, {
-        email: user.email,
-        idNumber: user.idNumber,
-        password: user.password,
-        fullname: user.fullname,
-        phone: user.phone,
-        address: user.address,
-        districtId: user.districtId,
-        gender: user.gender,
-        university: user.university,
-        major: user.major,
-        area: user.area,
-        imgCertificate: user.imgIdFront,
-        imgAvatar: user.imgAvatar,
-        imgIdFront: user.imgIdFront,
-        imgIdBack: user.imgIdBack,
-        subjects: user.subjects,
-      });
-      console.log(response);
-      if (response.data.responseCode === "00") {
-        console.log(response.data);
-        Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
-          {
-            text: "Cancel",
-            onPress: () => {},
-          },
-          {
-            text: "Continue",
-            onPress: () => {
-              navigation.replace("Login");
-            },
-          },
-          { defaultIndex: 1 },
-        ]);
-        setLoader(false);
-      } else {
-        Alert.alert("Error Logging im", "Please provide all require fields", [
-          {
-            text: "Cancel",
-            onPress: () => {},
-          },
-          {
-            text: "Continue",
-            onPress: () => {},
-          },
-          { defaultIndex: 1 },
-        ]);
-      }
-    } catch (error) {
-      console.log(error);
-      Alert.alert("Error", "error", [
-        {
-          text: "Cancel",
-          onPress: () => {},
-        },
-        {
-          text: "Continue",
-          onPress: () => {},
-        },
-        { defaultIndex: 1 },
-      ]);
-    } finally {
-      setLoader(false);
-    }
+    // try {
+    //   const endpoint = HOST_API.local + "/api/auth/registerTutor";
+    //   const response = await axios.post(endpoint, {
+    //     email: user.email,
+    //     idNumber: user.idNumber,
+    //     password: user.password,
+    //     fullname: user.fullname,
+    //     phone: user.phone,
+    //     address: user.address,
+    //     districtId: user.districtId,
+    //     gender: user.gender,
+    //     university: user.university,
+    //     major: user.major,
+    //     area: user.area,
+    //     imgCertificate: user.imgIdFront,
+    //     imgAvatar: user.imgAvatar,
+    //     imgIdFront: user.imgIdFront,
+    //     imgIdBack: user.imgIdBack,
+    //     subjects: user.subjects,
+    //   });
+    //   console.log(response);
+    //   if (response.data.responseCode === "00") {
+    //     console.log(response.data);
+    //     Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
+    //       {
+    //         text: "Cancel",
+    //         onPress: () => {},
+    //       },
+    //       {
+    //         text: "Continue",
+    //         onPress: () => {
+    //           navigation.replace("Login");
+    //         },
+    //       },
+    //       { defaultIndex: 1 },
+    //     ]);
+    //     setLoader(false);
+    //   } else {
+    //     Alert.alert("Error Logging im", "Please provide all require fields", [
+    //       {
+    //         text: "Cancel",
+    //         onPress: () => {},
+    //       },
+    //       {
+    //         text: "Continue",
+    //         onPress: () => {},
+    //       },
+    //       { defaultIndex: 1 },
+    //     ]);
+    //   }
+    // } catch (error) {
+    //   console.log(error);
+    //   Alert.alert("Error", "error", [
+    //     {
+    //       text: "Cancel",
+    //       onPress: () => {},
+    //     },
+    //     {
+    //       text: "Continue",
+    //       onPress: () => {},
+    //     },
+    //     { defaultIndex: 1 },
+    //   ]);
+    // } finally {
+    //   setLoader(false);
+    // }
   };
 
   return (
-    <ScrollView style={{ marginTop: 30, marginBottom: 20 }}>
+    <View style={{ marginTop: 30, marginBottom: 200 }}>
       <Heading title={"Đăng kí gia sư"} />
       <View
         style={{
@@ -509,7 +544,7 @@ const RegisterTutor = () => {
       )}
 
       {currentStep == 1 && (
-        <View style={{ marginHorizontal: 20 }}>
+        <ScrollView style={{ marginHorizontal: 20 }}>
           <Text style={{ fontSize: 16, fontWeight: "bold" }}>
             Thông tin cá nhân
           </Text>
@@ -721,7 +756,7 @@ const RegisterTutor = () => {
           {/* {address != "" && phone != "" && address != null && phone != null && (
           
           )} */}
-        </View>
+        </ScrollView>
       )}
 
       {currentStep == 2 && (
@@ -812,12 +847,62 @@ const RegisterTutor = () => {
       )}
 
       {currentStep == 3 && (
-        <View style={{ marginHorizontal: 20 }}>
+        <ScrollView style={{ marginHorizontal: 20 }}>
           <Text style={{ fontSize: 16, fontWeight: "bold" }}>
             Upload ảnh thông tin
           </Text>
           <Pressable>
             <KeyboardAwareScrollView extraScrollHeight={-150}>
+              <View style={styles.cetification}>
+                {isImage === false ? (
+                  <View style={{ alignItems: "center" }}>
+                    <Image
+                      source={require("../assets/images/userDefault.png")}
+                      style={styles.certificate}
+                    />
+                    <TouchableOpacity
+                      onPress={() => pickerIDBack()}
+                      style={{
+                        marginTop: 20,
+                        height: 50,
+                        width: "60%",
+                        backgroundColor: "skyblue",
+                        borderRadius: 20,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        alignSelf: "center",
+                      }}
+                    >
+                      <Text style={styles.itemText}>Mặt trước CCCD</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={{ alignItems: "center" }}>
+                    {imageIDBack && (
+                      <Image
+                        source={{ uri: imageIDBack }}
+                        style={styles.certificate}
+                      />
+                    )}
+                    <TouchableOpacity
+                      onPress={() => pickerIDBack()}
+                      style={{
+                        marginTop: 20,
+                        height: 50,
+                        width: "60%",
+                        backgroundColor: "skyblue",
+                        borderRadius: 20,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        alignSelf: "center",
+                      }}
+                    >
+                      <Text style={styles.itemText}>Mặt trước CCCD</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </View>
+
               <View style={styles.cetification}>
                 {isImage === false ? (
                   <View style={{ alignItems: "center" }}>
@@ -838,7 +923,7 @@ const RegisterTutor = () => {
                         alignSelf: "center",
                       }}
                     >
-                      <Text style={styles.itemText}>Bằng cấp 1</Text>
+                      <Text style={styles.itemText}>Mặt sau CCCD</Text>
                     </TouchableOpacity>
                   </View>
                 ) : (
@@ -862,7 +947,7 @@ const RegisterTutor = () => {
                         alignSelf: "center",
                       }}
                     >
-                      <Text style={styles.itemText}>Bằng cấp 1</Text>
+                      <Text style={styles.itemText}>Mặt sau CCCD</Text>
                     </TouchableOpacity>
                   </View>
                 )}
@@ -932,9 +1017,9 @@ const RegisterTutor = () => {
             isValid={name}
             loader={false}
           />
-        </View>
+        </ScrollView>
       )}
-    </ScrollView>
+    </View>
   );
 };
 
@@ -942,12 +1027,12 @@ export default RegisterTutor;
 
 const styles = StyleSheet.create({
   certificate: {
-    height: 200,
+    height: 300,
     width: 400,
     borderRadius: 10,
     borderColor: COLORS.primary,
     borderWidth: 2,
-    resizeMode: "cover",
+    resizeMode: "contain",
     marginTop: 10,
   },
 

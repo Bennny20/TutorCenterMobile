@@ -11,7 +11,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const TutorItemApply = ({ item, classID }) => {
   const navigation = useNavigation();
   const [loader, setLoader] = useState(false);
-  const [user, setUser] = useState(null);
+  const [userData, setUserData] = useState(null);
   useEffect(() => {
     checkExitingUser();
   }, []);
@@ -31,7 +31,7 @@ const TutorItemApply = ({ item, classID }) => {
         }
       );
       if (currentUser !== null) {
-        setUser(currentUser.data.data);
+        setUserData(currentUser.data.data);
       }
     } catch (error) {
       console.log("error", error);
@@ -119,15 +119,27 @@ const TutorItemApply = ({ item, classID }) => {
         }}
       >
         {item.status == 1 ? (
-          <View style={styles.btnStatus}>
-            <Text style={styles.txtStatus}>Đã chọn gia sư</Text>
-          </View>
+          // <View style={styles.btnStatus}>
+          //   <Text style={styles.txtStatus}>Đã chọn gia sư</Text>
+          // </View>
+          <TouchableOpacity
+            style={styles.btnStatus}
+            onPress={() =>
+              navigation.navigate("TransferMoney", { item, userData, classID })
+            }
+          >
+            <Text style={styles.txtStatus}>Chọn gia sư</Text>
+          </TouchableOpacity>
         ) : (
           item.status == 0 && (
             <TouchableOpacity
               style={styles.btnStatus}
               onPress={() =>
-                navigation.navigate("TransferMoney", { item, user, classID })
+                navigation.navigate("TransferMoney", {
+                  item,
+                  userData,
+                  classID,
+                })
               }
             >
               <Text style={styles.txtStatus}>Chọn gia sư</Text>

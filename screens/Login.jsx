@@ -31,7 +31,7 @@ const Login = () => {
   const navigation = useNavigation();
   const [loader, setLoader] = useState(false);
   const [responseData, setResponseData] = useState(null);
-  const [obscureText, setObscureText] = useState(false);
+  const [obscureText, setObscureText] = useState(true);
 
   const inValidForm = () => {
     Alert.alert("Invalid form", "Please provide all require fields", [

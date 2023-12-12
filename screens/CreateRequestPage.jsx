@@ -237,7 +237,7 @@ const CreateRequestPage = () => {
     month = month < 10 ? `0${month}` : month;
     day = day < 10 ? `0${day}` : day;
 
-    return `${day}/${month}/${year}`;
+    return `${year}-${month}-${day}`;
   };
 
   const toggleDatePickerStart = () => {
@@ -247,6 +247,7 @@ const CreateRequestPage = () => {
   const confirmDateStart = () => {
     setDateStartValue(date);
     setDateStart(formatData(date));
+    console.log(dateStartValue);
     toggleDatePickerStart();
   };
 
@@ -300,6 +301,13 @@ const CreateRequestPage = () => {
       tutorLevel: levelValue,
     };
     console.log(request);
+    console.log(
+      dateStartValue.getFullYear() +
+        " - " +
+        (dateStartValue.getMonth() + 1) +
+        " - " +
+        dateStartValue.getDate()
+    );
     const token = await AsyncStorage.getItem("token");
     axios
       .post(
@@ -500,6 +508,18 @@ const CreateRequestPage = () => {
           />
         </View>
 
+        {/* Số điện thoại */}
+        <View>
+          <Text style={styles.itemText}>Số điện thoại </Text>
+          <TextInput
+            keyboardType="phone-pad"
+            style={styles.input}
+            value={phone}
+            onChangeText={(text) => setPhone(text)}
+            placeholder="Số điện thoại"
+          />
+        </View>
+
         {/* Giới tính */}
         <View>
           <Text style={styles.itemText}>Giới tính </Text>
@@ -576,18 +596,6 @@ const CreateRequestPage = () => {
               />
             </View>
           )}
-        </View>
-
-        {/* Số điện thoại */}
-        <View>
-          <Text style={styles.itemText}>Số điện thoại </Text>
-          <TextInput
-            keyboardType="phone-pad"
-            style={styles.input}
-            value={phone}
-            onChangeText={(text) => setPhone(text)}
-            placeholder="Số điện thoại"
-          />
         </View>
 
         {/* Lớp */}
@@ -861,7 +869,7 @@ const CreateRequestPage = () => {
               value={date}
               onChange={onChangeStart}
               style={{ backgroundColor: COLORS.lightWhite }}
-              minimumDate={new Date("2020-1-1")}
+              minimumDate={new Date()}
             />
           )}
 
@@ -913,7 +921,7 @@ const CreateRequestPage = () => {
               value={date}
               onChange={onChangeEnd}
               style={styles.datePicker}
-              minimumDate={new Date("2020-1-1")}
+              minimumDate={new Date(dateStart)}
             />
           )}
 
@@ -947,7 +955,7 @@ const CreateRequestPage = () => {
                 style={styles.input}
                 value={dateEnd}
                 onChangeText={setDateEnd}
-                placeholder="Ngày kết thúc "
+                placeholder="Ngày kết thúc"
                 editable={false}
                 onPressIn={toggleDatePickerEnd}
               />

@@ -1,4 +1,10 @@
-import { SafeAreaView, StyleSheet, Text, View } from "react-native";
+import {
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect, useState, useCallback } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import axios from "axios";
@@ -17,16 +23,18 @@ const TransferMoney = () => {
   const navigation = useNavigation();
 
   const route = useRoute();
-  const { item, user, classID } = route.params;
+  const { item, userData, classID } = route.params;
+  console.log(userData);
   const [loader, setLoader] = useState(false);
   const [money, setMoney] = useState(classID.tuition);
   const [content, setContent] = useState(
     "Thanh toán chi phí class: " +
       classID.id +
       " của phụ huynh " +
-      user?.fullName
+      userData?.fullName
   );
   const [data, setData] = useState();
+  const [temp, setTemp] = useState();
   const fetchBalance = async () => {
     const token = await AsyncStorage.getItem("token");
     setLoader(true);
@@ -39,7 +47,13 @@ const TransferMoney = () => {
           },
         }
       );
-      setData(response.data);
+      setTemp(response.data);
+      setData(
+        Intl.NumberFormat("vi-VN", {
+          style: "currency",
+          currency: "VND",
+        }).format(response.data.data.balance)
+      );
     } catch (error) {
       console.log("error", error);
     } finally {
@@ -83,80 +97,97 @@ const TransferMoney = () => {
     const order = {
       clazzId: classID.id,
       amount: classID.tuition,
-      type: "Chuyen",
+      type: "Chuyển",
     };
-    setLoader(true);
-    try {
-      const response = await axios.post(
-        HOST_API.local + "/api/order/create",
-        {
-          clazzId: classID.id,
-          amount: classID.tuition,
-          type: 1,
+    Alert.alert("Chọn gia sư thành công", "Quản lý lớp", [
+      {
+        text: "Cancel",
+        onPress: () => {},
+      },
+      {
+        text: "Continue",
+        onPress: () => {
+          navigation.navigate("History", { item, order });
         },
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      );
-      console.log(response.data);
-      if (response.data.responseCode === "00") {
-        const response = await fetch(
-          HOST_API.local + `/api/tutorApply/acceptTutor/${item.id}`,
-          {
-            method: "PUT",
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          }
-        );
-        const result = await response.json();
-        if (result.responseCode == "00") {
-          Alert.alert("Chọn gia sư thành công va", "Quản lý lớp", [
-            {
-              text: "Cancel",
-              onPress: () => {},
-            },
-            {
-              text: "Continue",
-              onPress: () => {
-                navigation.navigate("Profile");
-              },
-            },
-            { defaultIndex: 1 },
-          ]);
-        }
-        setLoader(false);
-      }
-    } catch (error) {
-      console.log(error.message);
-      Alert.alert("Error", "error", [
-        {
-          text: "Cancel",
-          onPress: () => {},
-        },
-        {
-          text: "Continue",
-          onPress: () => {},
-        },
-        { defaultIndex: 1 },
-      ]);
-    } finally {
-      setLoader(false);
-    }
+      },
+      { defaultIndex: 1 },
+    ]);
+
+    // setLoader(true);
+    // try {
+    //   const response = await axios.post(
+    //     HOST_API.local + "/api/order/create",
+    //     {
+    //       clazzId: classID.id,
+    //       amount: new Intl.NumberFormat("vi-VN", {
+    //         style: "currency",
+    //         currency: "VND",
+    //       }).format(classID.tuition),
+    //       type: 1,
+    //     },
+    //     {
+    //       headers: {
+    //         Authorization: "Bearer " + token,
+    //       },
+    //     }
+    //   );
+    //   console.log(response.data);
+    //   if (response.data.responseCode === "00") {
+    //     const response = await fetch(
+    //       HOST_API.local + `/api/tutorApply/acceptTutor/${item.id}`,
+    //       {
+    //         method: "PUT",
+    //         headers: {
+    //           Authorization: "Bearer " + token,
+    //         },
+    //       }
+    //     );
+    //     const result = await response.json();
+    //     if (result.responseCode == "00") {
+    //       Alert.alert("Chọn gia sư thành công", "Quản lý lớp", [
+    //         {
+    //           text: "Cancel",
+    //           onPress: () => {},
+    //         },
+    //         {
+    //           text: "Continue",
+    //           onPress: () => {
+    //             navigation.navigate("History", { item, order });
+    //           },
+    //         },
+    //         { defaultIndex: 1 },
+    //       ]);
+    //     }
+    //     setLoader(false);
+    //   }
+    // } catch (error) {
+    //   console.log(error.message);
+    //   Alert.alert("Error", "error", [
+    //     {
+    //       text: "Cancel",
+    //       onPress: () => {},
+    //     },
+    //     {
+    //       text: "Continue",
+    //       onPress: () => {},
+    //     },
+    //     { defaultIndex: 1 },
+    //   ]);
+    // } finally {
+    //   setLoader(false);
+    // }
   };
 
   return (
     <ScrollView style={{ marginTop: 30 }}>
       <Heading title={"Chuyển tiền "} />
       <View style={styles.profile}>
-        <Text style={styles.textHeading}>{user?.fullName}</Text>
+        <Text style={styles.textHeading}>{userData?.fullName}</Text>
         <View style={{ marginRight: 20 }}>
           {loader ? (
             <ActivityIndicator size={20} color={COLORS.main} />
           ) : (
-            <CurrencyFormatter amount={data?.data.balance} />
+            <CurrencyFormatter amount={temp?.data.balance} />
           )}
         </View>
       </View>
@@ -195,7 +226,7 @@ const TransferMoney = () => {
           <ActivityIndicator size={50} color={COLORS.main} />
         ) : (
           <View>
-            {data?.data.balance < classID.tuition ? (
+            {temp?.data.balance < classID.tuition ? (
               <View
                 style={{
                   marginTop: 10,
@@ -206,12 +237,22 @@ const TransferMoney = () => {
                 <Text style={styles.warring}>
                   Tài khoản không đủ vui lòng nạp thêm thêm
                 </Text>
-                <Button
-                  loader={loader}
-                  title={"Nạp tiền vào ví "}
-                  onPress={{}}
-                  isValid={{}}
-                />
+                <View
+                  style={{ justifyContent: "center", alignItems: "center" }}
+                >
+                  <TouchableOpacity
+                    onPressIn={() =>
+                      navigation.navigate("DepositAndWithdrawMoney", {
+                        userData,
+                        data,
+                      })
+                    }
+                  >
+                    <View style={[styles.btn(COLORS.secondMain)]}>
+                      <Text style={styles.btnText}>Nạp tiền vào ví </Text>
+                    </View>
+                  </TouchableOpacity>
+                </View>
               </View>
             ) : (
               <Button
@@ -231,6 +272,20 @@ const TransferMoney = () => {
 export default TransferMoney;
 
 const styles = StyleSheet.create({
+  btnText: {
+    padding: 7,
+    fontFamily: "semibold",
+    fontSize: SIZES.medium,
+  },
+  btn: (color) => ({
+    borderWidth: 1,
+    borderColor: COLORS.black,
+    backgroundColor: color,
+    borderRadius: 10,
+    marginBottom: 5,
+    justifyContent: "center",
+    alignItems: "center",
+  }),
   profile: {
     padding: 10,
     justifyContent: "center",

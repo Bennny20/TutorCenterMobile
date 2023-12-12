@@ -8,7 +8,7 @@ import { useNavigation, useRoute } from "@react-navigation/native";
 const History = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { item } = route.params;
+  const { item, order } = route.params;
 
   const formattedAmount = new Intl.NumberFormat("vi-VN", {
     style: "currency",
@@ -64,7 +64,7 @@ const History = () => {
             </View>
           </View>
         </View>
-      ) : (
+      ) : item.type === "Rút" ? (
         <View style={styles.body}>
           <View style={{ alignItems: "center" }}>
             <View style={styles.logo}>
@@ -91,6 +91,41 @@ const History = () => {
             <View style={styles.info}>
               <Text style={styles.title}>Số tiền rút</Text>
               <Text style={styles.amount}> - {formattedAmount}</Text>
+            </View>
+            <View style={styles.info}>
+              <Text style={styles.title}>Phí giao dịch</Text>
+              <Text style={styles.amount}>Miễn phí</Text>
+            </View>
+          </View>
+        </View>
+      ) : (
+        <View style={styles.body}>
+          <View style={{ alignItems: "center" }}>
+            <View style={styles.logo}>
+              <MaterialCommunityIcons
+                name={"checkbox-marked-circle-outline"}
+                size={80}
+                color={"green"}
+              />
+            </View>
+          </View>
+
+          <View style={{ alignItems: "center", marginVertical: 20 }}>
+            <Text style={styles.amount}>Thanh toán khóa học</Text>
+            <Text style={styles.amount}>Chuyển tiền thành công</Text>
+            <Text style={[styles.amount, { fontSize: SIZES.large }]}>
+              - {order.amount}
+            </Text>
+          </View>
+
+          <View>
+            <View style={styles.info}>
+              <Text style={styles.title}>Nguồn tiền từ</Text>
+              <Text style={styles.amount}>Ví</Text>
+            </View>
+            <View style={styles.info}>
+              <Text style={styles.title}>Số tiền chuyển khoản</Text>
+              <Text style={styles.amount}> - {order.amount}</Text>
             </View>
             <View style={styles.info}>
               <Text style={styles.title}>Phí giao dịch</Text>
