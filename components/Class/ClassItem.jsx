@@ -106,7 +106,7 @@ const ClassItem = ({ item }) => {
             <Text style={styles.text}> {classNo}</Text>
             <Text style={styles.text}>Địa chỉ: {item.address}</Text>
             <Text style={styles.text}>
-              {item.address}, {item.provinceName}
+              {item.districtName}, {item.provinceName}
             </Text>
             <Text style={styles.text}>Giới tính: {item.gender}</Text>
           </View>

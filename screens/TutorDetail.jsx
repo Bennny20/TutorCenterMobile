@@ -38,6 +38,7 @@ const TutorDetail = () => {
     };
     fetchClassDetail();
   }, []);
+  console.log(tutorDetail);
   return (
     <View>
       <View style={styles.wrapper}>
@@ -98,7 +99,10 @@ const TutorDetail = () => {
               >
                 <Image
                   source={{
-                    uri: "http://192.168.1.203:9000/api/user/image/7214c55a-c2eb-41c3-976b-2fe68c0a5811IMG_3719.JPG",
+                    uri:
+                      HOST_API.local +
+                      "/api/user/image/" +
+                      tutorDetail?.imgCert,
                   }}
                   style={styles.certificate}
                 />

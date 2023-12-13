@@ -339,72 +339,72 @@ const RegisterTutor = () => {
     console.log("Value: ", user);
 
     setLoader(true);
-    // try {
-    //   const endpoint = HOST_API.local + "/api/auth/registerTutor";
-    //   const response = await axios.post(endpoint, {
-    //     email: user.email,
-    //     idNumber: user.idNumber,
-    //     password: user.password,
-    //     fullname: user.fullname,
-    //     phone: user.phone,
-    //     address: user.address,
-    //     districtId: user.districtId,
-    //     gender: user.gender,
-    //     university: user.university,
-    //     major: user.major,
-    //     area: user.area,
-    //     imgCertificate: user.imgIdFront,
-    //     imgAvatar: user.imgAvatar,
-    //     imgIdFront: user.imgIdFront,
-    //     imgIdBack: user.imgIdBack,
-    //     subjects: user.subjects,
-    //   });
-    //   console.log(response);
-    //   if (response.data.responseCode === "00") {
-    //     console.log(response.data);
-    //     Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
-    //       {
-    //         text: "Cancel",
-    //         onPress: () => {},
-    //       },
-    //       {
-    //         text: "Continue",
-    //         onPress: () => {
-    //           navigation.replace("Login");
-    //         },
-    //       },
-    //       { defaultIndex: 1 },
-    //     ]);
-    //     setLoader(false);
-    //   } else {
-    //     Alert.alert("Error Logging im", "Please provide all require fields", [
-    //       {
-    //         text: "Cancel",
-    //         onPress: () => {},
-    //       },
-    //       {
-    //         text: "Continue",
-    //         onPress: () => {},
-    //       },
-    //       { defaultIndex: 1 },
-    //     ]);
-    //   }
-    // } catch (error) {
-    //   console.log(error);
-    //   Alert.alert("Error", "error", [
-    //     {
-    //       text: "Cancel",
-    //       onPress: () => {},
-    //     },
-    //     {
-    //       text: "Continue",
-    //       onPress: () => {},
-    //     },
-    //     { defaultIndex: 1 },
-    //   ]);
-    // } finally {
-    //   setLoader(false);
-    // }
+    try {
+      const endpoint = HOST_API.local + "/api/auth/registerTutor";
+      const response = await axios.post(endpoint, {
+        email: user.email,
+        idNumber: user.idNumber,
+        password: user.password,
+        fullname: user.fullname,
+        phone: user.phone,
+        address: user.address,
+        districtId: user.districtId,
+        gender: user.gender,
+        university: user.university,
+        major: user.major,
+        area: user.area,
+        imgCertificate: user.imgIdFront,
+        imgAvatar: user.imgAvatar,
+        imgIdFront: user.imgIdFront,
+        imgIdBack: user.imgIdBack,
+        subjects: user.subjects,
+      });
+      console.log(response);
+      if (response.data.responseCode === "00") {
+        console.log(response.data);
+        Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {
+              navigation.replace("Login");
+            },
+          },
+          { defaultIndex: 1 },
+        ]);
+        setLoader(false);
+      } else {
+        Alert.alert("Error Logging im", "Please provide all require fields", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {},
+          },
+          { defaultIndex: 1 },
+        ]);
+      }
+    } catch (error) {
+      console.log(error);
+      Alert.alert("Error", "error", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+        },
+        {
+          text: "Continue",
+          onPress: () => {},
+        },
+        { defaultIndex: 1 },
+      ]);
+    } finally {
+      setLoader(false);
+    }
   };
 
   return (

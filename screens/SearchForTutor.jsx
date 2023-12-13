@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   TextInput,
   View,
@@ -6,7 +6,7 @@ import {
   StyleSheet,
   ActivityIndicator,
 } from "react-native";
-import { COLORS, SIZES } from "../constants";
+import { COLORS, HOST_API, SIZES } from "../constants";
 import { TouchableOpacity } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { FlatList } from "react-native-gesture-handler";
@@ -15,12 +15,32 @@ import useFetch from "../hook/Class/useFetch";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ClassItem from "../components/Class/ClassItem";
 import ClassItemForTutor from "../components/Class/ClassItemForTutor";
+import axios from "axios";
 
 const SearchForTutor = () => {
   const navigation = useNavigation();
-  const { data, isLoading, error } = useFetch();
-
+  const [classList, setClassList] = useState([]);
+  const [filterData, setFilterData] = useState([]);
+  const [searchValue, setSearchValue] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const res = await axios.get(HOST_API.local + `/api/clazz`);
+      setClassList(res.data.data);
+      setFilterData(res.data.data);
+    } catch (error) {
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []);
   const [refreshing, setRefreshing] = useState(false);
+
   const onRefresh = React.useCallback(() => {
     useFetch();
     setRefreshing(true);
@@ -29,24 +49,40 @@ const SearchForTutor = () => {
     }, 2000);
   }, []);
 
+  const search = () => {
+    setIsLoading(true);
+    if (searchValue) {
+      const newData = classList.filter((item) => {
+        const itemData = item.provinceName
+          ? item.provinceName.toUpperCase()
+          : "".toUpperCase();
+        const textData = searchValue.toUpperCase();
+        return itemData.indexOf(textData) > -1;
+      });
+      setFilterData(newData);
+    } else {
+      setFilterData(classList);
+    }
+    setIsLoading(false);
+  };
   return (
     <View style={{ padding: 16, marginTop: 10, marginBottom: 100 }}>
       <View style={styles.searchContainer}>
         <View style={styles.searchWrapper}>
           <TextInput
-            editable={false}
             style={styles.searchInput}
-            onPressIn={() => navigation.navigate("Search")}
-            placeholder="What are you looking for "
+            onChangeText={(text) => setSearchValue(text)}
+            value={searchValue}
+            placeholder="Nhập tỉnh thành muốn dạy"
+            keyboardType="default"
           />
         </View>
         <View>
-          <TouchableOpacity style={styles.searchBtn}>
+          <TouchableOpacity onPress={search} style={styles.searchBtn}>
             <Ionicons
               name="search"
               size={SIZES.xLarge}
               color={COLORS.offwhite}
-              onPressIn={() => navigation.navigate("Search")}
             />
           </TouchableOpacity>
         </View>
@@ -62,7 +98,7 @@ const SearchForTutor = () => {
               refreshing={refreshing}
               onRefresh={onRefresh}
               style={{ marginBottom: 70 }}
-              data={data.data}
+              data={filterData}
               renderItem={({ item }) => <ClassItemForTutor item={item} />}
               keyExtractor={(item) => item.id}
             />

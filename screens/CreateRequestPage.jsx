@@ -69,7 +69,8 @@ const CreateRequestPage = () => {
   const [address, setAddress] = useState("");
   const [slot, setSlot] = useState(0);
   const [phone, setPhone] = useState();
-  const [price, setPrice] = useState(0);
+  const [price, setPrice] = useState("");
+  const [priceValue, setPriceValue] = useState(0);
   const [description, setDescription] = useState("");
   const [dateStart, setDateStart] = useState("");
   const [dateEnd, setDateEnd] = useState("");
@@ -211,7 +212,7 @@ const CreateRequestPage = () => {
         return { label: item.name, value: item.id };
       });
       setSubject2(newArray);
-      console.log(subject2);
+      // console.log(subject2);
     });
   }
 
@@ -287,7 +288,7 @@ const CreateRequestPage = () => {
     const request = {
       phone: phone,
       address: address,
-      listSubjectId: subjectValue2,
+      listSubjectId: [subjectValue],
       gender: genderValue,
       daysOfWeek: dayOfWeekValue.join(", "),
       time: timeValue,
@@ -301,13 +302,13 @@ const CreateRequestPage = () => {
       tutorLevel: levelValue,
     };
     console.log(request);
-    console.log(
-      dateStartValue.getFullYear() +
-        " - " +
-        (dateStartValue.getMonth() + 1) +
-        " - " +
-        dateStartValue.getDate()
-    );
+    // console.log(
+    //   dateStartValue.getFullYear() +
+    //     " - " +
+    //     (dateStartValue.getMonth() + 1) +
+    //     " - " +
+    //     dateStartValue.getDate()
+    // );
     const token = await AsyncStorage.getItem("token");
     axios
       .post(
@@ -315,7 +316,7 @@ const CreateRequestPage = () => {
         {
           phone: phone,
           address: address,
-          listSubjectId: subjectValue2,
+          listSubjectId: [subjectValue],
           gender: genderValue,
           daysOfWeek: dayOfWeekValue.join(", "),
           time: timeValue,
@@ -412,6 +413,13 @@ const CreateRequestPage = () => {
     }).format(number);
   };
 
+  const inputPrice = (text) => {
+    console.log(text);
+    if (text) {
+      setPrice(formattedAmount(text));
+      setPriceValue(text);
+    }
+  };
   return (
     <View style={{ padding: 16, marginTop: 40, marginBottom: 80 }}>
       <View style={styles.title}>
@@ -639,7 +647,7 @@ const CreateRequestPage = () => {
         </View>
 
         {/* Môn học */}
-        <View style={{ zIndex: 20 }}>
+        {/* <View style={{ zIndex: 20 }}>
           <Text style={styles.itemText}>Môn học</Text>
           <DropDownPicker
             style={styles.dropdownSelector}
@@ -660,6 +668,54 @@ const CreateRequestPage = () => {
             badgeDotColors={["white"]}
             backgroundColor=""
           />
+        </View> */}
+
+        {/* Môn học */}
+        <View>
+          <Text style={styles.itemText}>Môn học</Text>
+          <TouchableOpacity
+            style={styles.dropdownSelector}
+            onPress={() => {
+              setIsClickSubject(!isClickSubject);
+            }}
+          >
+            <Text>{selectSubject}</Text>
+            {isClickSubject ? (
+              <Ionicons name="chevron-down-outline" size={24} />
+            ) : (
+              <TouchableOpacity
+                onPress={() => {
+                  onClose;
+                }}
+              >
+                <Ionicons name="chevron-up-outline" size={24} />
+              </TouchableOpacity>
+            )}
+          </TouchableOpacity>
+          {isClickSubject && (
+            <View style={styles.dropdownArea}>
+              <FlatList
+                data={subject}
+                renderItem={({ item, index }) => {
+                  return (
+                    <TouchableOpacity
+                      style={[styles.item, { borderColor: COLORS.main }]}
+                      onPress={() => {
+                        setSelectSubject(item.name);
+                        // console.log(item);
+                        setIsClickSubject(false);
+                        setSubjectValue(item.id);
+                        getTuition(item.pricePerHour);
+                        // getTuition(item.name);
+                      }}
+                    >
+                      <Text>{item.name}</Text>
+                    </TouchableOpacity>
+                  );
+                }}
+              />
+            </View>
+          )}
         </View>
 
         {/* Ngày học trong tuần */}
@@ -731,54 +787,6 @@ const CreateRequestPage = () => {
           )}
         </View>
 
-        {/* Môn học */}
-        <View>
-          <Text style={styles.itemText}>Môn học</Text>
-          <TouchableOpacity
-            style={styles.dropdownSelector}
-            onPress={() => {
-              setIsClickSubject(!isClickSubject);
-            }}
-          >
-            <Text>{selectSubject}</Text>
-            {isClickSubject ? (
-              <Ionicons name="chevron-down-outline" size={24} />
-            ) : (
-              <TouchableOpacity
-                onPress={() => {
-                  onClose;
-                }}
-              >
-                <Ionicons name="chevron-up-outline" size={24} />
-              </TouchableOpacity>
-            )}
-          </TouchableOpacity>
-          {isClickSubject && (
-            <View style={styles.dropdownArea}>
-              <FlatList
-                data={subject}
-                renderItem={({ item, index }) => {
-                  return (
-                    <TouchableOpacity
-                      style={[styles.item, { borderColor: COLORS.main }]}
-                      onPress={() => {
-                        setSelectSubject(item.name);
-                        console.log(item);
-                        setIsClickSubject(false);
-                        setSubjectValue(item.id);
-                        getTuition(item.pricePerHour);
-                        // getTuition(item.name);
-                      }}
-                    >
-                      <Text>{item.name}</Text>
-                    </TouchableOpacity>
-                  );
-                }}
-              />
-            </View>
-          )}
-        </View>
-
         {/* Số buổi */}
         <View>
           <Text style={styles.itemText}>Số buổi </Text>
@@ -814,7 +822,7 @@ const CreateRequestPage = () => {
           <TextInput
             keyboardType="phone-pad"
             style={styles.input}
-            value={String(price)}
+            value={formattedAmount(price)}
             onChangeText={(text) => setPrice(text)}
             placeholder="Chi phí"
           />

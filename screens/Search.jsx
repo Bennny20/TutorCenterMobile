@@ -31,26 +31,38 @@ const Search = () => {
   const [subjectValue, setSubjectValue] = useState();
   const [classValue, setClassValue] = useState();
   const [address, setAddress] = useState();
+  const [province, setProvince] = useState([]);
+  const [provinceValue, setProvinceValue] = useState();
+  const [loader, setLoader] = useState(false);
+
+  useEffect(() => {
+    setLoader(true);
+    const fetchProvince = async () => {
+      try {
+        const response = await axios.get(
+          HOST_API.local + `/api/district/province`
+        );
+        let newArray = response.data.data.map((item) => {
+          return { label: item.name, value: item.name };
+        });
+        setProvince(newArray);
+      } catch (error) {
+        console.log("error", error);
+      } finally {
+        setLoader(false);
+      }
+    };
+    fetchProvince();
+  }, []);
 
   const GioiTinh = [
     { label: "Nam", value: "Nam" },
     { label: "Nữ", value: "Nữ" },
-    { label: "Nam - Nữ", value: "Nam - Nữ" },
   ];
 
   const trinhDo = [
     { label: "Sinh viên", value: "Sinh viên" },
     { label: "Giáo viên", value: "Giáo viên" },
-    { label: "Sinh viên - Giáo viên", value: "Sinh viên - Giáo viên" },
-    { label: "hhh", value: "HHH" },
-  ];
-
-  const hocLuc = [
-    { label: "Giỏi", value: "Student" },
-    { label: "Khá", value: "Teacher" },
-    { label: "Trung bình", value: "Teacher" },
-    { label: "Yếu", value: "Teacher" },
-    { label: "Xuat sắc", value: "Teacher" },
   ];
 
   const monHoc = [
@@ -77,7 +89,19 @@ const Search = () => {
     { label: "Lớp 12", value: "Lớp 12" },
     { label: "Khác", value: "Order" },
   ];
+
+  const [refreshing, setRefreshing] = useState(false);
+
+  const onRefresh = React.useCallback(() => {
+    useFetch();
+    setRefreshing(true);
+    setTimeout(() => {
+      setRefreshing(false);
+    }, 2000);
+  }, []);
+
   const [searchTemp, setSearchTemp] = useState();
+  const [searchValue, setSearchValue] = useState();
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchData = async () => {
@@ -85,6 +109,7 @@ const Search = () => {
     try {
       const res = await axios.get(HOST_API.local + `/api/clazz`);
       setSearchTemp(res.data.data);
+      // setSearchValue(res.data.data);
     } catch (error) {
       console.log(error);
     } finally {
@@ -95,139 +120,56 @@ const Search = () => {
     fetchData();
   }, []);
 
-  const [searchValue, setSearchValue] = useState([]);
-  const search = async () => {
-    setSearchValue([]);
-    if (genderValue === undefined && levelValue === undefined) {
-      setSearchValue(searchTemp);
-    }
-
-    // if (searchValue.length > 0) {
-    //   console.log("searchValue");
-
-    //   if (genderValue !== undefined) {
-    //     const newArray = [];
-    //     console.log(searchTemp);
-    //     for (let index = 0; index < searchValue.length; index++) {
-    //       if (genderValue === "Nam") {
-    //         if (
-    //           searchTemp[index].gender === "Nam" ||
-    //           searchTemp[index].gender === "Nam - Nữ"
-    //         ) {
-    //           // console.log(searchTemp[index]);
-    //           newArray.push(searchTemp[index]);
-    //         }
-    //       }
-
-    //       if (genderValue === "Nữ") {
-    //         if (
-    //           searchTemp[index].gender === "Nữ" ||
-    //           searchTemp[index].gender === "Nam - Nữ"
-    //         ) {
-    //           // console.log(searchTemp[index]);
-    //           newArray.push(searchTemp[index]);
-    //         }
-    //       }
-
-    //       if (genderValue === "Nam - Nữ") {
-    //         newArray.push(searchTemp[index]);
-    //       }
-    //     }
-    //     setSearchValue(newArray);
-    //   }
-
-    //   if (levelValue !== undefined) {
-    //     const newArray = [];
-    //     for (let index = 0; index < searchValue.length; index++) {
-    //       if (levelValue === "Sinh viên") {
-    //         if (
-    //           searchTemp[index].gender === "Sinh viên" ||
-    //           searchTemp[index].gender === "Sinh viên - Giáo viên"
-    //         ) {
-    //           // console.log(searchTemp[index]);
-    //           newArray.push(searchTemp[index]);
-    //         }
-    //       }
-
-    //       if (levelValue === "Giáo viên") {
-    //         if (
-    //           searchTemp[index].gender === "Giáo viên" ||
-    //           searchTemp[index].gender === "Sinh viên - Giáo viên"
-    //         ) {
-    //           // console.log(searchTemp[index]);
-    //           newArray.push(searchTemp[index]);
-    //         }
-    //       }
-
-    //       if (levelValue === "Sinh viên - Giáo viên") {
-    //         newArray.push(searchTemp[index]);
-    //       }
-    //     }
-    //     setSearchValue(newArray);
-    //   }
-    // }
+  const search = () => {
+    setIsLoading(true);
+    setSearchValue(searchTemp);
 
     if (genderValue !== undefined) {
-      const newArray = [];
-      for (let index = 0; index < searchTemp.length; index++) {
-        if (genderValue === "Nam") {
-          if (
-            searchTemp[index].gender === "Nam" ||
-            searchTemp[index].gender === "Nam - Nữ"
-          ) {
-            // console.log(searchTemp[index]);
-            newArray.push(searchTemp[index]);
-          }
-        }
-
-        if (genderValue === "Nữ") {
-          if (
-            searchTemp[index].gender === "Nữ" ||
-            searchTemp[index].gender === "Nam - Nữ"
-          ) {
-            // console.log(searchTemp[index]);
-            newArray.push(searchTemp[index]);
-          }
-        }
-
-        if (genderValue === "Nam - Nữ") {
-          newArray.push(searchTemp[index]);
-        }
+      if (genderValue) {
+        const newData = searchTemp.filter((item) => {
+          const itemData = item.gender
+            ? item.gender.toUpperCase()
+            : "".toUpperCase();
+          const textData = genderValue.toUpperCase();
+          return itemData.indexOf(textData) > -1;
+        });
+        setSearchValue(newData);
+      } else {
+        setSearchValue(searchTemp);
       }
-      setSearchValue(newArray);
     }
 
     if (levelValue !== undefined) {
-      const newArray = [];
-      for (let index = 0; index < searchTemp.length; index++) {
-        if (levelValue === "Sinh viên") {
-          if (
-            searchTemp[index].tutorLevel === "Sinh viên" ||
-            searchTemp[index].tutorLevel === "Sinh viên - Giáo viên"
-          ) {
-            console.log(searchTemp[index]);
-            newArray.push(searchTemp[index]);
-          }
-        }
-
-        if (levelValue === "Giáo viên") {
-          if (
-            searchTemp[index].tutorLevel === "Giáo viên" ||
-            searchTemp[index].tutorLevel === "Sinh viên - Giáo viên"
-          ) {
-            console.log(searchTemp[index]);
-            newArray.push(searchTemp[index]);
-          }
-        }
-
-        if (levelValue === "Sinh viên - Giáo viên") {
-          newArray.push(searchTemp[index]);
-        }
+      if (levelValue) {
+        const newData = searchValue.filter((item) => {
+          const itemData = item.tutorLevel
+            ? item.tutorLevel.toUpperCase()
+            : "".toUpperCase();
+          const textData = levelValue.toUpperCase();
+          return itemData.indexOf(textData) > -1;
+        });
+        setSearchValue(newData);
+      } else {
+        setSearchValue(searchTemp);
       }
-      setSearchValue(newArray);
     }
 
-    // console.log("Search: ", searchValue);
+    if (provinceValue !== undefined) {
+      if (provinceValue) {
+        console.log(provinceValue);
+        const newData = searchValue.filter((item) => {
+          const itemData = item.provinceName
+            ? item.provinceName.toUpperCase()
+            : "".toUpperCase();
+          const textData = provinceValue.toUpperCase();
+          return itemData.indexOf(textData) > -1;
+        });
+        setSearchValue(newData);
+      } else {
+        setSearchValue(searchTemp);
+      }
+    }
+    setIsLoading(false);
   };
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
@@ -245,8 +187,8 @@ const Search = () => {
                 showTickIcon={true}
                 showArrowIcon={true}
                 // multiple={true}
-                // min={1}
-                // max={4}
+                min={1}
+                max={1}
                 mode="BADGE"
                 zIndex={20}
                 badgeColors={COLORS.secondMain}
@@ -290,12 +232,12 @@ const Search = () => {
                 style={{ marginBottom: 10 }}
               />
               <DropDownPicker
-                items={hocLuc}
+                items={province}
                 open={academicOpen}
                 setOpen={() => setAcademicOpen(!academicOpen)}
-                value={academicValue}
-                setValue={(val) => setAcademicValue(val)}
-                placeholder="Chọn học lực"
+                value={provinceValue}
+                setValue={(val) => setProvinceValue(val)}
+                placeholder="Chọn tỉnh thành"
                 showTickIcon={true}
                 zIndex={19}
                 style={{ marginBottom: 10 }}
@@ -314,24 +256,34 @@ const Search = () => {
             </TouchableOpacity>
           </View>
         </View>
-
-        {searchValue?.length == 0 ? (
-          <View style={{ flex: 1 }}>
-            <Image
-              source={require("../assets/images/Pose23.png")}
-              style={styles.searchImage}
-            />
-          </View>
+        {isLoading ? (
+          <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primarys} />
         ) : (
-          <View style={{ marginBottom: 450 }}>
-            {isLoading ? (
-              <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primarys} />
+          <View>
+            {searchValue == null ? (
+              <View style={{ flex: 1 }}>
+                <Image
+                  source={require("../assets/images/Pose23.png")}
+                  style={styles.searchImage}
+                />
+              </View>
+            ) : searchValue.length == 0 ? (
+              <View style={{ flex: 1 }}>
+                <Image
+                  source={require("../assets/images/Pose23.png")}
+                  style={styles.searchImage}
+                />
+              </View>
             ) : (
-              <FlatList
-                data={searchValue}
-                keyExtractor={(item) => item._id}
-                renderItem={({ item }) => <ClassItem item={item} />}
-              />
+              <View style={{ marginBottom: 450 }}>
+                <FlatList
+                  refreshing={refreshing}
+                  onRefresh={onRefresh}
+                  data={searchValue}
+                  keyExtractor={(item) => item._id}
+                  renderItem={({ item }) => <ClassItem item={item} />}
+                />
+              </View>
             )}
           </View>
         )}
@@ -366,6 +318,7 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 50,
+    padding: 10,
     borderWidth: 1,
     borderRadius: 10,
     backgroundColor: COLORS.lightWhite,
