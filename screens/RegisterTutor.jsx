@@ -197,7 +197,7 @@ const RegisterTutor = () => {
         })
         .then((response) => {
           setImgIdBack(response.data);
-          console.log(response.data);
+          console.log("ID font: ", response.data);
         })
         .catch((error) => {
           console.log("Create failed", error);
@@ -231,7 +231,7 @@ const RegisterTutor = () => {
         })
         .then((response) => {
           setImgCertificate1(response.data);
-          console.log(response.data);
+          console.log("Id Back: ", response.data);
         })
         .catch((error) => {
           console.log("Create failed", error);
@@ -265,13 +265,21 @@ const RegisterTutor = () => {
         })
         .then((response) => {
           setImgCertificate2(response.data);
-          console.log(response.data);
+          console.log("Ceti: ", response.data);
         })
         .catch((error) => {
           console.log("Create failed", error);
         });
     }
   };
+
+  const [selectLevel, setSelectLevel] = useState("Chọn trình độ gia sư");
+  const [isClickLevel, setIsClickLevel] = useState(false);
+  const [levelValue, setLevelValue] = useState("");
+  const trinhDo = [
+    { label: "Sinh viên", value: "Sinh viên" },
+    { label: "Giáo viên", value: "Giáo viên" },
+  ];
 
   const [checkEmail, setCheckEmail] = useState(false);
   const handleCheckEmail = async (email) => {
@@ -328,12 +336,13 @@ const RegisterTutor = () => {
       districtId: districtValue,
       gender: genderValue,
       university: university,
+      tutorLevel: levelValue,
       major: major,
       area: selectDistrict + ", " + selectProvince,
       imgCertificate: imgCertificate2,
       imgAvatar: imgProfile,
-      imgIdFront: imgCertificate1,
-      imgIdBack: imageIDBack,
+      imgIdFront: imgIdBack,
+      imgIdBack: imgCertificate1,
       subjects: subjectValue2,
     };
     console.log("Value: ", user);
@@ -351,12 +360,13 @@ const RegisterTutor = () => {
         districtId: user.districtId,
         gender: user.gender,
         university: user.university,
+        tutorLevel: user.tutorLevel,
         major: user.major,
         area: user.area,
-        imgCertificate: user.imgIdFront,
+        imgCertificate: user.imgCertificate,
         imgAvatar: user.imgAvatar,
-        imgIdFront: user.imgIdFront,
-        imgIdBack: user.imgIdBack,
+        imgIdFront: imgIdBack,
+        imgIdBack: imgCertificate1,
         subjects: user.subjects,
       });
       console.log(response);
@@ -811,6 +821,44 @@ const RegisterTutor = () => {
               </View>
 
               <View>
+                <Text style={styles.itemText}>Trình độ</Text>
+                <TouchableOpacity
+                  style={styles.dropdownSelector}
+                  onPress={() => {
+                    setIsClickLevel(!isClickLevel);
+                  }}
+                >
+                  <Text>{selectLevel}</Text>
+                  {isClickLevel ? (
+                    <Ionicons name="chevron-down-outline" size={24} />
+                  ) : (
+                    <Ionicons name="chevron-up-outline" size={24} />
+                  )}
+                </TouchableOpacity>
+                {isClickLevel && (
+                  <View style={styles.dropdownArea}>
+                    <FlatList
+                      data={trinhDo}
+                      renderItem={({ item, index }) => {
+                        return (
+                          <TouchableOpacity
+                            style={styles.item}
+                            onPress={() => {
+                              setSelectLevel(item.label);
+                              setIsClickLevel(false);
+                              setLevelValue(item.value);
+                            }}
+                          >
+                            <Text>{item.label}</Text>
+                          </TouchableOpacity>
+                        );
+                      }}
+                    />
+                  </View>
+                )}
+              </View>
+
+              <View>
                 <Text style={styles.itemText}>Trương đại học </Text>
                 <TextInput
                   style={styles.input}
@@ -853,7 +901,7 @@ const RegisterTutor = () => {
           </Text>
           <Pressable>
             <KeyboardAwareScrollView extraScrollHeight={-150}>
-              <View style={styles.cetification}>
+              <View>
                 {isImage === false ? (
                   <View style={{ alignItems: "center" }}>
                     <Image
@@ -903,7 +951,7 @@ const RegisterTutor = () => {
                 )}
               </View>
 
-              <View style={styles.cetification}>
+              <View>
                 {isImage === false ? (
                   <View style={{ alignItems: "center" }}>
                     <Image
@@ -952,8 +1000,9 @@ const RegisterTutor = () => {
                   </View>
                 )}
               </View>
+
               {/* certificate */}
-              <View style={styles.avatar}>
+              <View>
                 {isImage === false ? (
                   <View style={{ alignItems: "center" }}>
                     <Image

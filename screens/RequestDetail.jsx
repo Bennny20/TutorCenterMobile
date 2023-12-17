@@ -1,6 +1,13 @@
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import {
+  ActivityIndicator,
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 import React, { useEffect, useState } from "react";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native";
 import Heading from "../components/Heading";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
@@ -8,6 +15,8 @@ import { COLORS, HOST_API, SIZES } from "../constants";
 import axios from "axios";
 
 const RequestDetail = () => {
+  const navigation = useNavigation();
+
   const route = useRoute();
   const { item } = route.params;
   console.log(item);
@@ -56,7 +65,9 @@ const RequestDetail = () => {
       {loader ? (
         <ActivityIndicator size={500} color={COLORS.main} />
       ) : (
-        <View style={{ marginHorizontal: 10 }}>
+        <ScrollView
+          style={{ marginHorizontal: 10, marginBottom: 30, marginTop: 15 }}
+        >
           <View style={styles.header}>
             {/* <MaterialCommunityIcons
               name="chevron-double-right"
@@ -277,7 +288,41 @@ const RequestDetail = () => {
               </View>
             </View>
           )}
-        </View>
+
+          <View style={{ alignItems: "center" }}>
+            <View style={styles.reason}>
+              <Text style={styles.title}>
+                Lí do:{" "}
+                <Text style={styles.sup}>
+                  Yêu cầu không hợp lệ Yêu cầu không hợp lệ Yêu cầu không hợp lệ
+                </Text>
+              </Text>
+            </View>
+          </View>
+
+          <View
+            style={{
+              alignItems: "center",
+              flexDirection: "row",
+              justifyContent: "center",
+            }}
+          >
+            <TouchableOpacity onPress={() => navigation.navigate("Create")}>
+              <View style={styles.recreate}>
+                <Text style={styles.sup}>Đăng kí lại </Text>
+              </View>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() => navigation.navigate("ReCreateRequest", { item })}
+              style={{ marginLeft: 30 }}
+            >
+              <View style={styles.recreate}>
+                <Text style={styles.sup}>Tái sử dụng</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
       )}
     </SafeAreaView>
   );
@@ -291,6 +336,22 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
 
+  recreate: {
+    backgroundColor: COLORS.secondMain,
+    marginTop: 5,
+    borderWidth: 1,
+    padding: 10,
+    borderRadius: 10,
+  },
+
+  reason: {
+    borderColor: COLORS.red,
+    marginTop: 5,
+    borderWidth: 1,
+    padding: 10,
+    width: "80%",
+    borderRadius: 10,
+  },
   status: {
     backgroundColor: COLORS.secondMain,
     borderRadius: 20,

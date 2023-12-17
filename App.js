@@ -33,6 +33,7 @@ import {
   FeedbackTutor,
   ClassDetailForTutor,
   CreateDetailApply,
+  ReCreateRequest,
 } from "./screens";
 import { useEffect } from "react";
 import { LogBox } from "react-native";
@@ -217,6 +218,12 @@ export default function App() {
         <Stack.Screen
           name="CreateDetailApply"
           component={CreateDetailApply}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="ReCreateRequest"
+          component={ReCreateRequest}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

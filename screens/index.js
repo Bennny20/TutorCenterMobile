@@ -32,8 +32,10 @@ import RequestDetail from "./RequestDetail";
 import FeedbackTutor from "./FeedbackTutor";
 import ClassDetailForTutor from "./ClassDetailForTutor";
 import CreateDetailApply from "./CreateDetailApply";
+import ReCreateRequest from "./ReCreateRequest";
 
 export {
+  ReCreateRequest,
   Search,
   CreateDetailApply,
   ClassDetailForTutor,
