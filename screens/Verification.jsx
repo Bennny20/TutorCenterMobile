@@ -14,12 +14,14 @@ import Heading from "../components/Heading";
 import { COLORS, HOST_API, SIZES } from "../constants";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import axios from "axios";
-
+import { Ionicons } from "@expo/vector-icons";
 const Verification = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { userData, userTutor } = route.params;
 
+  const imageID = userTutor.imgId.split("~");
+  console.log(imageID);
   var major = " ";
   var classNo = " ";
   for (let index = 0; index < userTutor.subjects.length; index++) {
@@ -57,7 +59,7 @@ const Verification = () => {
           {
             text: "Continue",
             onPress: () => {
-              navigation.navigate("Profile");
+              navigation.replace("Profile");
             },
           },
           { defaultIndex: 1 },
@@ -85,6 +87,16 @@ const Verification = () => {
       <Heading title={"Xác minh tài khoản"} />
 
       <ScrollView style={{ marginTop: 20 }}>
+        <View style={{ flex: 1, position: "absolute" }}>
+          <TouchableOpacity
+            style={{ marginLeft: "90%" }}
+            onPressIn={() =>
+              navigation.navigate("EditProfile", { userData, userTutor })
+            }
+          >
+            <Ionicons name="create-outline" size={40} color={COLORS.main} />
+          </TouchableOpacity>
+        </View>
         <View style={styles.info}>
           <View style={{ alignItems: "center" }}>
             <Image
@@ -164,7 +176,33 @@ const Verification = () => {
               {userTutor.phone}
             </Text>
           </Text>
-
+          <Text style={styles.sup}>Cằn cước công dân</Text>
+        </View>
+        <View
+          style={{
+            marginTop: -25,
+            marginHorizontal: 10,
+          }}
+        >
+          <View
+            style={{
+              justifyContent: "space-around",
+              flexDirection: "row",
+            }}
+          >
+            <Image
+              source={{
+                uri: HOST_API.local + "/api/user/image/" + imageID[0],
+              }}
+              style={styles.idCard}
+            />
+            <Image
+              source={{
+                uri: HOST_API.local + "/api/user/image/" + imageID[1],
+              }}
+              style={styles.idCard}
+            />
+          </View>
           <View
             style={{
               alignItems: "center",
@@ -181,6 +219,7 @@ const Verification = () => {
             />
           </View>
         </View>
+
         {userTutor.status == 0 && (
           <TouchableOpacity style={styles.btn} onPress={createAttendance}>
             <Text>Xác minh tài khoản</Text>
@@ -208,6 +247,17 @@ const styles = StyleSheet.create({
     borderColor: COLORS.primary,
     borderWidth: 2,
     resizeMode: "cover",
+    marginTop: 10,
+  },
+
+  idCard: {
+    marginRight: 10,
+    height: 120,
+    width: "47%",
+    borderRadius: 20,
+    borderColor: COLORS.primary,
+    borderWidth: 2,
+    resizeMode: "contain",
     marginTop: 10,
   },
 

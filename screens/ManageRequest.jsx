@@ -90,20 +90,62 @@ const ManageRequest = () => {
         </View>
 
         <View style={styles.requestStatus}>
-          <View
-            style={{
-              backgroundColor: COLORS.secondMain,
-              borderRadius: 20,
-              borderWidth: 2,
-            }}
-          >
-            {item.status === 0 && (
-              <Text style={styles.requestStatusBtn}>Chưa duyệt</Text>
-            )}
-            {item.status === 1 && (
+          {item.status === 0 && (
+            <View
+              style={{
+                backgroundColor: COLORS.gray2,
+                borderRadius: 20,
+                borderWidth: 2,
+                width: "80%",
+                alignItems: "center",
+              }}
+            >
+              <Text style={[styles.requestStatusBtn, { color: COLORS.black }]}>
+                Chưa duyệt
+              </Text>
+            </View>
+          )}
+          {item.status === 1 && (
+            <View
+              style={{
+                backgroundColor: COLORS.secondMain,
+                borderRadius: 20,
+                borderWidth: 2,
+                width: "80%",
+                alignItems: "center",
+              }}
+            >
               <Text style={styles.requestStatusBtn}>Đã duyệt</Text>
-            )}
-          </View>
+            </View>
+          )}
+
+          {item.status === 2 && (
+            <View
+              style={{
+                backgroundColor: COLORS.red,
+                borderRadius: 20,
+                borderWidth: 2,
+                width: "80%",
+                alignItems: "center",
+              }}
+            >
+              <Text style={styles.requestStatusBtn}>Chưa đạt</Text>
+            </View>
+          )}
+
+          {item.status === 3 && (
+            <View
+              style={{
+                backgroundColor: COLORS.red,
+                borderRadius: 20,
+                borderWidth: 2,
+                width: "80%",
+                alignItems: "center",
+              }}
+            >
+              <Text style={styles.requestStatusBtn}>Đã hủy</Text>
+            </View>
+          )}
         </View>
       </View>
     </View>
@@ -131,9 +173,8 @@ export default ManageRequest;
 
 const styles = StyleSheet.create({
   requestStatusBtn: {
-    width: "95%",
     padding: 8,
-
+    justifyContent: "center",
     fontFamily: "bold",
     fontSize: SIZES.small,
     color: COLORS.black,

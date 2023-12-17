@@ -52,12 +52,98 @@ const RequestDetail = () => {
       setLoader(false);
     }
   };
-  console.log(requestDetail);
+  console.log("requestDetail: ", requestDetail);
 
   const formattedAmount = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   }).format(item.tuition);
+
+  const handleCancel = async () => {
+    const token = await AsyncStorage.getItem("token");
+    axios
+      .post(
+        HOST_API.local + "/api/request/create",
+        {
+          id: 0,
+          parentId: 0,
+          managerId: 0,
+          clazzId: 0,
+          phone: "string",
+          address: "string",
+          districtId: 0,
+          slots: 0,
+          slotsLength: 0,
+          tuition: 0,
+          notes: "string",
+          dateStart: "2023-12-17T18:52:46.207Z",
+          dateEnd: "2023-12-17T18:52:46.207Z",
+          dateCreate: "2023-12-17T18:52:46.207Z",
+          dateModified: "2023-12-17T18:52:46.207Z",
+          status: 0,
+          deleted: true,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      )
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.responseCode == "00") {
+          Alert.alert("Tạo yêu cầu thành công", "Quản lý yêu cầu", [
+            {
+              text: "Cancel",
+              onPress: () => {
+                // navigation.navigate("ManageRequest");
+              },
+            },
+            {
+              text: "Continue",
+              onPress: () => {
+                navigation.navigate("ManageRequest", {
+                  user,
+                  userData,
+                });
+              },
+            },
+            { defaultIndex: 1 },
+          ]);
+        } else {
+          Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
+            {
+              text: "Cancel",
+              onPress: () => {},
+            },
+            {
+              text: "Continue",
+              onPress: () => {
+                // navigation.navigate("ManageRequest", { profileId });
+              },
+            },
+            { defaultIndex: 1 },
+          ]);
+        }
+      })
+      .catch((error) => {
+        Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {
+              // navigation.navigate("ManageRequest", { profileId });
+            },
+          },
+          { defaultIndex: 1 },
+        ]);
+        console.log("Create failed", error);
+      });
+  };
+
   return (
     <SafeAreaView>
       <Heading title={"Yêu cầu chi tiết "} />
@@ -274,6 +360,14 @@ const RequestDetail = () => {
               <View style={[styles.status, { backgroundColor: COLORS.gray2 }]}>
                 <Text style={styles.sup}>Đang xác nhận</Text>
               </View>
+              <TouchableOpacity
+                style={[
+                  styles.status,
+                  { backgroundColor: COLORS.red, marginTop: 10 },
+                ]}
+              >
+                <Text style={styles.sup}>Hủy yêu cầu</Text>
+              </TouchableOpacity>
             </View>
           ) : item.status == 1 ? (
             <View style={{ alignItems: "center" }}>
@@ -281,47 +375,79 @@ const RequestDetail = () => {
                 <Text style={styles.sup}>Đã xác nhận</Text>
               </View>
             </View>
+          ) : item.status == 2 ? (
+            <View style={{ alignItems: "center" }}>
+              <View
+                style={[
+                  styles.status,
+                  { width: "60%", backgroundColor: COLORS.red },
+                ]}
+              >
+                <Text style={styles.sup}>Yêu cầu không hợp lệ</Text>
+              </View>
+              <View style={{ alignItems: "center" }}>
+                <View style={styles.reason}>
+                  <Text style={styles.title}>
+                    Lí do:{" "}
+                    <Text style={styles.sup}>
+                      Yêu cầu không hợp lệ Yêu cầu không hợp lệ Yêu cầu không
+                      hợp lệ
+                    </Text>
+                  </Text>
+                </View>
+              </View>
+
+              <View
+                style={{
+                  alignItems: "center",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                }}
+              >
+                <TouchableOpacity onPress={() => navigation.navigate("Create")}>
+                  <View style={styles.recreate}>
+                    <Text style={styles.sup}>Đăng kí lại </Text>
+                  </View>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  onPress={() =>
+                    navigation.navigate("ReCreateRequest", { item })
+                  }
+                  style={{ marginLeft: 30 }}
+                >
+                  <View style={styles.recreate}>
+                    <Text style={styles.sup}>Tái sử dụng</Text>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </View>
           ) : (
             <View style={{ alignItems: "center" }}>
-              <View style={[styles.status, { backgroundColor: COLORS.red }]}>
-                <Text style={styles.sup}>Yêu cầu không hợp lệ</Text>
+              <View
+                style={[
+                  styles.status,
+                  { width: "60%", backgroundColor: COLORS.red },
+                ]}
+              >
+                <Text style={styles.sup}>Đã hủy</Text>
+              </View>
+
+              <View
+                style={{
+                  alignItems: "center",
+                  flexDirection: "row",
+                  justifyContent: "center",
+                }}
+              >
+                <TouchableOpacity onPress={() => navigation.navigate("Create")}>
+                  <View style={styles.recreate}>
+                    <Text style={styles.sup}>Đăng kí lại </Text>
+                  </View>
+                </TouchableOpacity>
               </View>
             </View>
           )}
-
-          <View style={{ alignItems: "center" }}>
-            <View style={styles.reason}>
-              <Text style={styles.title}>
-                Lí do:{" "}
-                <Text style={styles.sup}>
-                  Yêu cầu không hợp lệ Yêu cầu không hợp lệ Yêu cầu không hợp lệ
-                </Text>
-              </Text>
-            </View>
-          </View>
-
-          <View
-            style={{
-              alignItems: "center",
-              flexDirection: "row",
-              justifyContent: "center",
-            }}
-          >
-            <TouchableOpacity onPress={() => navigation.navigate("Create")}>
-              <View style={styles.recreate}>
-                <Text style={styles.sup}>Đăng kí lại </Text>
-              </View>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              onPress={() => navigation.navigate("ReCreateRequest", { item })}
-              style={{ marginLeft: 30 }}
-            >
-              <View style={styles.recreate}>
-                <Text style={styles.sup}>Tái sử dụng</Text>
-              </View>
-            </TouchableOpacity>
-          </View>
         </ScrollView>
       )}
     </SafeAreaView>
@@ -349,7 +475,7 @@ const styles = StyleSheet.create({
     marginTop: 5,
     borderWidth: 1,
     padding: 10,
-    width: "80%",
+    width: "90%",
     borderRadius: 10,
   },
   status: {

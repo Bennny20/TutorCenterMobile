@@ -171,8 +171,42 @@ const RegisterTutor = () => {
     }
   };
 
+  const [imgIdFont, setImgIdFont] = useState(null);
+  const [imgIdFontValue, setImgIDFontValue] = useState(null);
+  const pickerIDFont = async () => {
+    let result2 = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.All,
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 1,
+    });
+    if (!result2.canceled) {
+      setIsImage(true);
+      setImgIdFont(result2.assets[0].uri);
+      const formData = new FormData();
+      formData.append("image", {
+        uri: result2.assets[0].uri,
+        type: result2.assets[0].type,
+        name: result2.assets[0].fileName,
+      });
+      axios
+        .post(HOST_API.local + "/api/user/upload", formData, {
+          headers: {
+            "Content-Type": "multipart/form-data; ",
+          },
+        })
+        .then((response) => {
+          setImgIDFontValue(response.data);
+          console.log("ID font: ", response.data);
+        })
+        .catch((error) => {
+          console.log("Create failed", error);
+        });
+    }
+  };
+
   const [imgIdBack, setImgIdBack] = useState(null);
-  const [imageIDBack, setImageIDBack] = useState(null);
+  const [imgIdBackValue, setImgIdBackValue] = useState(null);
   const pickerIDBack = async () => {
     let result2 = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -182,7 +216,7 @@ const RegisterTutor = () => {
     });
     if (!result2.canceled) {
       setIsImage(true);
-      setImageIDBack(result2.assets[0].uri);
+      setImgIdBack(result2.assets[0].uri);
       const formData = new FormData();
       formData.append("image", {
         uri: result2.assets[0].uri,
@@ -196,41 +230,7 @@ const RegisterTutor = () => {
           },
         })
         .then((response) => {
-          setImgIdBack(response.data);
-          console.log("ID font: ", response.data);
-        })
-        .catch((error) => {
-          console.log("Create failed", error);
-        });
-    }
-  };
-
-  const [imgCertificate1, setImgCertificate1] = useState(null);
-  const [certificate1, setCertificate1] = useState(null);
-  const pickerCeti1 = async () => {
-    let result2 = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.All,
-      allowsEditing: true,
-      aspect: [1, 1],
-      quality: 1,
-    });
-    if (!result2.canceled) {
-      setIsImage(true);
-      setCertificate1(result2.assets[0].uri);
-      const formData = new FormData();
-      formData.append("image", {
-        uri: result2.assets[0].uri,
-        type: result2.assets[0].type,
-        name: result2.assets[0].fileName,
-      });
-      axios
-        .post(HOST_API.local + "/api/user/upload", formData, {
-          headers: {
-            "Content-Type": "multipart/form-data; ",
-          },
-        })
-        .then((response) => {
-          setImgCertificate1(response.data);
+          setImgIdBackValue(response.data);
           console.log("Id Back: ", response.data);
         })
         .catch((error) => {
@@ -239,9 +239,9 @@ const RegisterTutor = () => {
     }
   };
 
-  const [imgCertificate2, setImgCertificate2] = useState(null);
-  const [certificate2, setCertificate2] = useState(null);
-  const pickerCeti2 = async () => {
+  const [imgCertificate, setImgCertificate] = useState(null);
+  const [certificateValue, setCertificateValue] = useState(null);
+  const pickerCertificate = async () => {
     let result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
       allowsEditing: true,
@@ -250,7 +250,7 @@ const RegisterTutor = () => {
     });
     if (!result.canceled) {
       setIsImage(true);
-      setCertificate2(result.assets[0].uri);
+      setImgCertificate(result.assets[0].uri);
       const formData = new FormData();
       formData.append("image", {
         uri: result.assets[0].uri,
@@ -264,7 +264,7 @@ const RegisterTutor = () => {
           },
         })
         .then((response) => {
-          setImgCertificate2(response.data);
+          setCertificateValue(response.data);
           console.log("Ceti: ", response.data);
         })
         .catch((error) => {
@@ -339,10 +339,10 @@ const RegisterTutor = () => {
       tutorLevel: levelValue,
       major: major,
       area: selectDistrict + ", " + selectProvince,
-      imgCertificate: imgCertificate2,
+      imgCertificate: certificateValue,
       imgAvatar: imgProfile,
-      imgIdFront: imgIdBack,
-      imgIdBack: imgCertificate1,
+      imgIdFront: imgIdFontValue,
+      imdIdBack: imgIdBackValue,
       subjects: subjectValue2,
     };
     console.log("Value: ", user);
@@ -363,10 +363,10 @@ const RegisterTutor = () => {
         tutorLevel: user.tutorLevel,
         major: user.major,
         area: user.area,
-        imgCertificate: user.imgCertificate,
+        imgCertificate: certificateValue,
         imgAvatar: user.imgAvatar,
-        imgIdFront: imgIdBack,
-        imgIdBack: imgCertificate1,
+        imgIdFront: imgIdFontValue,
+        imdIdBack: imgIdBackValue,
         subjects: user.subjects,
       });
       console.log(response);
@@ -775,7 +775,7 @@ const RegisterTutor = () => {
             Thông tin chuyên môn
           </Text>
           <Pressable>
-            <KeyboardAwareScrollView extraScrollHeight={-300}>
+            <KeyboardAwareScrollView extraScrollHeight={-150}>
               <View style={{ zIndex: 20 }}>
                 <Text style={styles.itemText}>Lớp học</Text>
                 <DropDownPicker
@@ -909,7 +909,7 @@ const RegisterTutor = () => {
                       style={styles.certificate}
                     />
                     <TouchableOpacity
-                      onPress={() => pickerIDBack()}
+                      onPress={() => pickerIDFont()}
                       style={{
                         marginTop: 20,
                         height: 50,
@@ -926,14 +926,14 @@ const RegisterTutor = () => {
                   </View>
                 ) : (
                   <View style={{ alignItems: "center" }}>
-                    {imageIDBack && (
+                    {imgIdFont && (
                       <Image
-                        source={{ uri: imageIDBack }}
+                        source={{ uri: imgIdFont }}
                         style={styles.certificate}
                       />
                     )}
                     <TouchableOpacity
-                      onPress={() => pickerIDBack()}
+                      onPress={() => pickerIDFont()}
                       style={{
                         marginTop: 20,
                         height: 50,
@@ -959,7 +959,7 @@ const RegisterTutor = () => {
                       style={styles.certificate}
                     />
                     <TouchableOpacity
-                      onPress={() => pickerCeti1()}
+                      onPress={() => pickerIDBack()}
                       style={{
                         marginTop: 20,
                         height: 50,
@@ -976,14 +976,14 @@ const RegisterTutor = () => {
                   </View>
                 ) : (
                   <View style={{ alignItems: "center" }}>
-                    {certificate1 && (
+                    {imgIdBack && (
                       <Image
-                        source={{ uri: certificate1 }}
+                        source={{ uri: imgIdBack }}
                         style={styles.certificate}
                       />
                     )}
                     <TouchableOpacity
-                      onPress={() => pickerCeti1()}
+                      onPress={() => pickerIDBack()}
                       style={{
                         marginTop: 20,
                         height: 50,
@@ -1010,7 +1010,7 @@ const RegisterTutor = () => {
                       style={styles.certificate}
                     />
                     <TouchableOpacity
-                      onPress={() => pickerCeti2()}
+                      onPress={() => pickerCertificate()}
                       style={{
                         marginTop: 20,
                         height: 50,
@@ -1022,19 +1022,19 @@ const RegisterTutor = () => {
                         alignSelf: "center",
                       }}
                     >
-                      <Text style={styles.itemText}>Bằng cấp 2</Text>
+                      <Text style={styles.itemText}>Bằng cấp</Text>
                     </TouchableOpacity>
                   </View>
                 ) : (
                   <View style={{ alignItems: "center" }}>
-                    {certificate1 && (
+                    {imgCertificate && (
                       <Image
-                        source={{ uri: certificate2 }}
+                        source={{ uri: imgCertificate }}
                         style={styles.certificate}
                       />
                     )}
                     <TouchableOpacity
-                      onPress={() => pickerCeti2()}
+                      onPress={() => pickerCertificate()}
                       style={{
                         marginTop: 20,
                         height: 50,

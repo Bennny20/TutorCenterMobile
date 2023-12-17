@@ -822,7 +822,7 @@ const CreateRequestPage = () => {
           <TextInput
             keyboardType="phone-pad"
             style={styles.input}
-            value={formattedAmount(price)}
+            value={price}
             onChangeText={(text) => setPrice(text)}
             placeholder="Chi phí"
           />
@@ -837,14 +837,14 @@ const CreateRequestPage = () => {
               setIsSlotLength(!isSlotLength);
             }}
           >
-            <Text>{selectSlotLength}</Text>
-            {isSlotLength ? (
+            <Text>1 Giờ 30 Phút</Text>
+            {/* {isSlotLength ? (
               <Ionicons name="chevron-down-outline" size={24} />
             ) : (
               <Ionicons name="chevron-up-outline" size={24} />
-            )}
+            )} */}
           </TouchableOpacity>
-          {isSlotLength && (
+          {/* {isSlotLength && (
             <View style={styles.dropdownArea}>
               <FlatList
                 data={thoiLuong}
@@ -864,7 +864,7 @@ const CreateRequestPage = () => {
                 }}
               />
             </View>
-          )}
+          )} */}
         </View>
 
         {/* Ngày bắt đầu */}
