@@ -5,7 +5,6 @@ import {
   TouchableOpacity,
   View,
   Image,
-  Button,
   Platform,
   Alert,
   ScrollView,
@@ -23,25 +22,29 @@ import { TextInput, FlatList } from "react-native";
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { Ionicons } from "@expo/vector-icons";
 import DropDownPicker from "react-native-dropdown-picker";
-
-const validationSchema = Yup.object().shape({
-  name: Yup.string().min(8, "Provide your full name").required("Required"),
-  phoneNumber: Yup.string()
-    .min(10, "Your phone number must be 10 number")
-    .max(10, "Your phone number must be 10 number")
-    .required("Required"),
-});
+import Button from "../components/Button";
 
 const EditProfile = () => {
   const route = useRoute();
   const { userData, userTutor } = route.params;
-  const [name, setName] = useState();
+  const [name, setName] = useState(userTutor.fullName);
   const [idNumber, setIdNumber] = useState();
   const [address, setAddress] = useState();
   const [phone, setPhone] = useState();
   const [university, setUniversity] = useState();
   const [major, setMajor] = useState();
   const imageID = userTutor.imgId.split("~");
+
+  var subject = " ";
+  var classNo = " ";
+  for (let index = 0; index < userTutor.subjects.length; index++) {
+    if (index == userTutor.subjects.length - 1) {
+      subject += userTutor.subjects[index].name;
+    } else {
+      subject += userTutor.subjects[index].name + ", ";
+    }
+    classNo = userTutor.subjects[index].level;
+  }
 
   //Tinh thanh
   const [selectProvince, setSelectProvince] = useState(userTutor.provinceName);
@@ -94,6 +97,24 @@ const EditProfile = () => {
     { label: "Lớp 12", value: "Lớp 12" },
     { label: "Khác", value: "Order" },
   ];
+
+  useEffect(() => {
+    const fetchProvince = async () => {
+      const response = await fetch(
+        HOST_API.local + `/api/subject/level?level=Lớp 12`
+      );
+      await response.json().then((data) => {
+        let newArray = data.data.map((item) => {
+          return { label: item.name, value: item.id };
+        });
+        setSubject2(newArray);
+      });
+    };
+    fetchProvince();
+  }, []);
+  const [isOpen, setIsOpen] = useState(false);
+  const [subjectValue2, setSubjectValue2] = useState([]);
+  const [subject2, setSubject2] = useState([]);
 
   const [selectGender, setSelectGender] = useState("Chọn giới tính gia sư");
   const [isClickGender, setIsClickGender] = useState(false);
@@ -241,6 +262,28 @@ const EditProfile = () => {
     }
   };
 
+  const edit = async () => {
+    const user = {
+      // email: userTutor.email,
+      // idNumber: idNumber,
+      // password: password,
+      fullname: name,
+      // phone: phone,
+      // address: address,
+      // districtId: districtValue,
+      // gender: genderValue,
+      // university: university,
+      // tutorLevel: levelValue,
+      // major: major,
+      // area: selectDistrict + ", " + selectProvince,
+      // imgCertificate: certificateValue,
+      // imgAvatar: imgProfile,
+      // imgIdFront: imgIdFontValue,
+      // imdIdBack: imgIdBackValue,
+      // subjects: subjectValue2,
+    };
+    console.log("Value: ", user);
+  };
   return (
     <SafeAreaView>
       <Heading title={"Chỉnh sửa thông tin "} />
@@ -316,7 +359,7 @@ const EditProfile = () => {
             <Text style={styles.itemText}>Họ và tên</Text>
             <TextInput
               style={styles.input}
-              value={userTutor.fullName}
+              value={name}
               onChangeText={(text) => setName(text)}
               placeholder="Nhập email"
             />
@@ -497,7 +540,7 @@ const EditProfile = () => {
           </View>
 
           {/* Lớp học */}
-          {/* <View style={{ zIndex: 20 }}>
+          <View style={{ zIndex: 20 }}>
             <Text style={styles.itemText}>Lớp học</Text>
             <DropDownPicker
               style={styles.dropdownSelector}
@@ -506,7 +549,7 @@ const EditProfile = () => {
               setOpen={() => setIsClassOpen(!isClassOpen)}
               value={classValue}
               setValue={(val) => setClassValue(val)}
-              placeholder={userTutor.}
+              placeholder={classNo}
               showTickIcon={true}
               multiple={true}
               min={1}
@@ -516,7 +559,30 @@ const EditProfile = () => {
               badgeColors={COLORS.secondMain}
               badgeDotColors={["white"]}
             />
-          </View> */}
+          </View>
+
+          <View style={{ zIndex: 15 }}>
+            <Text style={styles.itemText}>Môn học</Text>
+            <DropDownPicker
+              style={styles.dropdownSelector}
+              items={subject2}
+              open={isOpen}
+              setOpen={() => setIsOpen(!isOpen)}
+              value={subjectValue2}
+              setValue={(val) => setSubjectValue2(val)}
+              placeholder={subject}
+              showTickIcon={true}
+              showArrowIcon={true}
+              multiple={true}
+              min={1}
+              max={4}
+              mode="BADGE"
+              zIndex={20}
+              badgeColors={COLORS.secondMain}
+              badgeDotColors={["white"]}
+              backgroundColor=""
+            />
+          </View>
 
           {/* Mặt trước */}
           <View>
@@ -680,6 +746,14 @@ const EditProfile = () => {
             )}
           </View>
         </KeyboardAwareScrollView>
+        <View style={{ marginHorizontal: 40 }}>
+          <Button
+            title={"Chỉnh sữa và gửi xác thực"}
+            onPress={() => edit()}
+            isValid={name}
+            loader={false}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

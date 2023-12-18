@@ -64,13 +64,11 @@ const FeedbackClass = () => {
         Alert.alert("Tạo điểm danh thành công", "Quản lý lớp", [
           {
             text: "Cancel",
-            onPress: () => navigation.navigate("ManageClass", { profileId }),
+            onPress: () => {},
           },
           {
             text: "Continue",
-            onPress: () => {
-              navigation.navigate("ManageClass", { profileId });
-            },
+            onPress: () => {},
           },
           { defaultIndex: 1 },
         ]);
@@ -83,9 +81,7 @@ const FeedbackClass = () => {
           },
           {
             text: "Continue",
-            onPress: () => {
-              navigation.navigate("ManageClass", { profileId });
-            },
+            onPress: () => {},
           },
           { defaultIndex: 1 },
         ]);
@@ -103,7 +99,6 @@ const FeedbackClass = () => {
         text: "Continue",
         onPress: () => {
           createFeedback();
-          // navigation.navigate("Profile");
         },
       },
       { defaultIndex: 1 },
@@ -130,6 +125,7 @@ const FeedbackClass = () => {
   const [checkFeedback, setCheckFeedback] = useState(false);
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState([]);
+
   useEffect(() => {
     fetchFeedback();
   }, []);
@@ -151,6 +147,7 @@ const FeedbackClass = () => {
       setLoader(false);
     }
   };
+  console.log(item);
   return (
     <SafeAreaView>
       <Heading title={"Đánh giá chất lượng"} />
@@ -162,11 +159,16 @@ const FeedbackClass = () => {
         </View>
         <View style={styles.info}>
           <View style={styles.infoDetail}>
-            <Text style={styles.sup}>Môn học: {majors({ item }).classNo}</Text>
-            <Text style={styles.sup}>{majors({ item }).classNo}</Text>
+            {/* <Text style={styles.sup}>Môn học: {majors({ item }).classNo}</Text> */}
+            {/* <Text style={styles.sup}>{majors({ item }).classNo}</Text> */}
             <Text style={styles.sup}>Ngày bắt đầu: {item.dateStart}</Text>
             <Text style={styles.sup}>Ngày kết thúc: {item.dateEnd}</Text>
-            <Text style={styles.sup}>Gia sư: {item.tutor.name}</Text>
+            <Text style={styles.sup}>
+              {item.tutor
+                ? " Gia sư: " + item.tutor.name
+                : "Phụ huynh: " + item.parentName}
+            </Text>
+
             <Text style={styles.sup}>{formattedAmount}</Text>
           </View>
         </View>

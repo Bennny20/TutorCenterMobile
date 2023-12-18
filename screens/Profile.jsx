@@ -28,7 +28,7 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [userLogin, setUserLogin] = useState(false);
   const [userTutor, setUserTutor] = useState(null);
-
+  console.log(userData);
   useEffect(() => {
     checkExitingUser();
   }, []);
@@ -179,7 +179,16 @@ const Profile = () => {
                       </Text>
                     </TouchableOpacity>
                   ) : (
-                    <Text style={styles.supplier}>{userData.role}</Text>
+                    <TouchableOpacity
+                      onPressIn={() =>
+                        navigation.navigate("Verification", {
+                          userData,
+                          userTutor,
+                        })
+                      }
+                    >
+                      <Text style={styles.supplier}>{userData.role}</Text>
+                    </TouchableOpacity>
                   )}
                 </View>
               )}

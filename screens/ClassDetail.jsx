@@ -44,7 +44,6 @@ const ClassDetail = () => {
         );
         if (dataTutor !== null) {
           setUserTutor(dataTutor.data.data);
-          console.log("tutor: ", dataTutor.data.data);
         }
       } catch (error) {
         console.log("Get tutor data error", error);
@@ -68,7 +67,6 @@ const ClassDetail = () => {
         });
         if (list !== null) {
           setListApply(list.data.data);
-          // console.log("list apply", list.data.data);
           checkApplied(list.data.data);
         }
       } catch (error) {
@@ -124,7 +122,6 @@ const ClassDetail = () => {
       });
       const result = await response.json();
       if (result.responseCode === "00") {
-        console.log(response.data);
         Alert.alert("Chúc mừng ", "Bạn đã apply thành công", [
           {
             text: "Cancel",
@@ -133,7 +130,7 @@ const ClassDetail = () => {
           {
             text: "Continue",
             onPress: () => {
-              navigation.replace("Login");
+              navigation.navigate("ManageApply");
             },
           },
           { defaultIndex: 1 },

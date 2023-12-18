@@ -72,6 +72,7 @@ const ManageClassTutor = () => {
     <View style={styles.requestItem}>
       <TouchableOpacity
         onPress={() => navigation.navigate("ClassDetailForTutor", { item })}
+        style={{ width: "65%" }}
       >
         <View style={styles.requestInfo}>
           <Text style={styles.requestTitle}>{majors(item).major}</Text>
@@ -98,18 +99,22 @@ const ManageClassTutor = () => {
         </TouchableOpacity>
       ) : (
         <TouchableOpacity
-          onPress={() => navigation.navigate("AttendancePage", { item })}
+          onPress={() => navigation.navigate("AttendancePage", { item, user })}
           style={styles.requestStatus}
         >
           <View
             style={{
-              backgroundColor: COLORS.lightWhite,
+              backgroundColor: COLORS.main,
               borderRadius: 20,
               borderWidth: 2,
               borderColor: COLORS.main,
             }}
           >
-            <Text style={styles.requestStatusBtn}>Hoàn thành</Text>
+            <Text
+              style={[styles.requestStatusBtn, { color: COLORS.lightWhite }]}
+            >
+              Hoàn thành
+            </Text>
           </View>
         </TouchableOpacity>
       )}
@@ -149,6 +154,7 @@ const styles = StyleSheet.create({
   },
 
   requestStatus: {
+    width: "35%",
     alignItems: "center",
     justifyContent: "center",
     paddingLeft: 10,

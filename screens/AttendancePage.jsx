@@ -2,7 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
-import { Ionicons } from "@expo/vector-icons";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
 import Heading from "../components/Heading";
 import { COLORS, HOST_API, SIZES } from "../constants";
 import AttendanceItem from "../components/attendance/AttendanceItem";
@@ -30,10 +30,31 @@ const AttendancePage = () => {
   }, []);
   const route = useRoute();
   const { item, user } = route.params;
-
   useEffect(() => {
     fetchListApply();
+    userRole();
   }, []);
+
+  const [userData, setUserData] = useState(null);
+  const userRole = async () => {
+    const token = await AsyncStorage.getItem("token");
+    try {
+      const currentUser = await axios.get(
+        HOST_API.local + `/api/user/authProfile`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      setUserData(currentUser.data.data);
+      console.log(currentUser.data.data);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setLoader(false);
+    }
+  };
   const fetchListApply = async () => {
     const token = await AsyncStorage.getItem("token");
 
@@ -69,8 +90,6 @@ const AttendancePage = () => {
     }
     return { major, classNo };
   };
-  var date = new Date();
-  var month = new Date().getMonth() + 1;
   const createAttendance = (attendance) => {
     axios
       .post(
@@ -154,16 +173,17 @@ const AttendancePage = () => {
               </Text>
             </TouchableOpacity>
           )}
-
-          <TouchableOpacity
-            style={styles.createAttendance}
-            onPressIn={() =>
-              navigation.navigate("FeedbackClass", { item, length, user })
-            }
-          >
-            <Ionicons name="add-circle" size={20} color={COLORS.main} />
-            <Text style={styles.titleText}>Đánh giá chất lượng </Text>
-          </TouchableOpacity>
+          {userData?.role !== "TUTOR" && (
+            <TouchableOpacity
+              style={styles.createAttendance}
+              onPressIn={() =>
+                navigation.navigate("FeedbackClass", { item, length, user })
+              }
+            >
+              <Ionicons name="add-circle" size={20} color={COLORS.main} />
+              <Text style={styles.titleText}>Đánh giá chất lượng </Text>
+            </TouchableOpacity>
+          )}
         </View>
         <View
           style={{
@@ -177,38 +197,41 @@ const AttendancePage = () => {
       <View style={styles.attendance}>
         <View style={styles.title}>
           <Text style={styles.titleText}>Danh sách điểm danh</Text>
-
-          {/* <TouchableOpacity
-            style={styles.createAttendance}
-            onPress={createAttendance}
-          >
-            <Ionicons name="add-circle" size={20} color={COLORS.main} />
-            <Text style={styles.titleText}>Tạo điểm danh</Text>
-          </TouchableOpacity> */}
           {length == item.slots ? (
-            // <TouchableOpacity
-            //   style={styles.createAttendance}
-            //   onPressIn={() =>
-            //     navigation.navigate("FeedbackClass", { item, length })
-            //   }
-            // >
-            //   <Ionicons name="add-circle" size={20} color={COLORS.main} />
-            //   <Text style={styles.titleText}>Kết thúc lớp học</Text>
-            // </TouchableOpacity>
-            <View></View>
+            <View>
+              {userData?.role === "TUTOR" && (
+                <TouchableOpacity
+                  style={styles.createAttendance}
+                  onPressIn={() =>
+                    navigation.navigate("FeedbackClass", { item, length, user })
+                  }
+                >
+                  <MaterialCommunityIcons name="format-list-text" size={24} />
+                  <Text style={styles.titleText}> Xem đánh giá</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           ) : (
-            <TouchableOpacity
-              style={styles.createAttendance}
-              onPress={createAttendance}
-            >
-              <Ionicons name="add-circle" size={20} color={COLORS.main} />
-              <Text style={styles.titleText}>Tạo điểm danh</Text>
-            </TouchableOpacity>
+            <View>
+              {userData?.role !== "TUTOR" && (
+                <TouchableOpacity
+                  style={styles.createAttendance}
+                  onPress={createAttendance}
+                >
+                  <Ionicons name="add-circle" size={20} color={COLORS.main} />
+                  <Text style={styles.titleText}>Tạo điểm danh</Text>
+                </TouchableOpacity>
+              )}
+            </View>
           )}
         </View>
       </View>
-      <View style={{ marginTop: 10 }}>
-        <FlatList
+      <ScrollView style={{ marginTop: 10, marginBottom: 350 }}>
+        {data?.data?.map((item, stt = 0) => (
+          <AttendanceItem item={item} stt={stt + 1} />
+        ))}
+
+        {/* <FlatList
           refreshing={refreshing}
           onRefresh={onRefresh}
           data={data.data}
@@ -217,24 +240,8 @@ const AttendancePage = () => {
             <AttendanceItem item={item} stt={stt} />
           )}
           keyExtractor={(item) => item.id}
-        />
-      </View>
-
-      <View
-        style={{
-          justifyContent: "center",
-          alignItems: "center",
-          marginTop: 40,
-        }}
-      >
-        <TouchableOpacity
-          style={styles.createAttendance}
-          onPressIn={() => navigation.navigate("FeedbackClass", { item })}
-        >
-          <Ionicons name="add-circle" size={20} color={COLORS.main} />
-          <Text style={styles.titleText}>Kết thúc lớp học</Text>
-        </TouchableOpacity>
-      </View>
+        /> */}
+      </ScrollView>
     </SafeAreaView>
   );
 };

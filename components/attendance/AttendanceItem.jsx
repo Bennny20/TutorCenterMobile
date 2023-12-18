@@ -3,7 +3,8 @@ import React from "react";
 import { COLORS, SIZES } from "../../constants";
 
 const AttendanceItem = ({ item, stt }) => {
-  var temp = stt + 1;
+  const date = item.dateCreate.split(" ");
+
   return (
     <View
       style={{
@@ -18,11 +19,11 @@ const AttendanceItem = ({ item, stt }) => {
     >
       <View style={styles.item}>
         <View>
-          <Text style={styles.textItem}>Slot: {temp}</Text>
+          <Text style={styles.textItem}>Slot: {stt}</Text>
         </View>
-        <View style={{ marginLeft: 30 }}>
-          <Text style={styles.textItem}>Ngày điểm danh: {item.dateCreate}</Text>
-          {/* <Text style={styles.textItem}>Giờ điểm danh: {item.time}</Text> */}
+        <View style={{ marginLeft: 20 }}>
+          <Text style={styles.textItem}>Ngày điểm danh: {date[0]}</Text>
+          <Text style={styles.textItem}>Giờ điểm danh: {date[1]}</Text>
         </View>
       </View>
       <View style={styles.status}>

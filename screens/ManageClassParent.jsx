@@ -86,13 +86,14 @@ const ManageClass = () => {
         >
           <View
             style={{
-              backgroundColor: COLORS.lightWhite,
+              backgroundColor: COLORS.gray2,
               borderRadius: 20,
               borderWidth: 2,
-              borderColor: COLORS.main,
             }}
           >
-            <Text style={styles.requestStatusBtn}>Chọn gia sư</Text>
+            <Text style={[styles.requestStatusBtn, { color: COLORS.black }]}>
+              Chọn gia sư
+            </Text>
           </View>
         </TouchableOpacity>
       ) : item.status === 1 ? (
@@ -118,13 +119,17 @@ const ManageClass = () => {
         >
           <View
             style={{
-              backgroundColor: COLORS.lightWhite,
+              backgroundColor: COLORS.main,
               borderRadius: 20,
               borderWidth: 2,
               borderColor: COLORS.main,
             }}
           >
-            <Text style={styles.requestStatusBtn}>Hoàn thành</Text>
+            <Text
+              style={[styles.requestStatusBtn, { color: COLORS.lightWhite }]}
+            >
+              Hoàn thành
+            </Text>
           </View>
         </TouchableOpacity>
       )}
@@ -164,6 +169,7 @@ const styles = StyleSheet.create({
   },
 
   requestStatus: {
+    width: "35%",
     alignItems: "center",
     justifyContent: "center",
     paddingLeft: 10,

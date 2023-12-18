@@ -29,7 +29,6 @@ const ManageClass = () => {
     }, 2000);
   }, []);
   const route = useRoute();
-  const { profileId } = route.params;
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState([]);
   useEffect(() => {
@@ -58,7 +57,6 @@ const ManageClass = () => {
 
   const majors = ({ item }) => {
     var major = "";
-    console.log(item);
     var classNo = "";
     for (let index = 0; index < item.subjects.length; index++) {
       if (index == item.subjects.length - 1) {
@@ -95,10 +93,7 @@ const ManageClass = () => {
       </TouchableOpacity>
 
       {item.status == 0 && (
-        <TouchableOpacity
-          onPress={() => navigation.navigate("AttendancePage")}
-          style={styles.requestStatus}
-        >
+        <View style={styles.requestStatus}>
           <View
             style={{
               width: "100%",
@@ -109,25 +104,17 @@ const ManageClass = () => {
               alignItems: "center",
             }}
           >
-            <Text
-              style={styles.requestStatusBtn}
-              onPress={() => navigation.navigate("AttendancePage")}
-            >
-              Đợi xác nhận
-            </Text>
+            <Text style={styles.requestStatusBtn}>Đợi xác nhận</Text>
           </View>
-        </TouchableOpacity>
+        </View>
       )}
 
       {item.status == 1 && (
-        <TouchableOpacity
-          onPress={() => navigation.navigate("AttendancePage")}
-          style={styles.requestStatus}
-        >
+        <View style={styles.requestStatus}>
           <View
             style={{
               width: "100%",
-              backgroundColor: COLORS.lightWhite,
+              backgroundColor: COLORS.main,
               borderRadius: 20,
               borderWidth: 2,
               borderColor: COLORS.main,
@@ -135,38 +122,30 @@ const ManageClass = () => {
             }}
           >
             <Text
-              style={styles.requestStatusBtn}
-              onPress={() => navigation.navigate("AttendancePage")}
+              style={[styles.requestStatusBtn, { color: COLORS.lightWhite }]}
             >
               Đã xác nhận
             </Text>
           </View>
-        </TouchableOpacity>
+        </View>
       )}
 
       {item.status == 2 && (
-        <TouchableOpacity
-          onPress={() => navigation.navigate("AttendancePage")}
-          style={styles.requestStatus}
-        >
+        <View style={styles.requestStatus}>
           <View
             style={{
               width: "100%",
-              backgroundColor: COLORS.lightWhite,
+              backgroundColor: COLORS.gray2,
               borderRadius: 20,
               borderWidth: 2,
-              borderColor: COLORS.main,
               alignItems: "center",
             }}
           >
-            <Text
-              style={styles.requestStatusBtn}
-              onPress={() => navigation.navigate("AttendancePage")}
-            >
+            <Text style={[styles.requestStatusBtn, { color: COLORS.black }]}>
               Đã có gia sư
             </Text>
           </View>
-        </TouchableOpacity>
+        </View>
       )}
     </View>
   );

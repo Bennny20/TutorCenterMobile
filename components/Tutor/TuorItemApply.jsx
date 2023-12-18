@@ -119,18 +119,18 @@ const TutorItemApply = ({ item, classID }) => {
         }}
       >
         {item.status == 1 ? (
-          // <View style={styles.btnStatus}>
-          //   <Text style={styles.txtStatus}>Đã chọn gia sư</Text>
-          // </View>
-          <TouchableOpacity
-            style={styles.btnStatus}
-            onPress={() =>
-              navigation.navigate("TransferMoney", { item, userData, classID })
-            }
-          >
-            <Text style={styles.txtStatus}>Chọn gia sư</Text>
-          </TouchableOpacity>
+          <View style={styles.btnStatus}>
+            <Text style={styles.txtStatus}>Đã chọn gia sư</Text>
+          </View>
         ) : (
+          // <TouchableOpacity
+          //   style={styles.btnStatus}
+          //   onPress={() =>
+          //     navigation.navigate("TransferMoney", { item, userData, classID })
+          //   }
+          // >
+          //   <Text style={styles.txtStatus}>Chọn gia sư</Text>
+          // </TouchableOpacity>
           item.status == 0 && (
             <TouchableOpacity
               style={styles.btnStatus}

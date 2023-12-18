@@ -96,6 +96,14 @@ const ApplyPage = () => {
         </View>
       </View>
 
+      {data?.data?.length == 0 && (
+        <View style={{ justifyContent: "center", alignItems: "center" }}>
+          <View style={styles.cancel}>
+            <Text style={styles.name}>Hủy Lớp</Text>
+          </View>
+        </View>
+      )}
+
       <View style={{ marginTop: 5 }}>
         <View style={styles.title}>
           <Text style={styles.titleText}> Thong tin gia su</Text>
@@ -106,16 +114,24 @@ const ApplyPage = () => {
       {loader ? (
         <ActivityIndicator size={SIZES.xxLarge} color={COLORS.primarys} />
       ) : (
-        <FlatList
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          style={{ marginTop: 10, marginHorizontal: 10, marginBottom: 100 }}
-          data={data.data}
-          renderItem={({ item }) => (
-            <TutorItemApply item={item} classID={classID} />
+        <View>
+          {data?.data?.length == 0 ? (
+            <View style={{ justifyContent: "center", alignItems: "center" }}>
+              <Text style={styles.sup}>Chưa có gia sư Apply</Text>
+            </View>
+          ) : (
+            <FlatList
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              style={{ marginTop: 10, marginHorizontal: 10, marginBottom: 100 }}
+              data={data.data}
+              renderItem={({ item }) => (
+                <TutorItemApply item={item} classID={classID} />
+              )}
+              keyExtractor={(item) => item.id}
+            />
           )}
-          keyExtractor={(item) => item.id}
-        />
+        </View>
       )}
     </SafeAreaView>
   );
@@ -143,6 +159,15 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     alignItems: "center",
     backgroundColor: COLORS.main,
+  },
+
+  cancel: {
+    marginTop: 10,
+    width: "40%",
+    borderRadius: 20,
+    borderWidth: 1,
+    alignItems: "center",
+    backgroundColor: COLORS.red,
   },
 
   info: {
