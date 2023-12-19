@@ -27,6 +27,9 @@ const ClassDetail = () => {
     checkExitingApply();
     checkRoleTutor();
   }, []);
+  const start = classDetail.dateStart.split("T");
+  console.log(start);
+  const end = classDetail.dateEnd.split("T");
 
   const [userTutor, setUserTutor] = useState(null);
   const checkRoleTutor = async () => {
@@ -105,12 +108,15 @@ const ClassDetail = () => {
       setRefreshing(false);
     }, 2000);
   }, []);
-
+  console.log(classDetail);
+  console.log(item);
   const createApply = async () => {
     const token = await AsyncStorage.getItem("token");
     const url =
       HOST_API.local +
       `/api/tutorApply/create?clazzId=${classDetail.id}&tutorId=${user}`;
+    console.log(url);
+
     if (userData == null) {
       navigation.navigate("Login");
     } else {
@@ -125,7 +131,7 @@ const ClassDetail = () => {
         Alert.alert("Chúc mừng ", "Bạn đã apply thành công", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
@@ -140,11 +146,11 @@ const ClassDetail = () => {
         Alert.alert("Bạn đã apply không thành công", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
-            onPress: () => {},
+            onPress: () => { },
           },
           { defaultIndex: 1 },
         ]);
@@ -237,7 +243,7 @@ const ClassDetail = () => {
                   }}
                 >
                   <View style={styles.dateForm}>
-                    <Text style={styles.date}>{classDetail.dateStart}</Text>
+                    <Text style={styles.date}>{start[0]}</Text>
                   </View>
                   <View
                     style={{
@@ -249,7 +255,7 @@ const ClassDetail = () => {
                     <Ionicons name="send" size={24} color={COLORS.main} />
                   </View>
                   <View style={styles.dateForm}>
-                    <Text style={styles.date}>{classDetail.dateEnd}</Text>
+                    <Text style={styles.date}>{end[0]}</Text>
                   </View>
                 </View>
                 <Text style={styles.title}>
@@ -358,8 +364,8 @@ const ClassDetail = () => {
               </TouchableOpacity>
             )}
             {userData?.role === "TUTOR" &&
-            userTutor?.status == 2 &&
-            !checkApply ? (
+              userTutor?.status == 2 &&
+              !checkApply ? (
               <TouchableOpacity style={styles.btnApply} onPress={createApply}>
                 <Ionicons
                   name="receipt-outline"

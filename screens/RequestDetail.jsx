@@ -1,5 +1,6 @@
 import {
   ActivityIndicator,
+  Alert,
   ScrollView,
   StyleSheet,
   Text,
@@ -13,6 +14,7 @@ import Heading from "../components/Heading";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { COLORS, HOST_API, SIZES } from "../constants";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const RequestDetail = () => {
   const navigation = useNavigation();
@@ -20,6 +22,7 @@ const RequestDetail = () => {
   const route = useRoute();
   const { item } = route.params;
   console.log(item);
+
 
   var major = "";
   var classNo = "";
@@ -53,36 +56,19 @@ const RequestDetail = () => {
     }
   };
   console.log("requestDetail: ", requestDetail);
-
+  const start = requestDetail?.dateStart.split("T");
+  const end = requestDetail?.dateEnd.split("T");
   const formattedAmount = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   }).format(item.tuition);
 
-  const handleCancel = async () => {
+  const cancel = async () => {
     const token = await AsyncStorage.getItem("token");
+    console.log(token);
     axios
-      .post(
-        HOST_API.local + "/api/request/create",
-        {
-          id: 0,
-          parentId: 0,
-          managerId: 0,
-          clazzId: 0,
-          phone: "string",
-          address: "string",
-          districtId: 0,
-          slots: 0,
-          slotsLength: 0,
-          tuition: 0,
-          notes: "string",
-          dateStart: "2023-12-17T18:52:46.207Z",
-          dateEnd: "2023-12-17T18:52:46.207Z",
-          dateCreate: "2023-12-17T18:52:46.207Z",
-          dateModified: "2023-12-17T18:52:46.207Z",
-          status: 0,
-          deleted: true,
-        },
+      .delete(
+        HOST_API.local + `/api/request/cancel/${item.id}`,
         {
           headers: {
             Authorization: "Bearer " + token,
@@ -92,20 +78,20 @@ const RequestDetail = () => {
       .then((response) => {
         console.log(response.data);
         if (response.data.responseCode == "00") {
-          Alert.alert("Tạo yêu cầu thành công", "Quản lý yêu cầu", [
+          Alert.alert("Hủy thành công", "Quản lý yêu cầu", [
             {
               text: "Cancel",
               onPress: () => {
-                // navigation.navigate("ManageRequest");
+                // navigation.navigate("ManasgeRequest");
               },
             },
             {
               text: "Continue",
               onPress: () => {
-                navigation.navigate("ManageRequest", {
-                  user,
-                  userData,
-                });
+                // navigation.navigate("ManageRequest", {
+                //   user,
+                //   userData,
+                // });
               },
             },
             { defaultIndex: 1 },
@@ -114,7 +100,7 @@ const RequestDetail = () => {
           Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
             {
               text: "Cancel",
-              onPress: () => {},
+              onPress: () => { },
             },
             {
               text: "Continue",
@@ -127,10 +113,10 @@ const RequestDetail = () => {
         }
       })
       .catch((error) => {
-        Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
+        Alert.alert("Hủy không thành công", "Quản lý yêu cầu", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
@@ -144,6 +130,21 @@ const RequestDetail = () => {
       });
   };
 
+  const check = () => {
+    Alert.alert("Bạn có muốn hủy yêu cầu", " ", [
+      {
+        text: "Cancel",
+        onPress: () => {
+
+        },
+      },
+      {
+        text: "Continue",
+        onPress: () => cancel(),
+      },
+      { defaultIndex: 1 },
+    ]);
+  }
   return (
     <SafeAreaView>
       <Heading title={"Yêu cầu chi tiết "} />
@@ -361,6 +362,7 @@ const RequestDetail = () => {
                 <Text style={styles.sup}>Đang xác nhận</Text>
               </View>
               <TouchableOpacity
+                onPress={check}
                 style={[
                   styles.status,
                   { backgroundColor: COLORS.red, marginTop: 10 },

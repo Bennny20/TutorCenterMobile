@@ -48,7 +48,6 @@ const AttendancePage = () => {
         }
       );
       setUserData(currentUser.data.data);
-      console.log(currentUser.data.data);
     } catch (error) {
       console.log("error", error);
     } finally {
@@ -57,7 +56,6 @@ const AttendancePage = () => {
   };
   const fetchListApply = async () => {
     const token = await AsyncStorage.getItem("token");
-
     setLoader(true);
     try {
       const response = await axios.get(
@@ -90,7 +88,10 @@ const AttendancePage = () => {
     }
     return { major, classNo };
   };
-  const createAttendance = (attendance) => {
+  var date = new Date()
+  var dayCreate = (String(date.getDay()).length == 1 ? "0" + date.getDay() : date.getDay()) + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+  var timeCreate = date.getHours() + ":" + date.getMinutes() + ":" 
+  const createAttendance = () => {
     axios
       .post(
         HOST_API.local + `/api/attendance/create?clazzId=${item.id}&status=1`
@@ -118,7 +119,7 @@ const AttendancePage = () => {
         Alert.alert("Tạo điểm danh không thành công", "Quản lý lớp", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
@@ -132,8 +133,27 @@ const AttendancePage = () => {
       });
   };
 
-  let temp = 0;
-  return (
+  const check = () => {
+    Alert.alert("Bạn có muốn tạo điểm danh", dayCreate + " " + timeCreate, [
+      {
+        text: "Cancel",
+        onPress: () => {
+          {
+          }
+        },
+      },
+      {
+        text: "Continue",
+        onPress: () => createAttendance(),
+      },
+      { defaultIndex: 1 },
+    ]);
+  }
+  const day = ({ item }) => {
+    const start = item?.dateStart.split("T");
+    const end = item?.dateEnd.split("T");
+    return { start, end };
+  }; return (
     <SafeAreaView style={{ marginTop: -20 }}>
       <Heading title={"Điểm danh"} />
       <View style={styles.class}>
@@ -146,8 +166,8 @@ const AttendancePage = () => {
           <View style={styles.infoDetail}>
             <Text style={styles.sup}>Môn học: {majors({ item }).major}</Text>
             <Text style={styles.sup}>{majors({ item }).classNo}</Text>
-            <Text style={styles.sup}>Ngày bắt đầu: {item.dateStart}</Text>
-            <Text style={styles.sup}>Ngày kết thúc: {item.dateEnd}</Text>
+            <Text style={styles.sup}>Ngày bắt đầu: {day({ item }).start[0]}</Text>
+            <Text style={styles.sup}>Ngày kết thúc: {day({ item }).end[0]}</Text>
             <Text style={styles.sup}>
               Gia sư: {item.tutor?.name} {item?.tutorName}
             </Text>
@@ -216,7 +236,7 @@ const AttendancePage = () => {
               {userData?.role !== "TUTOR" && (
                 <TouchableOpacity
                   style={styles.createAttendance}
-                  onPress={createAttendance}
+                  onPress={check}
                 >
                   <Ionicons name="add-circle" size={20} color={COLORS.main} />
                   <Text style={styles.titleText}>Tạo điểm danh</Text>

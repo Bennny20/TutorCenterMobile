@@ -376,7 +376,7 @@ const CreateRequestPage = () => {
           Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
             {
               text: "Cancel",
-              onPress: () => {},
+              onPress: () => { },
             },
             {
               text: "Continue",
@@ -392,7 +392,7 @@ const CreateRequestPage = () => {
         Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
@@ -929,7 +929,7 @@ const CreateRequestPage = () => {
               value={date}
               onChange={onChangeEnd}
               style={styles.datePicker}
-              minimumDate={new Date(dateStart)}
+              minimumDate={dateStart !== null ? new Date(dateStart) : new Date()}
             />
           )}
 

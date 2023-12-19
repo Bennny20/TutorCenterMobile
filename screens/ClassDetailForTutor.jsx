@@ -46,6 +46,9 @@ const ClassDetailForTutor = () => {
     style: "currency",
     currency: "VND",
   }).format(item.tuition);
+
+  const start = classDetail?.dateStart.split("T");
+  const end = classDetail?.dateEnd.split("T");
   return (
     <SafeAreaView>
       <Heading title={"Thông tin lớp chi tiết "} />

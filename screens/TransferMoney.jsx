@@ -113,69 +113,69 @@ const TransferMoney = () => {
       { defaultIndex: 1 },
     ]);
 
-    // setLoader(true);
-    // try {
-    //   const response = await axios.post(
-    //     HOST_API.local + "/api/order/create",
-    //     {
-    //       clazzId: classID.id,
-    //       amount: new Intl.NumberFormat("vi-VN", {
-    //         style: "currency",
-    //         currency: "VND",
-    //       }).format(classID.tuition),
-    //       type: 1,
-    //     },
-    //     {
-    //       headers: {
-    //         Authorization: "Bearer " + token,
-    //       },
-    //     }
-    //   );
-    //   console.log(response.data);
-    //   if (response.data.responseCode === "00") {
-    //     const response = await fetch(
-    //       HOST_API.local + `/api/tutorApply/acceptTutor/${item.id}`,
-    //       {
-    //         method: "PUT",
-    //         headers: {
-    //           Authorization: "Bearer " + token,
-    //         },
-    //       }
-    //     );
-    //     const result = await response.json();
-    //     if (result.responseCode == "00") {
-    //       Alert.alert("Chọn gia sư thành công", "Quản lý lớp", [
-    //         {
-    //           text: "Cancel",
-    //           onPress: () => {},
-    //         },
-    //         {
-    //           text: "Continue",
-    //           onPress: () => {
-    //             navigation.navigate("History", { item, order });
-    //           },
-    //         },
-    //         { defaultIndex: 1 },
-    //       ]);
-    //     }
-    //     setLoader(false);
-    //   }
-    // } catch (error) {
-    //   console.log(error.message);
-    //   Alert.alert("Error", "error", [
-    //     {
-    //       text: "Cancel",
-    //       onPress: () => {},
-    //     },
-    //     {
-    //       text: "Continue",
-    //       onPress: () => {},
-    //     },
-    //     { defaultIndex: 1 },
-    //   ]);
-    // } finally {
-    //   setLoader(false);
-    // }
+    setLoader(true);
+    try {
+      const response = await axios.post(
+        HOST_API.local + "/api/order/create",
+        {
+          clazzId: classID.id,
+          amount: new Intl.NumberFormat("vi-VN", {
+            style: "currency",
+            currency: "VND",
+          }).format(classID.tuition),
+          type: 1,
+        },
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      console.log(response.data);
+      if (response.data.responseCode === "00") {
+        const response = await fetch(
+          HOST_API.local + `/api/tutorApply/acceptTutor/${item.id}`,
+          {
+            method: "PUT",
+            headers: {
+              Authorization: "Bearer " + token,
+            },
+          }
+        );
+        const result = await response.json();
+        if (result.responseCode == "00") {
+          Alert.alert("Chọn gia sư thành công", "Quản lý lớp", [
+            {
+              text: "Cancel",
+              onPress: () => {},
+            },
+            {
+              text: "Continue",
+              onPress: () => {
+                navigation.navigate("History", { item, order });
+              },
+            },
+            { defaultIndex: 1 },
+          ]);
+        }
+        setLoader(false);
+      }
+    } catch (error) {
+      console.log(error.message);
+      Alert.alert("Error", "error", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+        },
+        {
+          text: "Continue",
+          onPress: () => {},
+        },
+        { defaultIndex: 1 },
+      ]);
+    } finally {
+      setLoader(false);
+    }
   };
 
   return (

@@ -28,7 +28,6 @@ const Profile = () => {
   const [user, setUser] = useState(null);
   const [userLogin, setUserLogin] = useState(false);
   const [userTutor, setUserTutor] = useState(null);
-  console.log(userData);
   useEffect(() => {
     checkExitingUser();
   }, []);
@@ -66,6 +65,7 @@ const Profile = () => {
             }
           }
         }
+        setLoader(false)
       } catch (error) {
         console.log("error", error);
       } finally {

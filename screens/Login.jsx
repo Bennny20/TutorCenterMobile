@@ -37,11 +37,11 @@ const Login = () => {
     Alert.alert("Invalid form", "Please provide all require fields", [
       {
         text: "Cancel",
-        onPress: () => {},
+        onPress: () => { },
       },
       {
         text: "Continue",
-        onPress: () => {},
+        onPress: () => { },
       },
       { defaultIndex: 1 },
     ]);
@@ -73,11 +73,11 @@ const Login = () => {
               [
                 {
                   text: "Cancel",
-                  onPress: () => {},
+                  onPress: () => { },
                 },
                 {
                   text: "Continue",
-                  onPress: () => {},
+                  onPress: () => { },
                 },
                 { defaultIndex: 1 },
               ]
@@ -92,11 +92,11 @@ const Login = () => {
           Alert.alert("Đăng nhập thất bại", "error", [
             {
               text: "Cancel",
-              onPress: () => {},
+              onPress: () => { },
             },
             {
               text: "Continue",
-              onPress: () => {},
+              onPress: () => { },
             },
             { defaultIndex: 1 },
           ]);
@@ -153,7 +153,7 @@ const Login = () => {
                       style={{ marginRight: 10 }}
                     />
                     <TextInput
-                      placeholder="Enter your email"
+                      placeholder="Nhập email của bạn"
                       onFocus={() => {
                         setFieldTouched("email");
                       }}
@@ -188,7 +188,7 @@ const Login = () => {
                     />
                     <TextInput
                       secureTextEntry={obscureText}
-                      placeholder="Enter your password"
+                      placeholder="Nhập mật khẩu của bạn"
                       onFocus={() => {
                         setFieldTouched("password");
                       }}
@@ -220,7 +220,7 @@ const Login = () => {
 
                 <Button
                   loader={loader}
-                  title={"Dang nhap"}
+                  title={"Đăng nhập"}
                   onPress={isValid ? handleSubmit : inValidForm}
                   isValid={isValid}
                 />

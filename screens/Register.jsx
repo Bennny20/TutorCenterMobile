@@ -131,7 +131,6 @@ const Register = () => {
     console.log("Value: ", user);
 
     handleCheckEmail(data.email);
-    console.log(checkEmail);
     if (checkEmail.data == false) {
       setLoader(true);
       try {

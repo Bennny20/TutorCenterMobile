@@ -289,7 +289,7 @@ const RegisterTutor = () => {
       Alert.alert("Hãy điền đầy đủ thông tin", "", [
         {
           text: "Cancel",
-          onPress: () => {},
+          onPress: () => { },
         },
         { defaultIndex: 1 },
       ]);
@@ -299,7 +299,7 @@ const RegisterTutor = () => {
       Alert.alert("Xác nhập mật khẩu không đúng", "Nhập lại mật khẩu", [
         {
           text: "Cancel",
-          onPress: () => {},
+          onPress: () => { },
         },
         { defaultIndex: 1 },
       ]);
@@ -375,7 +375,7 @@ const RegisterTutor = () => {
         Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
@@ -390,11 +390,11 @@ const RegisterTutor = () => {
         Alert.alert("Error Logging im", "Please provide all require fields", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
-            onPress: () => {},
+            onPress: () => { },
           },
           { defaultIndex: 1 },
         ]);
@@ -404,11 +404,11 @@ const RegisterTutor = () => {
       Alert.alert("Error", "error", [
         {
           text: "Cancel",
-          onPress: () => {},
+          onPress: () => { },
         },
         {
           text: "Continue",
-          onPress: () => {},
+          onPress: () => { },
         },
         { defaultIndex: 1 },
       ]);
@@ -504,7 +504,7 @@ const RegisterTutor = () => {
                   style={styles.input}
                   value={password}
                   onChangeText={(text) => setPassword(text)}
-                  placeholder="Nhập password"
+                  placeholder="Nhập mật khẩu"
                 />
               </View>
 
@@ -515,7 +515,7 @@ const RegisterTutor = () => {
                   style={styles.input}
                   value={rePassword}
                   onChangeText={(text) => setRePassword(text)}
-                  placeholder="Nhập lại password"
+                  placeholder="Nhập lại mật khẩu"
                 />
               </View>
 
@@ -544,7 +544,7 @@ const RegisterTutor = () => {
           )} */}
 
           <Button
-            title={"Tiếp túc"}
+            title={"Tiếp tục"}
             onPress={() => handleCheckEmail(email)}
             // onPress={() => setCurrentStep(1)}
             isValid={name}
@@ -628,10 +628,22 @@ const RegisterTutor = () => {
                 </TouchableOpacity>
                 {isClickProvince && (
                   <View style={styles.dropdownArea}>
+                    <TouchableOpacity
+                      style={styles.item}
+                      onPress={() => {
+                        setSelectProvince(item.name);
+                        setIsClickProvince(false);
+                        handLoadDistrict(item.id);
+                      }}
+                    >
+                      <Text>{item.name}</Text>
+                    </TouchableOpacity>
                     <FlatList
                       data={province.data}
                       renderItem={({ item, index }) => {
                         return (
+
+
                           <TouchableOpacity
                             style={styles.item}
                             onPress={() => {
@@ -758,7 +770,7 @@ const RegisterTutor = () => {
           />
 
           <Button
-            title={"Tiếp túc"}
+            title={"Tiếp tục"}
             onPress={() => setCurrentStep(2)}
             isValid={name}
             loader={false}
@@ -886,7 +898,7 @@ const RegisterTutor = () => {
             loader={false}
           />
           <Button
-            title={"Tiếp túc"}
+            title={"Tiếp tục"}
             onPress={() => setCurrentStep(3)}
             isValid={name}
             loader={false}
@@ -1046,7 +1058,7 @@ const RegisterTutor = () => {
                         alignSelf: "center",
                       }}
                     >
-                      <Text style={styles.itemText}>Bằng cấp 2</Text>
+                      <Text style={styles.itemText}>Bằng cấp </Text>
                     </TouchableOpacity>
                   </View>
                 )}

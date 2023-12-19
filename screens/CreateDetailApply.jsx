@@ -23,7 +23,10 @@ const ClassDetailApply = () => {
     classNo = item.subjects[index].level;
   }
   const [classDetail, setClassDetail] = useState();
+  const [start, setStart] = useState();
+  const [end, setEnd] = useState();
   const [loader, setLoader] = useState(false);
+
   useEffect(() => {
     fetchClassDetail();
   }, []);
@@ -34,6 +37,8 @@ const ClassDetailApply = () => {
         HOST_API.local + `/api/clazz/${item.clazzId}`
       );
       setClassDetail(response.data.data);
+      setStart(response.data.data.dateStart.split("T"));
+      setEnd(response.data.data.dateStart.split("T"));
       setLoader(false);
     } catch (error) {
       console.log("error", error);
@@ -46,6 +51,12 @@ const ClassDetailApply = () => {
     style: "currency",
     currency: "VND",
   }).format(item.tuition);
+
+
+  console.log(start);
+
+  console.log(end);
+
   return (
     <SafeAreaView>
       <Heading title={"Thông tin lớp chi tiết "} />
