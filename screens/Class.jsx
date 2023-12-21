@@ -20,15 +20,14 @@ const Class = () => {
   const navigation = useNavigation();
 
   const { data, isLoading, error } = useFetch();
-
   const [refreshing, setRefreshing] = useState(false);
-  const onRefresh = React.useCallback(() => {
-    useFetch();
-    setRefreshing(true);
-    setTimeout(() => {
-      setRefreshing(false);
-    }, 2000);
-  }, []);
+  // const onRefresh = React.useCallback(() => {
+  //   useFetch();
+  //   setRefreshing(true);
+  //   setTimeout(() => {
+  //     setRefreshing(false);
+  //   }, 2000);
+  // }, []);
   return (
     <SafeAreaView>
       <View style={styles.wrapper}>
@@ -44,7 +43,7 @@ const Class = () => {
               </TouchableOpacity>
             </View>
             <View>
-              <Text style={styles.heading}>Danh sach lop</Text>
+              <Text style={styles.heading}>Danh sách lớp</Text>
             </View>
           </View>
           <View style={styles.btnSreacrh}>
@@ -61,8 +60,6 @@ const Class = () => {
           <Text>Something went wrong </Text>
         ) : (
           <FlatList
-            refreshing={refreshing}
-            onRefresh={onRefresh}
             style={{ marginBottom: 70 }}
             data={data.data}
             renderItem={({ item }) => <ClassItem item={item} />}

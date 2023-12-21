@@ -18,7 +18,7 @@ const ClassCardView = ({ item }) => {
     fetchClassDetail();
     checkExitingUser();
   }, []);
-
+  console.log(item);
   const [userData, setUserData] = useState(null);
   const [user, setUser] = useState(null);
   const checkExitingUser = async () => {
@@ -77,54 +77,59 @@ const ClassCardView = ({ item }) => {
   }).format(item.tuition);
   return (
     <View>
-      {loader ? (
-        <ActivityIndicator size={500} color={COLORS.main} />
-      ) : (
-        <TouchableOpacity
-          onPress={() =>
-            navigation.navigate("ClassDetail", {
-              item,
-              classDetail,
-              user,
-              userData,
-            })
-          }
-        >
-          <View style={styles.container}>
-            <View style={styles.heading}>
-              <Text style={styles.headingText}>{major}</Text>
-            </View>
 
-            <View style={styles.details}>
-              <Text style={styles.supplier} numberOfLines={1}>
-                Trình độ: {item.tutorLevel}
-              </Text>
-              <Text style={styles.supplier} numberOfLines={1}>
-                {classNo}
-              </Text>
-              <Text style={styles.supplier} numberOfLines={1}>
-                Hôn học: {major}
-              </Text>
-              <Text style={styles.supplier} numberOfLines={1}>
-                Địa điểm: {item.address}, {item.districtName}
-              </Text>
-              <Text style={styles.supplier} numberOfLines={1}>
-                Giới tính: {item.gender}
-              </Text>
-              <Text style={styles.price}>{formattedAmount} </Text>
+      <View>
+        {loader ? (
+          <ActivityIndicator size={500} color={COLORS.main} />
+        ) : (
+          <TouchableOpacity
+            onPress={() =>
+              navigation.navigate("ClassDetail", {
+                item,
+                classDetail,
+                user,
+                userData,
+              })
+            }
+          >
+            <View style={styles.container}>
+              <View style={styles.heading}>
+                <Text style={styles.headingText}>{major}</Text>
+              </View>
+
+              <View style={styles.details}>
+                <Text style={styles.supplier} numberOfLines={1}>
+                  Trình độ: {item.tutorLevel}
+                </Text>
+                <Text style={styles.supplier} numberOfLines={1}>
+                  {classNo}
+                </Text>
+                <Text style={styles.supplier} numberOfLines={1}>
+                  Hôn học: {major}
+                </Text>
+                <Text style={styles.supplier} numberOfLines={1}>
+                  Địa điểm: {item.address}, {item.districtName}
+                </Text>
+                <Text style={styles.supplier} numberOfLines={1}>
+                  Giới tính: {item.gender}
+                </Text>
+                <Text style={styles.price}>{formattedAmount} </Text>
+              </View>
+              <TouchableOpacity style={styles.addBtn}>
+                <Text style={styles.detailText}>Xem chi tiết</Text>
+                <Ionicons
+                  name="chevron-forward"
+                  size={20}
+                  color={COLORS.lightWhite}
+                />
+              </TouchableOpacity>
             </View>
-            <TouchableOpacity style={styles.addBtn}>
-              <Text style={styles.detailText}>Xem chi tiết</Text>
-              <Ionicons
-                name="chevron-forward"
-                size={20}
-                color={COLORS.lightWhite}
-              />
-            </TouchableOpacity>
-          </View>
-        </TouchableOpacity>
-      )}
+          </TouchableOpacity>
+        )}
+      </View>
+
     </View>
+
   );
 };
 

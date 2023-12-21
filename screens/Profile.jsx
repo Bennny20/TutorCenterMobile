@@ -134,14 +134,29 @@ const Profile = () => {
               )}
             </View>
             <View style={styles.info}>
-              <Image
+
+              {userLogin === false ? (
+                <Image
+                  source={require("../assets/images/profile.jpeg")}
+                  style={styles.profileImg}
+                />
+              ) : userData?.role === "TUTOR" ? (
+                <Image
+                  source={{
+                    uri: HOST_API.local + "/api/user/image/" + userTutor.imgAvatar,
+                  }} style={styles.profileImg}
+                />
+              ): (
+                <Image
                 source={require("../assets/images/profile.jpeg")}
                 style={styles.profileImg}
-              />
+              /> 
+              )}
+
               <Text style={styles.name}>
                 {userLogin === true
-                  ? userData.fullName
-                  : "Please login into your account"}
+                  ? userData?.fullName
+                  : ""}
               </Text>
               {userLogin === false ? (
                 <TouchableOpacity
@@ -153,7 +168,7 @@ const Profile = () => {
                 </TouchableOpacity>
               ) : (
                 <View style={styles.loginBtn}>
-                  <Text style={styles.email}>{userData.fullName}</Text>
+                  <Text style={styles.email}>{userData?.fullName}</Text>
                   {userTutor !== null && userTutor.status == 0 ? (
                     <TouchableOpacity
                       onPressIn={() =>

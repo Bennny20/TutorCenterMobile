@@ -35,7 +35,7 @@ const Tutor = () => {
               color={COLORS.lightWhite}
             />
           </TouchableOpacity>
-          <Text style={styles.heading}>Best Tutors</Text>
+          <Text style={styles.heading}>Danh sách gia sư</Text>
         </View>
       </View>
       <View style={{ marginTop: 80, marginHorizontal: 15, marginBottom: 60 }}>

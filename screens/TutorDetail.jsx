@@ -38,7 +38,22 @@ const TutorDetail = () => {
     };
     fetchClassDetail();
   }, []);
-  console.log(tutorDetail);
+
+
+
+
+  console.log("tutorDetail: ", tutorDetail);
+
+  var major = " ";
+  var classNo = " ";
+  for (let index = 0; index < tutorDetail?.subjects.length; index++) {
+    if (index == tutorDetail?.subjects.length - 1) {
+      major += tutorDetail?.subjects[index].name;
+    } else {
+      major += tutorDetail?.subjects[index].name + ", ";
+    }
+    classNo = tutorDetail?.subjects[index].level;
+  }
   return (
     <View>
       <View style={styles.wrapper}>
@@ -69,23 +84,23 @@ const TutorDetail = () => {
                 <View style={{ marginHorizontal: 20, marginVertical: 10 }}>
                   <Text style={styles.name}>{tutorDetail?.tutorName} </Text>
                   <Text style={styles.sup}>
-                    Giới tính: {tutorDetail?.gender}
+                    Giới tính: <Text style={[styles.sup, { color: COLORS.black }]}>{tutorDetail?.gender}</Text>
+                  </Text>
+                  {/* <Text style={styles.sup}>
+                    Địa chỉ:  <Text style={[styles.sup, { color: COLORS.black }]}>{tutorDetail?.address}</Text>
+                  </Text> */}
+                  <Text style={styles.sup}>
+                    Khu vực: <Text style={[styles.sup, { color: COLORS.black }]}>{tutorDetail?.districtName}, {tutorDetail?.provinceName}</Text>
+                  </Text>
+                  <Text style={styles.sup}>Trình độ: <Text style={[styles.sup, { color: COLORS.black }]}>  {tutorDetail?.tutorLevel} </Text>
+                  </Text>
+                  <Text style={styles.sup}> Trường đại học: <Text style={[styles.sup, { color: COLORS.black }]}> {tutorDetail?.university}</Text>
                   </Text>
                   <Text style={styles.sup}>
-                    Địa chỉ: {tutorDetail?.address}
+                    Chuyên môn: <Text style={[styles.sup, { color: COLORS.black }]}>{tutorDetail?.major}</Text>
                   </Text>
                   <Text style={styles.sup}>
-                    {tutorDetail?.districtName}, {tutorDetail?.provinceName}
-                  </Text>
-                  <Text style={styles.sup}>Sinh viên </Text>
-                  <Text style={styles.sup}>
-                    Trường đại học:{tutorDetail?.gender}
-                  </Text>
-                  <Text style={styles.sup}>
-                    Chuyên môn: {tutorDetail?.major}
-                  </Text>
-                  <Text style={styles.sup}>
-                    Kinh nghiệm: {tutorDetail?.major}
+                    Kinh nghiệm: <Text style={[styles.sup, { color: COLORS.black }]}>{major}</Text>
                   </Text>
                 </View>
               </View>

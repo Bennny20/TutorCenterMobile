@@ -19,7 +19,7 @@ const ClassRow = () => {
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Classes</Text>
+        <Text style={styles.headerTitle}>Lớp chưa có gia sư</Text>
         <TouchableOpacity
           style={{ display: "flex", flexDirection: "row" }}
           onPress={() => navigation.navigate("ClassList")}
@@ -38,7 +38,7 @@ const ClassRow = () => {
           <FlatList
             data={data.data}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => <ClassCardView item={item} />}
+            renderItem={({ item }) => item.status === 0 && <ClassCardView item={item} />}
             horizontal
             contentContainerStyle={{ columnGap: SIZES.medium }}
           />

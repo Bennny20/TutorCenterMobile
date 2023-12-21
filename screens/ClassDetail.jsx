@@ -27,10 +27,9 @@ const ClassDetail = () => {
     checkExitingApply();
     checkRoleTutor();
   }, []);
-  const start = classDetail.dateStart.split("T");
-  console.log(start);
-  const end = classDetail.dateEnd.split("T");
 
+  console.log("detail: " + classDetail);
+  console.log("item: " + item);
   const [userTutor, setUserTutor] = useState(null);
   const checkRoleTutor = async () => {
     const token = await AsyncStorage.getItem("token");
@@ -243,7 +242,7 @@ const ClassDetail = () => {
                   }}
                 >
                   <View style={styles.dateForm}>
-                    <Text style={styles.date}>{start[0]}</Text>
+                    <Text style={styles.date}>{item?.dateStart}</Text>
                   </View>
                   <View
                     style={{
@@ -255,7 +254,7 @@ const ClassDetail = () => {
                     <Ionicons name="send" size={24} color={COLORS.main} />
                   </View>
                   <View style={styles.dateForm}>
-                    <Text style={styles.date}>{end[0]}</Text>
+                    <Text style={styles.date}>{item?.dateEnd}</Text>
                   </View>
                 </View>
                 <Text style={styles.title}>

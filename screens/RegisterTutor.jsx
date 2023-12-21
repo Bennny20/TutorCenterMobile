@@ -173,6 +173,7 @@ const RegisterTutor = () => {
 
   const [imgIdFont, setImgIdFont] = useState(null);
   const [imgIdFontValue, setImgIDFontValue] = useState(null);
+  const [profile, setProfile] = useState(null);
   const pickerIDFont = async () => {
     let result2 = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ImagePicker.MediaTypeOptions.All,
@@ -201,6 +202,21 @@ const RegisterTutor = () => {
         })
         .catch((error) => {
           console.log("Create failed", error);
+        });
+
+
+      axios
+        .post("https://api.fpt.ai/vision/idr/vnm", formData, {
+          headers: {
+            api_key: "raX5WR45dKMgRduK7bRWOZGBv6XbbPOX",
+            "Content-Type": "multipart/form-data; ",
+          },
+        })
+        .then((response) => {
+          setProfile(response.data);
+        })
+        .catch((error) => {
+          console.log("Load failed", error);
         });
     }
   };
@@ -281,48 +297,68 @@ const RegisterTutor = () => {
     { label: "Giáo viên", value: "Giáo viên" },
   ];
 
-  const [checkEmail, setCheckEmail] = useState(false);
+  const [checkEmailExit, setCheckEmailExit] = useState(false);
+  const [checkEmail, setCheckEmail] = useState(true);
+  const [checkPassword, setCheckPassword] = useState(true);
+  const [checkRePassword, setReCheckPassword] = useState(true);
   const handleCheckEmail = async (email) => {
-    const temp = email.toLowerCase();
-    console.log(idNumber);
-    if (idNumber == "" || name == "") {
-      Alert.alert("Hãy điền đầy đủ thông tin", "", [
+    if (email === undefined || password === undefined) {
+      Alert.alert("Vui lòng điền đầy đủ thông tin", "", [
         {
           text: "Cancel",
           onPress: () => { },
         },
         { defaultIndex: 1 },
       ]);
-    } else if (password === rePassword) {
-      setCurrentStep(1);
     } else {
-      Alert.alert("Xác nhập mật khẩu không đúng", "Nhập lại mật khẩu", [
-        {
-          text: "Cancel",
-          onPress: () => { },
-        },
-        { defaultIndex: 1 },
-      ]);
-      setPassword(""), setRePassword("");
-    }
-    // await axios
-    //   .get(HOST_API.local + `/api/auth/emailExist/${temp}`)
-    //   .then((response) => {
-    //     console.log(response.data);
-    //     setCheckEmail(response.data);
-    //     if (checkEmail.data == true) {
-    //       Alert.alert("Email đã được đăng kí", "Nhập lại email", [
-    //         {
-    //           text: "Cancel",
-    //           onPress: () => {},
-    //         },
-    //         { defaultIndex: 1 },
-    //       ]);
-    //       setEmail("");
-    //     } else {
+      setLoader(true)
+      setCheckEmail(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email.toLowerCase())
+      )
+      setCheckPassword(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(password))
+      setReCheckPassword(password === rePassword);
+      setLoader(false)
 
-    //     }
-    //   });
+
+      if (checkEmail && checkPassword && checkRePassword) {
+        await axios
+          .get(HOST_API.local + `/api/auth/emailExist/${email.toLowerCase()}`)
+          .then((response) => {
+            if (response.data.data === true) {
+              Alert.alert("Email này đã được đăng kí", "", [
+                {
+                  text: "Cancel",
+                  onPress: () => { },
+                },
+                { defaultIndex: 1 },
+              ]);
+              setEmail()
+            } else {
+              if (imgIdFontValue !== null && imgIdBackValue !== null) {
+                console.log(profile?.data.lenght);
+                if (profile !== null) {
+                  console.log(profile.data[0]);
+                  setIdNumber(profile.data[0].id)
+                  setName(profile.data[0].name)
+                }
+                setCurrentStep(1)
+              } else {
+                Alert.alert("Vui lòng cung cấp ảnh để xác minh", "", [
+                  {
+                    text: "Cancel",
+                    onPress: () => { },
+                  },
+                  { defaultIndex: 1 },
+                ]);
+              }
+
+            }
+          });
+      }
+    }
+
+
+
+
   };
 
   const register = async () => {
@@ -480,8 +516,9 @@ const RegisterTutor = () => {
         </View>
       </View>
 
+      {/* Thông tin tài khoản */}
       {currentStep == 0 && (
-        <View style={{ marginHorizontal: 20 }}>
+        <ScrollView style={{ marginHorizontal: 20 }}>
           <Text style={{ fontSize: 16, fontWeight: "bold" }}>
             Thông tin tài khoản
           </Text>
@@ -496,6 +533,11 @@ const RegisterTutor = () => {
                   onChangeText={(text) => setEmail(text)}
                   placeholder="Nhập email"
                 />
+                {!checkEmail && (<Text style={styles.errorMessage}>Cung cấp địa chỉ email hợp lệ</Text>
+                )}
+
+                {checkEmailExit && (<Text style={styles.errorMessage}>Email này đã được đăng kí</Text>
+                )}
               </View>
               <View>
                 <Text style={styles.itemText}>Mật khẩu </Text>
@@ -506,6 +548,8 @@ const RegisterTutor = () => {
                   onChangeText={(text) => setPassword(text)}
                   placeholder="Nhập mật khẩu"
                 />
+                {!checkPassword && (<Text style={styles.errorMessage}>Mật khẩu tối thiểu 8 kí tự(Tối thiểu: 1 số, 1 chữ viết hoa)</Text>
+                )}
               </View>
 
               <View>
@@ -517,42 +561,119 @@ const RegisterTutor = () => {
                   onChangeText={(text) => setRePassword(text)}
                   placeholder="Nhập lại mật khẩu"
                 />
+                {!checkRePassword && (<Text style={styles.errorMessage}>Không trùng khớp mật khẩu</Text>
+                )}
+              </View>
+              <View>
+                {isImage === false ? (
+                  <View style={{ alignItems: "center" }}>
+                    <Image
+                    // source={require("../assets/images/userDefault.png")}
+                    />
+                    <TouchableOpacity
+                      onPress={() => pickerIDFont()}
+                      style={{
+                        marginTop: 20,
+                        height: 50,
+                        width: "60%",
+                        backgroundColor: "skyblue",
+                        borderRadius: 20,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        alignSelf: "center",
+                      }}
+                    >
+                      <Text style={styles.itemText}>Mặt trước CCCD</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={{ alignItems: "center" }}>
+                    {imgIdFont && (
+                      <Image
+                        source={{ uri: imgIdFont }}
+                        style={styles.certificate}
+                      />
+                    )}
+                    <TouchableOpacity
+                      onPress={() => pickerIDFont()}
+                      style={{
+                        marginTop: 20,
+                        height: 50,
+                        width: "60%",
+                        backgroundColor: "skyblue",
+                        borderRadius: 20,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        alignSelf: "center",
+                      }}
+                    >
+                      <Text style={styles.itemText}>Mặt trước CCCD</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
 
               <View>
-                <Text style={styles.itemText}>Họ và tên </Text>
-                <TextInput
-                  style={styles.input}
-                  value={name}
-                  onChangeText={(text) => setName(text)}
-                  placeholder="Nhập họ và tên"
-                />
-              </View>
-              <View>
-                <Text style={styles.itemText}>CCCD/CMND </Text>
-                <TextInput
-                  style={styles.input}
-                  value={idNumber}
-                  onChangeText={(text) => setIdNumber(text)}
-                  placeholder="Nhập họ và tên"
-                />
+                {isImage === false ? (
+                  <View style={{ alignItems: "center" }}>
+                    <Image
+                    // source={require("../assets/images/userDefault.png")}
+                    />
+                    <TouchableOpacity
+                      onPress={() => pickerIDBack()}
+                      style={{
+                        marginTop: 20,
+                        height: 50,
+                        width: "60%",
+                        backgroundColor: "skyblue",
+                        borderRadius: 20,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        alignSelf: "center",
+                      }}
+                    >
+                      <Text style={styles.itemText}>Mặt sau CCCD</Text>
+                    </TouchableOpacity>
+                  </View>
+                ) : (
+                  <View style={{ alignItems: "center" }}>
+                    {imgIdBack && (
+                      <Image
+                        source={{ uri: imgIdBack }}
+                        style={styles.certificate}
+                      />
+                    )}
+                    <TouchableOpacity
+                      onPress={() => pickerIDBack()}
+                      style={{
+                        marginTop: 20,
+                        height: 50,
+                        width: "60%",
+                        backgroundColor: "skyblue",
+                        borderRadius: 20,
+                        justifyContent: "center",
+                        alignItems: "center",
+                        alignSelf: "center",
+                      }}
+                    >
+                      <Text style={styles.itemText}>Mặt sau CCCD</Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
               </View>
             </KeyboardAwareScrollView>
           </Pressable>
-          {/* {email != null && password != null && name != null && (
-           
-          )} */}
-
           <Button
             title={"Tiếp tục"}
             onPress={() => handleCheckEmail(email)}
             // onPress={() => setCurrentStep(1)}
             isValid={name}
-            loader={false}
+            loader={loader}
           />
-        </View>
+        </ScrollView>
       )}
 
+      {/* Thông tin cá nhân */}
       {currentStep == 1 && (
         <ScrollView style={{ marginHorizontal: 20 }}>
           <Text style={{ fontSize: 16, fontWeight: "bold" }}>
@@ -610,6 +731,26 @@ const RegisterTutor = () => {
                 )}
               </View>
 
+
+              <View>
+                <Text style={styles.itemText}>Họ và tên </Text>
+                <TextInput
+                  style={styles.input}
+                  value={name}
+                  onChangeText={(text) => setName(text)}
+                  placeholder="Nhập họ và tên"
+                />
+              </View>
+              <View>
+                <Text style={styles.itemText}>CCCD/CMND </Text>
+                <TextInput
+                  style={styles.input}
+                  value={idNumber}
+                  onChangeText={(text) => setIdNumber(text)}
+                  placeholder="Nhập họ và tên"
+                />
+              </View>
+
               {/* Tỉnh thành */}
               <View>
                 <Text style={styles.itemText}>Tỉnh thành</Text>
@@ -628,22 +769,10 @@ const RegisterTutor = () => {
                 </TouchableOpacity>
                 {isClickProvince && (
                   <View style={styles.dropdownArea}>
-                    <TouchableOpacity
-                      style={styles.item}
-                      onPress={() => {
-                        setSelectProvince(item.name);
-                        setIsClickProvince(false);
-                        handLoadDistrict(item.id);
-                      }}
-                    >
-                      <Text>{item.name}</Text>
-                    </TouchableOpacity>
                     <FlatList
                       data={province.data}
                       renderItem={({ item, index }) => {
                         return (
-
-
                           <TouchableOpacity
                             style={styles.item}
                             onPress={() => {
@@ -781,6 +910,7 @@ const RegisterTutor = () => {
         </ScrollView>
       )}
 
+      {/* Thông tin chuyên môn */}
       {currentStep == 2 && (
         <View style={{ marginHorizontal: 20 }}>
           <Text style={{ fontSize: 16, fontWeight: "bold" }}>
@@ -906,14 +1036,15 @@ const RegisterTutor = () => {
         </View>
       )}
 
+      {/* Bằng cáp hoặc giấy tờ chứng minh */}
       {currentStep == 3 && (
         <ScrollView style={{ marginHorizontal: 20 }}>
           <Text style={{ fontSize: 16, fontWeight: "bold" }}>
-            Upload ảnh thông tin
+            Bằng cấp hoặc thẻ sinh viên
           </Text>
           <Pressable>
             <KeyboardAwareScrollView extraScrollHeight={-150}>
-              <View>
+              {/* <View>
                 {isImage === false ? (
                   <View style={{ alignItems: "center" }}>
                     <Image
@@ -1011,7 +1142,7 @@ const RegisterTutor = () => {
                     </TouchableOpacity>
                   </View>
                 )}
-              </View>
+              </View> */}
 
               {/* certificate */}
               <View>
@@ -1128,6 +1259,14 @@ const styles = StyleSheet.create({
     fontFamily: "bold",
     fontSize: SIZES.medium,
     color: COLORS.main,
+  },
+
+  errorMessage: {
+    marginLeft: 20,
+    padding: 3,
+    fontFamily: "regular",
+    fontSize: SIZES.small,
+    color: COLORS.red,
   },
 
   dropdownSelector: {

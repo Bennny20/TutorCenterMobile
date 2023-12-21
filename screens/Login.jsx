@@ -6,6 +6,7 @@ import {
   View,
   TouchableOpacity,
   TextInput,
+  Image,
 } from "react-native";
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
@@ -20,11 +21,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const validationSchema = Yup.object().shape({
   password: Yup.string()
-    .min(1, "Password must be at least 8 characters")
-    .required("Required"),
+    .min(1, "Mật khẩu tối thiểu 8 kí tự")
+    .required("Mật khẩu tối thiểu 8 kí tự"),
   email: Yup.string()
-    .email("Provide a valid email address")
-    .required("Required"),
+    .email("Cung cấp địa chỉ email hợp lệ")
+    .required("Cung cấp địa chỉ email hợp lệ"),
 });
 
 const Login = () => {
@@ -120,7 +121,11 @@ const Login = () => {
             />
           </TouchableOpacity>
           <View style={{ alignItems: "center" }}>
-            <Text style={styles.title}>TUTOR CENTER</Text>
+            <Image
+              source={require("../assets/logo-no-background.png")}
+              style={styles.logo}
+            />
+            <Text style={styles.title}>ĐĂNG NHẬP</Text>
           </View>
           <Formik
             initialValues={{ email: "", password: "" }}
@@ -280,6 +285,12 @@ const Login = () => {
 export default Login;
 
 const styles = StyleSheet.create({
+  logo: {
+    height: 100,
+    width: 200,
+    resizeMode: "stretch",
+  },
+
   registration: {
     fontFamily: "regular",
     fontSize: SIZES.medium,
@@ -315,9 +326,8 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 20,
     fontFamily: "bold",
-    fontSize: SIZES.xxLarge,
+    fontSize: SIZES.xLarge,
     color: COLORS.main,
     alignItems: "center",
-    marginBottom: SIZES.xxLarge,
   },
 });

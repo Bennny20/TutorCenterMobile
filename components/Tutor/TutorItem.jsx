@@ -1,6 +1,6 @@
 import { StyleSheet, Text, TouchableOpacity, View, Image } from "react-native";
 import React, { useEffect } from "react";
-import { SIZES, SHADOWS, COLORS } from "../../constants";
+import { SIZES, SHADOWS, COLORS, HOST_API } from "../../constants";
 import { useNavigation } from "@react-navigation/native";
 import { useState } from "react";
 import axios from "axios";
@@ -8,8 +8,9 @@ import axios from "axios";
 const TutorItem = ({ item }) => {
   const navigation = useNavigation();
   const idTutor = item.id;
-
+  console.log(item);
   return (
+    
     <View>
       <TouchableOpacity
         style={styles.container}
@@ -17,8 +18,8 @@ const TutorItem = ({ item }) => {
       >
         <View style={styles.image}>
           <Image
-            source={{
-              uri: "https://img.freepik.com/premium-photo/blue-white-sign-with-man-white-shirt-blue-circle-with-man-front-it_745528-3249.jpg?w=2000",
+             source={{
+              uri: HOST_API.local + "/api/user/image/" + item.imgAvatar,
             }}
             style={styles.productImg}
           />
@@ -58,10 +59,10 @@ const styles = StyleSheet.create({
     marginHorizontal: SIZES.small - 5,
   },
   productImg: {
-    width: "100%",
-    height: 65,
-    borderRadius: SIZES.small,
-    resizeMode: "cover",
+    width: "75%",
+    height: "75%",
+    borderRadius: 200,
+    resizeMode: "stretch",
   },
   image: {
     width: 70,

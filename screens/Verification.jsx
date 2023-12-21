@@ -59,7 +59,7 @@ const Verification = () => {
           {
             text: "Continue",
             onPress: () => {
-              navigation.navigate("Profile");
+              navigation.replace("Bottom Navigation");
             },
           },
           { defaultIndex: 1 },
@@ -74,7 +74,7 @@ const Verification = () => {
           {
             text: "Continue",
             onPress: () => {
-              navigation.replace("Profile");
+              navigation.replace("Bottom Navigation");
             },
           },
           { defaultIndex: 1 },

@@ -1,6 +1,6 @@
 import { TouchableOpacity, StyleSheet, Text, View, Image } from "react-native";
 import React from "react";
-import { COLORS, SIZES } from "../../constants";
+import { COLORS, HOST_API, SIZES } from "../../constants";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 import { useEffect } from "react";
@@ -18,7 +18,7 @@ const TutorCartView = ({ item }) => {
         <View style={styles.imageContainer}>
           <Image
             source={{
-              uri: "https://img.freepik.com/premium-photo/blue-white-sign-with-man-white-shirt-blue-circle-with-man-front-it_745528-3249.jpg?w=2000",
+              uri: HOST_API.local + "/api/user/image/" + item.imgAvatar,
             }}
             style={styles.image}
           />

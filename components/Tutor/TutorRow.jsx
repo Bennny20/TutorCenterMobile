@@ -15,13 +15,30 @@ import useFetch from "../../hook/Tutor/useFetch";
 import { useState } from "react";
 import axios from "axios";
 const TutorRow = () => {
-  const { data, isLoading, error } = useFetch();
-  const navigation = useNavigation();
+  const [data, setData] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchData = async () => {
+    setIsLoading(true);
+    try {
+      const res = await axios.get(HOST_API.local + `/api/tutor/best`);
+      setData(res.data);
+    } catch (error) {
+      console.log(error);
+      setError(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchData();
+  }, []); const navigation = useNavigation();
 
   return (
     <View style={styles.container}>
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>Best Tutors</Text>
+        <Text style={styles.headerTitle}>Top gia sư </Text>
         <TouchableOpacity
           style={{ display: "flex", flexDirection: "row" }}
           onPress={() => navigation.navigate("TutorList")}
