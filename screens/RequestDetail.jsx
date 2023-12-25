@@ -392,8 +392,7 @@ const RequestDetail = () => {
                   <Text style={styles.title}>
                     Lí do:{" "}
                     <Text style={styles.sup}>
-                      Yêu cầu không hợp lệ Yêu cầu không hợp lệ Yêu cầu không
-                      hợp lệ
+                      {requestDetail?.rejectReason}
                     </Text>
                   </Text>
                 </View>
@@ -412,7 +411,7 @@ const RequestDetail = () => {
                   </View>
                 </TouchableOpacity>
 
-                <TouchableOpacity
+                {/* <TouchableOpacity
                   onPress={() =>
                     navigation.navigate("ReCreateRequest", { item })
                   }
@@ -421,7 +420,7 @@ const RequestDetail = () => {
                   <View style={styles.recreate}>
                     <Text style={styles.sup}>Tái sử dụng</Text>
                   </View>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
               </View>
             </View>
           ) : (

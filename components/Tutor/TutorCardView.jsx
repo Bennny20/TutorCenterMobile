@@ -53,7 +53,7 @@ export default TutorCartView;
 const styles = StyleSheet.create({
   container: {
     width: 250,
-    height: 240,
+    height: 270,
     marginEnd: 22,
     borderRadius: SIZES.medium,
     backgroundColor: COLORS.secondary,
@@ -64,8 +64,8 @@ const styles = StyleSheet.create({
   imageContainer: {
     display: "flex",
     flex: 1,
-    width: 120,
-    height: 120,
+    width: 220,
+    height: 220,
     marginTop: SIZES.small / 2,
     borderRadius: "50%",
     overflow: "hidden",
@@ -74,9 +74,10 @@ const styles = StyleSheet.create({
 
   image: {
     width: 100,
+    height: 100,
     borderRadius: 50,
     aspectRatio: 1,
-    resizeMode: "cover",
+    resizeMode: "stretch",
   },
 
   details: {

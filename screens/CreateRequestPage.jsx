@@ -208,6 +208,8 @@ const CreateRequestPage = () => {
     );
     await response.json().then((data) => {
       setSubject(data.data);
+      getTuition(data.data[0].pricePerHour);
+
       let newArray = data.data.map((item) => {
         return { label: item.name, value: item.id };
       });
@@ -288,7 +290,7 @@ const CreateRequestPage = () => {
     const request = {
       phone: phone,
       address: address,
-      listSubjectId: [subjectValue],
+      listSubjectId: subjectValue2,
       gender: genderValue,
       daysOfWeek: dayOfWeekValue.join(", "),
       time: timeValue,
@@ -316,7 +318,7 @@ const CreateRequestPage = () => {
         {
           phone: phone,
           address: address,
-          listSubjectId: [subjectValue],
+          listSubjectId: subjectValue2,
           gender: genderValue,
           daysOfWeek: dayOfWeekValue.join(", "),
           time: timeValue,
@@ -647,7 +649,7 @@ const CreateRequestPage = () => {
         </View>
 
         {/* Môn học */}
-        {/* <View style={{ zIndex: 20 }}>
+        <View style={{ zIndex: 20 }}>
           <Text style={styles.itemText}>Môn học</Text>
           <DropDownPicker
             style={styles.dropdownSelector}
@@ -668,10 +670,10 @@ const CreateRequestPage = () => {
             badgeDotColors={["white"]}
             backgroundColor=""
           />
-        </View> */}
+        </View>
 
         {/* Môn học */}
-        <View>
+        {/* <View>
           <Text style={styles.itemText}>Môn học</Text>
           <TouchableOpacity
             style={styles.dropdownSelector}
@@ -716,7 +718,7 @@ const CreateRequestPage = () => {
               />
             </View>
           )}
-        </View>
+        </View> */}
 
         {/* Ngày học trong tuần */}
         <View style={{ zIndex: 18 }}>

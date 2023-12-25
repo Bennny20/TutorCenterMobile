@@ -10,7 +10,7 @@ const TutorItem = ({ item }) => {
   const idTutor = item.id;
   console.log(item);
   return (
-    
+
     <View>
       <TouchableOpacity
         style={styles.container}
@@ -18,7 +18,7 @@ const TutorItem = ({ item }) => {
       >
         <View style={styles.image}>
           <Image
-             source={{
+            source={{
               uri: HOST_API.local + "/api/user/image/" + item.imgAvatar,
             }}
             style={styles.productImg}
@@ -65,8 +65,8 @@ const styles = StyleSheet.create({
     resizeMode: "stretch",
   },
   image: {
-    width: 70,
-    backgroundColor: COLORS.secondary,
+    width: 80,
+    height: 80,
     borderRadius: SIZES.medium,
     justifyContent: "center",
     alignContent: "center",

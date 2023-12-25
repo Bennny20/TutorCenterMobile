@@ -77,8 +77,9 @@ const TutorDetail = () => {
               <View style={styles.info}>
                 <View style={{ alignItems: "center" }}>
                   <Image
-                    source={require("../assets/images/profile.jpeg")}
-                    style={styles.profileImg}
+                    source={{
+                      uri: HOST_API.local + "/api/user/image/" + tutorDetail?.imgAvatar,
+                    }} style={styles.profileImg}
                   />
                 </View>
                 <View style={{ marginHorizontal: 20, marginVertical: 10 }}>
