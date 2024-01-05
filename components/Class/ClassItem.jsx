@@ -9,7 +9,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 const ClassItem = ({ item }) => {
   const navigation = useNavigation();
   console.log(item);
-const status = item.status;
+  const status = item.status;
   var major = "";
   var classNo = "";
 
@@ -76,52 +76,49 @@ const status = item.status;
   }).format(item.tuition);
   return (
     <View>
-      {item.status === 0 && (
-        <View style={styles.card_container}>
-          <View
-            style={{
-              alignItems: "center",
-              justifyContent: "center",
-              width: "5%",
-            }}
-          >
-            <View style={styles.circle} />
-          </View>
-          {loader ? (
-            <ActivityIndicator size={500} color={COLORS.main} />
-          ) : (
-            <TouchableOpacity
-              style={styles.content}
-              onPress={() =>
-                navigation.navigate("ClassDetail", {
-                  item,
-                  classDetail,
-                  user,
-                  userData,
-                })
-              }
-            >
-              <View style={styles.title}>
-                <Text style={styles.titleText}>{major}</Text>
-              </View>
-              <View style={styles.info}>
-                <Text style={styles.text}>Trình đồ: {item.tutorLevel}</Text>
-                <Text style={styles.text}> {classNo}</Text>
-                <Text style={styles.text}>Địa chỉ: {item.address}</Text>
-                <Text style={styles.text}>
-                  {item.districtName}, {item.provinceName}
-                </Text>
-                <Text style={styles.text}>Giới tính: {item.gender}</Text>
-              </View>
-              <View style={styles.price}>
-                <Text style={styles.priceText}>{formattedAmount}</Text>
-              </View>
-            </TouchableOpacity>
-          )}
+      <View style={styles.card_container}>
+        <View
+          style={{
+            alignItems: "center",
+            justifyContent: "center",
+            width: "5%",
+          }}
+        >
+          <View style={styles.circle} />
         </View>
-      )}
+        {loader ? (
+          <ActivityIndicator size={500} color={COLORS.main} />
+        ) : (
+          <TouchableOpacity
+            style={styles.content}
+            onPress={() =>
+              navigation.navigate("ClassDetail", {
+                item,
+                classDetail,
+                user,
+                userData,
+              })
+            }
+          >
+            <View style={styles.title}>
+              <Text style={styles.titleText}>{major}</Text>
+            </View>
+            <View style={styles.info}>
+              <Text style={styles.text}>Trình đồ: {item.tutorLevel}</Text>
+              <Text style={styles.text}> {classNo}</Text>
+              <Text style={styles.text}>Địa chỉ: {item.address}</Text>
+              <Text style={styles.text}>
+                {item.districtName}, {item.provinceName}
+              </Text>
+              <Text style={styles.text}>Giới tính: {item.gender}</Text>
+            </View>
+            <View style={styles.price}>
+              <Text style={styles.priceText}>{formattedAmount}</Text>
+            </View>
+          </TouchableOpacity>
+        )}
+      </View>
     </View>
-
   );
 };
 

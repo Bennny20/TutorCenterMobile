@@ -18,7 +18,6 @@ const ClassCardView = ({ item }) => {
     fetchClassDetail();
     checkExitingUser();
   }, []);
-  console.log(item);
   const [userData, setUserData] = useState(null);
   const [user, setUser] = useState(null);
   const checkExitingUser = async () => {
@@ -77,7 +76,6 @@ const ClassCardView = ({ item }) => {
   }).format(item.tuition);
   return (
     <View>
-
       <View>
         {loader ? (
           <ActivityIndicator size={500} color={COLORS.main} />
@@ -127,9 +125,7 @@ const ClassCardView = ({ item }) => {
           </TouchableOpacity>
         )}
       </View>
-
     </View>
-
   );
 };
 

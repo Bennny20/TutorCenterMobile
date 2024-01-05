@@ -132,16 +132,7 @@ const TutorItemApply = ({ item, classID }) => {
           //   <Text style={styles.txtStatus}>Chọn gia sư</Text>
           // </TouchableOpacity>
           item.status == 0 && (
-            <TouchableOpacity
-              style={styles.btnStatus}
-              onPress={() =>
-                navigation.navigate("TransferMoney", {
-                  item,
-                  userData,
-                  classID,
-                })
-              }
-            >
+            <TouchableOpacity style={styles.btnStatus} onPress={handleChoose}>
               <Text style={styles.txtStatus}>Chọn gia sư</Text>
             </TouchableOpacity>
           )

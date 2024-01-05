@@ -34,6 +34,8 @@ import {
   ClassDetailForTutor,
   CreateDetailApply,
   ReCreateRequest,
+  TestTutor,
+  ClassDetailForParent,
 } from "./screens";
 import { useEffect } from "react";
 import { LogBox } from "react-native";
@@ -191,25 +193,21 @@ export default function App() {
           component={Order}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="Verification"
           component={Verification}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="RequestDetail"
           component={RequestDetail}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="FeedbackTutor"
           component={FeedbackTutor}
           options={{ headerShown: false }}
         />
-
         <Stack.Screen
           name="ClassDetailForTutor"
           component={ClassDetailForTutor}
@@ -220,10 +218,19 @@ export default function App() {
           component={CreateDetailApply}
           options={{ headerShown: false }}
         />
-
+        <Stack.Screen
+          name="TestTutor"
+          component={TestTutor}
+          options={{ headerShown: false }}
+        />
         <Stack.Screen
           name="ReCreateRequest"
           component={ReCreateRequest}
+          options={{ headerShown: false }}
+        />
+        <Stack.Screen
+          name="ClassDetailForParent"
+          component={ClassDetailForParent}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>
