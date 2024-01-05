@@ -8,7 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigation, useRoute } from "@react-navigation/native";
 import Heading from "../components/Heading";
 import { COLORS, HOST_API, SIZES } from "../constants";
@@ -19,9 +19,8 @@ const Verification = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { userData, userTutor } = route.params;
-
+  console.log(userData);
   const imageID = userTutor.imgId.split("~");
-  console.log(imageID);
   var major = " ";
   var classNo = " ";
   for (let index = 0; index < userTutor.subjects.length; index++) {
@@ -32,8 +31,6 @@ const Verification = () => {
     }
     classNo = userTutor.subjects[index].level;
   }
-  console.log("user: ", userData);
-  console.log("userTutor: ", userTutor);
   const createAttendance = async () => {
     const token = await AsyncStorage.getItem("token");
     axios
@@ -80,6 +77,28 @@ const Verification = () => {
           { defaultIndex: 1 },
         ]);
       });
+  };
+
+  const [loader, setLoader] = useState(false);
+  const [data, setData] = useState([]);
+  useEffect(() => {
+    fetchTest();
+  }, []);
+  const fetchTest = async () => {
+    const token = await AsyncStorage.getItem("token");
+
+    setLoader(true);
+    try {
+      const response = await axios.get(
+        HOST_API.local + `/api/tutor/test/${userData.id}`
+      );
+      console.log(response.data);
+      setData(response.data.data);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setLoader(false);
+    }
   };
 
   return (
@@ -220,15 +239,137 @@ const Verification = () => {
           </View>
         </View>
 
-        {userTutor.status == 0 && (
-          <TouchableOpacity style={styles.btn} onPress={createAttendance}>
-            <Text>Xác minh tài khoản</Text>
-          </TouchableOpacity>
-        )}
+        {userTutor.status == 0 ? (
+          <View>
+            <TouchableOpacity
+              style={styles.btnTest}
+              onPressIn={() => navigation.navigate("TestTutor", { userTutor })}
+            >
+              <Text style={styles.txtTest}>
+                Bài test môn {userTutor.subjects[0].name}{" "}
+                {userTutor.subjects[0].level}
+                <Text style={{ color: COLORS.main }}>{"   "}Làm ngay</Text>
+              </Text>
+            </TouchableOpacity>
 
-        {userTutor.status == 1 && (
-          <View style={styles.btn}>
-            <Text>Đang xác minh tài khoản</Text>
+            {userTutor.subjects[1] !== undefined && (
+              <TouchableOpacity
+                style={styles.btnTest}
+                onPressIn={() => navigation.navigate("TestTutor")}
+              >
+                <Text style={styles.txtTest}>
+                  Bài test môn {userTutor.subjects[1].name}{" "}
+                  {userTutor.subjects[1].level}
+                  <Text style={{ color: COLORS.main }}>{"   "}Làm ngay</Text>
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            {userTutor.subjects[2] !== undefined && (
+              <TouchableOpacity
+                style={styles.btnTest}
+                onPressIn={() => navigation.navigate("TestTutor")}
+              >
+                <Text style={styles.txtTest}>
+                  Bài test môn {userTutor.subjects[2].name}{" "}
+                  {userTutor.subjects[2].level}
+                  <Text style={{ color: COLORS.main }}>{"   "}Làm ngay</Text>
+                </Text>
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity style={styles.btn} onPress={createAttendance}>
+              <Text>Xác minh tài khoản</Text>
+            </TouchableOpacity>
+          </View>
+        ) : (
+          <View>
+            <Text
+              style={[
+                styles.txtTest,
+                { marginLeft: 20, fontSize: SIZES.medium + 5 },
+              ]}
+            >
+              {" "}
+              Bài test
+            </Text>
+            <TouchableOpacity
+              style={styles.btnTest}
+              onPressIn={() => navigation.navigate("TestTutor", { userTutor })}
+            >
+              <Text style={styles.txtTest}>
+                Môn {data[0]?.name} {data[0]?.level}
+                <Text style={{ color: COLORS.main }}>
+                  {" "}
+                  {data[0]?.latestGrade == 0
+                    ? "   Làm ngay"
+                    : " Số điểm: " +
+                      data[0]?.latestGrade +
+                      " Số lần : " +
+                      data[0]?.times}
+                </Text>
+              </Text>
+            </TouchableOpacity>
+
+            {userTutor.subjects[1] !== undefined && (
+              <TouchableOpacity
+                style={styles.btnTest}
+                onPressIn={() => navigation.navigate("TestTutor")}
+              >
+                <Text style={styles.txtTest}>
+                  Môn {data[1]?.name} {data[1]?.level}
+                  <Text style={{ color: COLORS.main }}>
+                    {" "}
+                    {data[1]?.latestGrade == 0
+                      ? "   Làm ngay"
+                      : " Số điểm: " +
+                        data[1]?.latestGrade +
+                        " Số lần : " +
+                        data[1]?.times}
+                  </Text>
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            {data[2] !== undefined && (
+              <TouchableOpacity
+                style={styles.btnTest}
+                onPressIn={() => navigation.navigate("TestTutor")}
+              >
+                <Text style={styles.txtTest}>
+                  Môn {data[2]?.name} {data[2]?.level}
+                  <Text style={{ color: COLORS.main }}>
+                    {" "}
+                    {data[2]?.latestGrade == 0
+                      ? "   Làm ngay"
+                      : " Số điểm: " +
+                        data[2]?.latestGrade +
+                        " Số lần : " +
+                        data[2]?.times}
+                  </Text>
+                </Text>
+              </TouchableOpacity>
+            )}
+            {data[3] !== undefined && (
+              <TouchableOpacity
+                style={styles.btnTest}
+                onPressIn={() => navigation.navigate("TestTutor")}
+              >
+                <Text style={styles.txtTest}>
+                  Môn {data[3]?.name} {data[3]?.level}
+                  <Text style={{ color: COLORS.main }}>
+                    {data[3]?.latestGrade == 0
+                      ? "   Làm ngay"
+                      : " Số điểm: " +
+                        data[3]?.latestGrade +
+                        " Số lần : " +
+                        data[3]?.times}
+                  </Text>
+                </Text>
+              </TouchableOpacity>
+            )}
+            <View style={styles.btn}>
+              <Text>Đã xác thực tài khoản</Text>
+            </View>
           </View>
         )}
       </ScrollView>
@@ -273,6 +414,14 @@ const styles = StyleSheet.create({
     fontSize: SIZES.medium,
     color: COLORS.gray,
   },
+
+  txtTest: {
+    fontFamily: "semibold",
+    color: COLORS.gray,
+    color: COLORS.black,
+    fontSize: SIZES.medium,
+  },
+
   btn: {
     marginVertical: 20,
     justifyContent: "center",
@@ -284,6 +433,13 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.secondMain,
     marginTop: 10,
   },
+
+  btnTest: {
+    marginHorizontal: 30,
+    marginTop: 10,
+    marginBottom: 5,
+  },
+
   profileImg: {
     height: 155,
     width: 155,

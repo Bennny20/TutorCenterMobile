@@ -120,7 +120,7 @@ const RegisterTutor = () => {
   useEffect(() => {
     const fetchProvince = async () => {
       const response = await fetch(
-        HOST_API.local + `/api/subject/level?level=Lớp 12`
+        HOST_API.local + `/api/subject/level?level=Lớp 6`
       );
       await response.json().then((data) => {
         let newArray = data.data.map((item) => {
@@ -204,7 +204,6 @@ const RegisterTutor = () => {
           console.log("Create failed", error);
         });
 
-
       axios
         .post("https://api.fpt.ai/vision/idr/vnm", formData, {
           headers: {
@@ -233,6 +232,7 @@ const RegisterTutor = () => {
     if (!result2.canceled) {
       setIsImage(true);
       setImgIdBack(result2.assets[0].uri);
+      console.log(result2.assets[0]);
       const formData = new FormData();
       formData.append("image", {
         uri: result2.assets[0].uri,
@@ -306,18 +306,22 @@ const RegisterTutor = () => {
       Alert.alert("Vui lòng điền đầy đủ thông tin", "", [
         {
           text: "Cancel",
-          onPress: () => { },
+          onPress: () => {},
         },
         { defaultIndex: 1 },
       ]);
     } else {
-      setLoader(true)
-      setCheckEmail(/^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(email.toLowerCase())
-      )
-      setCheckPassword(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(password))
+      setLoader(true);
+      setCheckEmail(
+        /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+          email.toLowerCase()
+        )
+      );
+      setCheckPassword(
+        /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(password)
+      );
       setReCheckPassword(password === rePassword);
-      setLoader(false)
-
+      setLoader(false);
 
       if (checkEmail && checkPassword && checkRePassword) {
         await axios
@@ -327,38 +331,33 @@ const RegisterTutor = () => {
               Alert.alert("Email này đã được đăng kí", "", [
                 {
                   text: "Cancel",
-                  onPress: () => { },
+                  onPress: () => {},
                 },
                 { defaultIndex: 1 },
               ]);
-              setEmail()
+              setEmail();
             } else {
               if (imgIdFontValue !== null && imgIdBackValue !== null) {
                 console.log(profile?.data.lenght);
                 if (profile !== null) {
                   console.log(profile.data[0]);
-                  setIdNumber(profile.data[0].id)
-                  setName(profile.data[0].name)
+                  setIdNumber(profile.data[0].id);
+                  setName(profile.data[0].name);
                 }
-                setCurrentStep(1)
+                setCurrentStep(1);
               } else {
                 Alert.alert("Vui lòng cung cấp ảnh để xác minh", "", [
                   {
                     text: "Cancel",
-                    onPress: () => { },
+                    onPress: () => {},
                   },
                   { defaultIndex: 1 },
                 ]);
               }
-
             }
           });
       }
     }
-
-
-
-
   };
 
   const register = async () => {
@@ -411,7 +410,7 @@ const RegisterTutor = () => {
         Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
           {
             text: "Cancel",
-            onPress: () => { },
+            onPress: () => {},
           },
           {
             text: "Continue",
@@ -426,11 +425,11 @@ const RegisterTutor = () => {
         Alert.alert("Error Logging im", "Please provide all require fields", [
           {
             text: "Cancel",
-            onPress: () => { },
+            onPress: () => {},
           },
           {
             text: "Continue",
-            onPress: () => { },
+            onPress: () => {},
           },
           { defaultIndex: 1 },
         ]);
@@ -440,11 +439,11 @@ const RegisterTutor = () => {
       Alert.alert("Error", "error", [
         {
           text: "Cancel",
-          onPress: () => { },
+          onPress: () => {},
         },
         {
           text: "Continue",
-          onPress: () => { },
+          onPress: () => {},
         },
         { defaultIndex: 1 },
       ]);
@@ -533,10 +532,16 @@ const RegisterTutor = () => {
                   onChangeText={(text) => setEmail(text)}
                   placeholder="Nhập email"
                 />
-                {!checkEmail && (<Text style={styles.errorMessage}>Cung cấp địa chỉ email hợp lệ</Text>
+                {!checkEmail && (
+                  <Text style={styles.errorMessage}>
+                    Cung cấp địa chỉ email hợp lệ
+                  </Text>
                 )}
 
-                {checkEmailExit && (<Text style={styles.errorMessage}>Email này đã được đăng kí</Text>
+                {checkEmailExit && (
+                  <Text style={styles.errorMessage}>
+                    Email này đã được đăng kí
+                  </Text>
                 )}
               </View>
               <View>
@@ -548,7 +553,10 @@ const RegisterTutor = () => {
                   onChangeText={(text) => setPassword(text)}
                   placeholder="Nhập mật khẩu"
                 />
-                {!checkPassword && (<Text style={styles.errorMessage}>Mật khẩu tối thiểu 8 kí tự(Tối thiểu: 1 số, 1 chữ viết hoa)</Text>
+                {!checkPassword && (
+                  <Text style={styles.errorMessage}>
+                    Mật khẩu tối thiểu 8 kí tự(Tối thiểu: 1 số, 1 chữ viết hoa)
+                  </Text>
                 )}
               </View>
 
@@ -561,7 +569,10 @@ const RegisterTutor = () => {
                   onChangeText={(text) => setRePassword(text)}
                   placeholder="Nhập lại mật khẩu"
                 />
-                {!checkRePassword && (<Text style={styles.errorMessage}>Không trùng khớp mật khẩu</Text>
+                {!checkRePassword && (
+                  <Text style={styles.errorMessage}>
+                    Không trùng khớp mật khẩu
+                  </Text>
                 )}
               </View>
               <View>
@@ -730,7 +741,6 @@ const RegisterTutor = () => {
                   </View>
                 )}
               </View>
-
 
               <View>
                 <Text style={styles.itemText}>Họ và tên </Text>

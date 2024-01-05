@@ -39,9 +39,6 @@ const TutorDetail = () => {
     fetchClassDetail();
   }, []);
 
-
-
-
   console.log("tutorDetail: ", tutorDetail);
 
   var major = " ";
@@ -78,30 +75,57 @@ const TutorDetail = () => {
                 <View style={{ alignItems: "center" }}>
                   <Image
                     source={{
-                      uri: HOST_API.local + "/api/user/image/" + tutorDetail?.imgAvatar,
-                    }} style={styles.profileImg}
+                      uri:
+                        HOST_API.local +
+                        "/api/user/image/" +
+                        tutorDetail?.imgAvatar,
+                    }}
+                    style={styles.profileImg}
                   />
                 </View>
                 <View style={{ marginHorizontal: 20, marginVertical: 10 }}>
                   <Text style={styles.name}>{tutorDetail?.tutorName} </Text>
                   <Text style={styles.sup}>
-                    Giới tính: <Text style={[styles.sup, { color: COLORS.black }]}>{tutorDetail?.gender}</Text>
+                    Giới tính:{" "}
+                    <Text style={[styles.sup, { color: COLORS.black }]}>
+                      {tutorDetail?.gender}
+                    </Text>
                   </Text>
                   {/* <Text style={styles.sup}>
                     Địa chỉ:  <Text style={[styles.sup, { color: COLORS.black }]}>{tutorDetail?.address}</Text>
                   </Text> */}
                   <Text style={styles.sup}>
-                    Khu vực: <Text style={[styles.sup, { color: COLORS.black }]}>{tutorDetail?.districtName}, {tutorDetail?.provinceName}</Text>
-                  </Text>
-                  <Text style={styles.sup}>Trình độ: <Text style={[styles.sup, { color: COLORS.black }]}>  {tutorDetail?.tutorLevel} </Text>
-                  </Text>
-                  <Text style={styles.sup}> Trường đại học: <Text style={[styles.sup, { color: COLORS.black }]}> {tutorDetail?.university}</Text>
-                  </Text>
-                  <Text style={styles.sup}>
-                    Chuyên môn: <Text style={[styles.sup, { color: COLORS.black }]}>{tutorDetail?.major}</Text>
+                    Khu vực:{" "}
+                    <Text style={[styles.sup, { color: COLORS.black }]}>
+                      {tutorDetail?.districtName}, {tutorDetail?.provinceName}
+                    </Text>
                   </Text>
                   <Text style={styles.sup}>
-                    Kinh nghiệm: <Text style={[styles.sup, { color: COLORS.black }]}>{major}</Text>
+                    Trình độ:{" "}
+                    <Text style={[styles.sup, { color: COLORS.black }]}>
+                      {" "}
+                      {tutorDetail?.tutorLevel}{" "}
+                    </Text>
+                  </Text>
+                  <Text style={styles.sup}>
+                    {" "}
+                    Trường đại học:{" "}
+                    <Text style={[styles.sup, { color: COLORS.black }]}>
+                      {" "}
+                      {tutorDetail?.university}
+                    </Text>
+                  </Text>
+                  <Text style={styles.sup}>
+                    Chuyên ngành:{" "}
+                    <Text style={[styles.sup, { color: COLORS.black }]}>
+                      {tutorDetail?.major}
+                    </Text>
+                  </Text>
+                  <Text style={styles.sup}>
+                    Môn dạy:{" "}
+                    <Text style={[styles.sup, { color: COLORS.black }]}>
+                      {major}
+                    </Text>
                   </Text>
                 </View>
               </View>

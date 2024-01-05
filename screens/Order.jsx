@@ -35,6 +35,7 @@ const Order = () => {
   const [data, setData] = useState([]);
   const fetchOrder = async () => {
     const token = await AsyncStorage.getItem("token");
+    console.log(token);
     setLoader(true);
     try {
       const response = await axios.get(HOST_API.local + `/api/user/order`, {
@@ -42,6 +43,7 @@ const Order = () => {
           Authorization: "Bearer " + token,
         },
       });
+      console.log(response.data);
       setData(response.data);
     } catch (error) {
       console.log("error", error);

@@ -23,7 +23,6 @@ const RequestDetail = () => {
   const { item } = route.params;
   console.log(item);
 
-
   var major = "";
   var classNo = "";
 
@@ -67,14 +66,11 @@ const RequestDetail = () => {
     const token = await AsyncStorage.getItem("token");
     console.log(token);
     axios
-      .delete(
-        HOST_API.local + `/api/request/cancel/${item.id}`,
-        {
-          headers: {
-            Authorization: "Bearer " + token,
-          },
-        }
-      )
+      .delete(HOST_API.local + `/api/request/cancel/${item.id}`, {
+        headers: {
+          Authorization: "Bearer " + token,
+        },
+      })
       .then((response) => {
         console.log(response.data);
         if (response.data.responseCode == "00") {
@@ -100,7 +96,7 @@ const RequestDetail = () => {
           Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
             {
               text: "Cancel",
-              onPress: () => { },
+              onPress: () => {},
             },
             {
               text: "Continue",
@@ -116,7 +112,7 @@ const RequestDetail = () => {
         Alert.alert("Hủy không thành công", "Quản lý yêu cầu", [
           {
             text: "Cancel",
-            onPress: () => { },
+            onPress: () => {},
           },
           {
             text: "Continue",
@@ -134,9 +130,7 @@ const RequestDetail = () => {
     Alert.alert("Bạn có muốn hủy yêu cầu", " ", [
       {
         text: "Cancel",
-        onPress: () => {
-
-        },
+        onPress: () => {},
       },
       {
         text: "Continue",
@@ -144,7 +138,7 @@ const RequestDetail = () => {
       },
       { defaultIndex: 1 },
     ]);
-  }
+  };
   return (
     <SafeAreaView>
       <Heading title={"Yêu cầu chi tiết "} />

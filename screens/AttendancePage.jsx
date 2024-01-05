@@ -34,7 +34,7 @@ const AttendancePage = () => {
     fetchListApply();
     userRole();
   }, []);
-
+  let idTutor = item.tutor?.id;
   const [userData, setUserData] = useState(null);
   const userRole = async () => {
     const token = await AsyncStorage.getItem("token");
@@ -88,9 +88,14 @@ const AttendancePage = () => {
     }
     return { major, classNo };
   };
-  var date = new Date()
-  var dayCreate = (String(date.getDay()).length == 1 ? "0" + date.getDay() : date.getDay()) + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
-  var timeCreate = date.getHours() + ":" + date.getMinutes() + ":" 
+  var date = new Date();
+  var dayCreate =
+    (String(date.getDay()).length == 1 ? "0" + date.getDay() : date.getDay()) +
+    "/" +
+    (date.getMonth() + 1) +
+    "/" +
+    date.getFullYear();
+  var timeCreate = date.getHours() + ":" + date.getMinutes() + ":";
   const createAttendance = () => {
     axios
       .post(
@@ -119,7 +124,7 @@ const AttendancePage = () => {
         Alert.alert("Tạo điểm danh không thành công", "Quản lý lớp", [
           {
             text: "Cancel",
-            onPress: () => { },
+            onPress: () => {},
           },
           {
             text: "Continue",
@@ -148,12 +153,14 @@ const AttendancePage = () => {
       },
       { defaultIndex: 1 },
     ]);
-  }
+  };
+  console.log(item);
   const day = ({ item }) => {
     const start = item?.dateStart.split("T");
     const end = item?.dateEnd.split("T");
     return { start, end };
-  }; return (
+  };
+  return (
     <SafeAreaView style={{ marginTop: -20 }}>
       <Heading title={"Điểm danh"} />
       <View style={styles.class}>
@@ -166,14 +173,39 @@ const AttendancePage = () => {
           <View style={styles.infoDetail}>
             <Text style={styles.sup}>Môn học: {majors({ item }).major}</Text>
             <Text style={styles.sup}>{majors({ item }).classNo}</Text>
-            <Text style={styles.sup}>Ngày bắt đầu: {day({ item }).start[0]}</Text>
-            <Text style={styles.sup}>Ngày kết thúc: {day({ item }).end[0]}</Text>
             <Text style={styles.sup}>
-              Gia sư: {item.tutor?.name} {item?.tutorName}
+              Ngày bắt đầu: {day({ item }).start[0]}
             </Text>
+            <Text style={styles.sup}>
+              Ngày kết thúc: {day({ item }).end[0]}
+            </Text>
+            <Text style={styles.sup}>Chi phí: {item.tuition}</Text>
           </View>
         </View>
 
+        <View style={styles.infoTutor}>
+          <View style={{ alignItems: "center", marginBottom: -10 }}>
+            <Text style={styles.sup}> Thông tin gia sư</Text>
+          </View>
+
+          <View style={styles.infoDetail}>
+            <TouchableOpacity
+              onPress={() => navigation.navigate("TutorDetail", { idTutor })}
+            >
+              <Text style={styles.sup}>
+                Gia sư: {item.tutor?.name} {item?.tutorName}
+              </Text>
+            </TouchableOpacity>
+
+            <Text style={styles.sup}>Địa chỉ: {item.tutor?.address} </Text>
+            <Text style={styles.sup}>
+              {item.tutor?.districtName}, {item.tutor?.provinceName}
+            </Text>
+            <Text style={styles.sup}>
+              Trường đại học: {item.tutor?.university}
+            </Text>
+          </View>
+        </View>
         <View
           style={{
             justifyContent: "space-between",
@@ -331,6 +363,15 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     marginHorizontal: 20,
     marginTop: -10,
+    backgroundColor: COLORS.secondMain,
+  },
+
+  infoTutor: {
+    borderWidth: 2,
+    borderColor: COLORS.black,
+    borderRadius: 30,
+    marginHorizontal: 20,
+    marginTop: 10,
     backgroundColor: COLORS.secondMain,
   },
 });

@@ -70,7 +70,9 @@ const ManageClass = () => {
   const Item = ({ item }) => (
     <View style={styles.requestItem}>
       <TouchableOpacity
-        onPress={() => navigation.navigate("ApplyPage", { item, user })}
+        onPress={() =>
+          navigation.navigate("ClassDetailForParent", { item, user })
+        }
       >
         <View style={styles.requestInfo}>
           <Text style={styles.requestTitle}>{majors({ item }).major}</Text>
@@ -81,22 +83,42 @@ const ManageClass = () => {
       </TouchableOpacity>
       {item.status === 0 ? (
         <TouchableOpacity
+          onPress={() =>
+            navigation.navigate("ClassDetailForParent", { item, user })
+          }
+          style={styles.requestStatus}
+        >
+          <View
+            style={{
+              backgroundColor: COLORS.main,
+              borderRadius: 20,
+              borderWidth: 2,
+            }}
+          >
+            <Text
+              style={[styles.requestStatusBtn, { color: COLORS.lightWhite }]}
+            >
+              Thanh toán
+            </Text>
+          </View>
+        </TouchableOpacity>
+      ) : item.status === 1 ? (
+        <TouchableOpacity
           onPress={() => navigation.navigate("ApplyPage", { item, user })}
           style={styles.requestStatus}
         >
           <View
             style={{
-              backgroundColor: COLORS.gray2,
+              backgroundColor: COLORS.lightWhite,
               borderRadius: 20,
               borderWidth: 2,
+              borderColor: COLORS.main,
             }}
           >
-            <Text style={[styles.requestStatusBtn, { color: COLORS.black }]}>
-              Chọn gia sư
-            </Text>
+            <Text style={styles.requestStatusBtn}>Chọn gia sư</Text>
           </View>
         </TouchableOpacity>
-      ) : item.status === 1 ? (
+      ) : item.status === 2 ? (
         <TouchableOpacity
           onPress={() => navigation.navigate("AttendancePage", { item, user })}
           style={styles.requestStatus}
@@ -109,7 +131,7 @@ const ManageClass = () => {
               borderColor: COLORS.main,
             }}
           >
-            <Text style={styles.requestStatusBtn}>Điểm danh</Text>
+            <Text style={styles.requestStatusBtn}>Đã có gia sư</Text>
           </View>
         </TouchableOpacity>
       ) : (
@@ -119,16 +141,14 @@ const ManageClass = () => {
         >
           <View
             style={{
-              backgroundColor: COLORS.main,
+              backgroundColor: COLORS.gray2,
               borderRadius: 20,
               borderWidth: 2,
               borderColor: COLORS.main,
             }}
           >
-            <Text
-              style={[styles.requestStatusBtn, { color: COLORS.lightWhite }]}
-            >
-              Hoàn thành
+            <Text style={[styles.requestStatusBtn, { color: COLORS.black }]}>
+              Kết thúc
             </Text>
           </View>
         </TouchableOpacity>

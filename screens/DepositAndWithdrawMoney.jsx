@@ -81,19 +81,7 @@ const DepositAndWithdrawMoney = () => {
     setLoader(false);
     if (result.responseCode === "00") {
       if (result.message == null) {
-        Alert.alert("Nạp tiền thành công", "", [
-          {
-            text: "Cancel",
-            onPress: () => {},
-          },
-          {
-            text: "Continue",
-            onPress: () => {
-              navigation.navigate("History", { item });
-            },
-          },
-          { defaultIndex: 1 },
-        ]);
+        navigation.navigate("History", { item });
       } else {
         Alert.alert("Nạp tiền không thành công", "", [
           {

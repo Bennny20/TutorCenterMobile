@@ -24,7 +24,6 @@ const TransferMoney = () => {
 
   const route = useRoute();
   const { item, userData, classID } = route.params;
-  console.log(userData);
   const [loader, setLoader] = useState(false);
   const [money, setMoney] = useState(classID.tuition);
   const [content, setContent] = useState(
@@ -66,53 +65,15 @@ const TransferMoney = () => {
   }, []);
 
   const [checkPayment, setCheckPayment] = useState(false);
-  const [payment, setPayment] = useState();
-
-  const handleChoose = async () => {
-    createOrder();
-    const token = await AsyncStorage.getItem("token");
-    console.log("payment ", payment);
-    console.log("checkPayment ", checkPayment);
-    if (checkPayment) {
-    } else {
-      Alert.alert("Chọn gia sư không thành công", "Quản lý lớp", [
-        {
-          text: "Cancel",
-          onPress: () => {},
-        },
-        {
-          text: "Continue",
-          onPress: () => {
-            {
-            }
-          },
-        },
-        { defaultIndex: 1 },
-      ]);
-    }
-  };
+  const tuition = classID.tuition * 0.1;
 
   const createOrder = async () => {
     const token = await AsyncStorage.getItem("token");
     const order = {
       clazzId: classID.id,
-      amount: classID.tuition,
+      amount: tuition,
       type: "Chuyển",
     };
-    Alert.alert("Chọn gia sư thành công", "Quản lý lớp", [
-      {
-        text: "Cancel",
-        onPress: () => {},
-      },
-      {
-        text: "Continue",
-        onPress: () => {
-          navigation.navigate("History", { item, order });
-        },
-      },
-      { defaultIndex: 1 },
-    ]);
-
     setLoader(true);
     try {
       const response = await axios.post(
@@ -122,7 +83,7 @@ const TransferMoney = () => {
           amount: new Intl.NumberFormat("vi-VN", {
             style: "currency",
             currency: "VND",
-          }).format(classID.tuition),
+          }).format(tuition),
           type: 1,
         },
         {
@@ -133,32 +94,33 @@ const TransferMoney = () => {
       );
       console.log(response.data);
       if (response.data.responseCode === "00") {
-        const response = await fetch(
-          HOST_API.local + `/api/tutorApply/acceptTutor/${item.id}`,
-          {
-            method: "PUT",
-            headers: {
-              Authorization: "Bearer " + token,
-            },
-          }
-        );
-        const result = await response.json();
-        if (result.responseCode == "00") {
-          Alert.alert("Chọn gia sư thành công", "Quản lý lớp", [
-            {
-              text: "Cancel",
-              onPress: () => {},
-            },
-            {
-              text: "Continue",
-              onPress: () => {
-                navigation.navigate("History", { item, order });
-              },
-            },
-            { defaultIndex: 1 },
-          ]);
-        }
         setLoader(false);
+        navigation.navigate("History", { item, order });
+        // Alert.alert("Thanh toán thành công", "", [
+        //   {
+        //     text: "Cancel",
+        //     onPress: () => {},
+        //   },
+        //   {
+        //     text: "Continue",
+        //     onPress: () => {
+        //       navigation.navigate("History", { item, order });
+        //     },
+        //   },
+        //   { defaultIndex: 1 },
+        // ]);
+      } else {
+        Alert.alert("Thanh toán không thành công", "", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {},
+          },
+          { defaultIndex: 1 },
+        ]);
       }
     } catch (error) {
       console.log(error.message);
@@ -201,7 +163,7 @@ const TransferMoney = () => {
         <View>
           <Text style={styles.itemText}>Số tiền </Text>
           <View style={styles.input}>
-            <CurrencyFormatter amount={classID.tuition} />
+            <CurrencyFormatter amount={tuition} />
           </View>
         </View>
 
@@ -226,7 +188,7 @@ const TransferMoney = () => {
           <ActivityIndicator size={50} color={COLORS.main} />
         ) : (
           <View>
-            {temp?.data.balance < classID.tuition ? (
+            {temp?.data.balance < tuition ? (
               <View
                 style={{
                   marginTop: 10,

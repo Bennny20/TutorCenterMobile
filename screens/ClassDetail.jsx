@@ -107,54 +107,109 @@ const ClassDetail = () => {
       setRefreshing(false);
     }, 2000);
   }, []);
-  console.log(classDetail);
-  console.log(item);
   const createApply = async () => {
     const token = await AsyncStorage.getItem("token");
-    const url =
-      HOST_API.local +
-      `/api/tutorApply/create?clazzId=${classDetail.id}&tutorId=${user}`;
-    console.log(url);
-
-    if (userData == null) {
+    if (userData === null) {
       navigation.navigate("Login");
     } else {
-      const response = await fetch(url, {
-        method: "POST", // *GET, POST, PUT, DELETE, etc.
-        headers: {
-          Authorization: "Bearer " + token,
-        },
-      });
-      const result = await response.json();
-      if (result.responseCode === "00") {
-        Alert.alert("Chúc mừng ", "Bạn đã apply thành công", [
+      try {
+        const response = await axios.post(
+          HOST_API.local +
+            `/api/tutorApply/create?clazzId=${classDetail.id}&tutorId=${user}`,
+          {},
           {
-            text: "Cancel",
-            onPress: () => { },
-          },
-          {
-            text: "Continue",
-            onPress: () => {
-              navigation.navigate("ManageApply");
+            headers: {
+              Authorization: "Bearer " + token,
             },
-          },
-          { defaultIndex: 1 },
-        ]);
-        setLoader(false);
-      } else {
-        Alert.alert("Bạn đã apply không thành công", [
+          }
+        );
+        console.log(response.data);
+        if (response.data.responseCode === "00") {
+          setLoader(false);
+          Alert.alert("Chúc mừng ", "Bạn đã apply thành công", [
+            {
+              text: "Cancel",
+              onPress: () => {},
+            },
+            {
+              text: "Continue",
+              onPress: () => {},
+            },
+            { defaultIndex: 1 },
+          ]);
+        } else {
+          Alert.alert("Lớp không trong trạng thái có thể đăng ký", "", [
+            {
+              text: "Cancel",
+              onPress: () => {},
+            },
+            {
+              text: "Continue",
+              onPress: () => {},
+            },
+            { defaultIndex: 1 },
+          ]);
+        }
+      } catch (error) {
+        console.log(error.message);
+        Alert.alert("Error", "error", [
           {
             text: "Cancel",
-            onPress: () => { },
+            onPress: () => {},
           },
           {
             text: "Continue",
-            onPress: () => { },
+            onPress: () => {},
           },
           { defaultIndex: 1 },
         ]);
+      } finally {
+        setLoader(false);
       }
     }
+
+    // const url =
+    //   HOST_API.local +
+    //   `/api/tutorApply/create?clazzId=${classDetail.id}&tutorId=${user}`;
+    // if (userData === null) {
+    //   navigation.navigate("Login");
+    // } else {
+    //   const response = await fetch(url, {
+    //     method: "POST", // *GET, POST, PUT, DELETE, etc.
+    //     headers: {
+    //       Authorization: "Bearer " + token,
+    //     },
+    //   });
+    //   const result = await response.json();
+    //   if (result.responseCode === "00") {
+    //     Alert.alert("Chúc mừng ", "Bạn đã apply thành công", [
+    //       {
+    //         text: "Cancel",
+    //         onPress: () => {},
+    //       },
+    //       {
+    //         text: "Continue",
+    //         onPress: () => {
+    //           navigation.navigate("ManageApply");
+    //         },
+    //       },
+    //       { defaultIndex: 1 },
+    //     ]);
+    //     setLoader(false);
+    //   } else {
+    //     Alert.alert("Bạn đã apply không thành công", [
+    //       {
+    //         text: "Cancel",
+    //         onPress: () => {},
+    //       },
+    //       {
+    //         text: "Continue",
+    //         onPress: () => {},
+    //       },
+    //       { defaultIndex: 1 },
+    //     ]);
+    //   }
+    // }
   };
 
   const formattedAmount = new Intl.NumberFormat("vi-VN", {
@@ -275,7 +330,7 @@ const ClassDetail = () => {
                   Số buổi:
                 </Text>
                 <Text style={styles.sup}> {item.slots} buổi</Text>
-                {item.status == 0 && (
+                {item.status == 1 && (
                   <View style={{ marginLeft: 5 }}>
                     <Text style={styles.title}>
                       <Ionicons
@@ -288,7 +343,7 @@ const ClassDetail = () => {
                     <Text style={styles.sup}>Chưa có gia sư</Text>
                   </View>
                 )}
-                {item.status == 1 && (
+                {item.status == 2 && (
                   <View>
                     <Text style={styles.title}>
                       <Ionicons
@@ -303,7 +358,7 @@ const ClassDetail = () => {
                     </Text>
                   </View>
                 )}
-                {item.status == 2 && (
+                {item.status == 3 && (
                   <View>
                     <Text style={styles.title}>
                       <Ionicons
@@ -344,27 +399,9 @@ const ClassDetail = () => {
               alignItems: "center",
             }}
           >
-            {userData == null && (
-              <TouchableOpacity style={styles.btnApply} onPress={createApply}>
-                <Ionicons
-                  name="receipt-outline"
-                  size={30}
-                  color={COLORS.black}
-                />
-                <Text
-                  style={{
-                    marginLeft: 5,
-                    fontFamily: "bold",
-                    fontSize: SIZES.large,
-                  }}
-                >
-                  Apply
-                </Text>
-              </TouchableOpacity>
-            )}
             {userData?.role === "TUTOR" &&
-              userTutor?.status == 2 &&
-              !checkApply ? (
+            userTutor?.status == 2 &&
+            !checkApply ? (
               <TouchableOpacity style={styles.btnApply} onPress={createApply}>
                 <Ionicons
                   name="receipt-outline"

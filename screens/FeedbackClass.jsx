@@ -25,7 +25,11 @@ const FeedbackClass = () => {
   const { item, length, user } = route.params;
   const { checkEndDate, setCheckEndDate } = useState(false);
   const [content, setContent] = useState("");
-  const [startRating, setStartRating] = useState(null);
+  const [startRating1, setStartRating1] = useState(null);
+  const [startRating2, setStartRating2] = useState(null);
+  const [startRating3, setStartRating3] = useState(null);
+  const [startRating4, setStartRating4] = useState(null);
+  const [startRating5, setStartRating5] = useState(null);
 
   var date = new Date();
   var month = new Date().getMonth() + 1;
@@ -36,11 +40,14 @@ const FeedbackClass = () => {
 
   const createFeedback = async () => {
     const token = await AsyncStorage.getItem("token");
-    console.log(token);
     const feedback = {
       clazzId: item.id,
       tutorId: item.tutor.id,
-      rating: startRating,
+      professionalSkill: startRating2,
+      supportOt: startRating1,
+      pedagogicalSkill: startRating3,
+      workingStyle: startRating4,
+      courseCover: startRating5,
       content: content,
     };
     console.log(feedback);
@@ -48,10 +55,14 @@ const FeedbackClass = () => {
       .post(
         HOST_API.local + `/api/feedback/create`,
         {
-          clazzId: feedback.clazzId,
-          tutorId: feedback.tutorId,
-          rating: feedback.rating,
-          content: feedback.content,
+          clazzId: item.id,
+          tutorId: item.tutor.id,
+          professionalSkill: startRating2,
+          supportOt: startRating1,
+          pedagogicalSkill: startRating3,
+          workingStyle: startRating4,
+          courseCover: startRating5,
+          content: content,
         },
         {
           headers: {
@@ -199,9 +210,10 @@ const FeedbackClass = () => {
       </View>
       <View style={{ marginHorizontal: 20, marginTop: 10 }}>
         <View>
-          <KeyboardAwareScrollView extraScrollHeight={20}>
+          <KeyboardAwareScrollView extraScrollHeight={-20}>
             <Text style={styles.itemText}>Đánh giá chất lượng gia sư </Text>
 
+            <View style={{ flexDirection: "row" }}></View>
             {loader ? (
               <ActivityIndicator size={500} color={COLORS.main} />
             ) : checkFeedback ? (
@@ -237,104 +249,366 @@ const FeedbackClass = () => {
               </View>
             ) : !checkFeedback ? (
               <View>
-                <View
-                  style={{
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "row",
-                    marginBottom: 10,
-                  }}
-                >
-                  <Text>{startRating ? `${startRating}` : "Tap to rate"}</Text>
-                  <TouchableOpacity onPress={() => setStartRating(1)}>
-                    <Ionicons
-                      name={startRating >= 1 ? "star" : "star-outline"}
-                      size={35}
-                      style={
-                        startRating >= 1
-                          ? styles.startSelect
-                          : styles.startUnSelect
-                      }
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setStartRating(2)}>
-                    <Ionicons
-                      name={startRating >= 2 ? "star" : "star-outline"}
-                      size={35}
-                      style={
-                        startRating >= 2
-                          ? styles.startSelect
-                          : styles.startUnSelect
-                      }
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setStartRating(3)}>
-                    <Ionicons
-                      name={startRating >= 3 ? "star" : "star-outline"}
-                      size={35}
-                      style={
-                        startRating >= 3
-                          ? styles.startSelect
-                          : styles.startUnSelect
-                      }
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setStartRating(4)}>
-                    <Ionicons
-                      name={startRating >= 4 ? "star" : "star-outline"}
-                      size={35}
-                      style={
-                        startRating >= 4
-                          ? styles.startSelect
-                          : styles.startUnSelect
-                      }
-                    />
-                  </TouchableOpacity>
-                  <TouchableOpacity onPress={() => setStartRating(5)}>
-                    <Ionicons
-                      name={startRating >= 5 ? "star" : "star-outline"}
-                      size={35}
-                      style={
-                        startRating >= 5
-                          ? styles.startSelect
-                          : styles.startUnSelect
-                      }
-                    />
+                <View>
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                      alignItems: "center",
+                      marginBottom: 10,
+                    }}
+                  >
+                    <Text>Hỗ trợ ngoài giờ</Text>
+                    <View style={{ flexDirection: "row" }}>
+                      <TouchableOpacity onPress={() => setStartRating1(1)}>
+                        <Ionicons
+                          name={startRating1 >= 1 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating1 >= 1
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating1(2)}>
+                        <Ionicons
+                          name={startRating1 >= 2 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating1 >= 2
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating1(3)}>
+                        <Ionicons
+                          name={startRating1 >= 3 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating1 >= 3
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating1(4)}>
+                        <Ionicons
+                          name={startRating1 >= 4 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating1 >= 4
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating1(5)}>
+                        <Ionicons
+                          name={startRating1 >= 5 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating1 >= 5
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  {/*  */}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                      alignItems: "center",
+                      marginBottom: 10,
+                    }}
+                  >
+                    <Text>Kỹ năng</Text>
+                    <View style={{ flexDirection: "row" }}>
+                      <TouchableOpacity onPress={() => setStartRating2(1)}>
+                        <Ionicons
+                          name={startRating2 >= 1 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating2 >= 1
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating2(2)}>
+                        <Ionicons
+                          name={startRating2 >= 2 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating2 >= 2
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating2(3)}>
+                        <Ionicons
+                          name={startRating2 >= 3 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating2 >= 3
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating2(4)}>
+                        <Ionicons
+                          name={startRating2 >= 4 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating2 >= 4
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating2(5)}>
+                        <Ionicons
+                          name={startRating2 >= 5 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating2 >= 5
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  {/*  */}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                      alignItems: "center",
+                      marginBottom: 10,
+                    }}
+                  >
+                    <Text>Kỹ năng dạy</Text>
+                    <View style={{ flexDirection: "row" }}>
+                      <TouchableOpacity onPress={() => setStartRating3(1)}>
+                        <Ionicons
+                          name={startRating3 >= 1 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating3 >= 1
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating3(2)}>
+                        <Ionicons
+                          name={startRating3 >= 2 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating3 >= 2
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating3(3)}>
+                        <Ionicons
+                          name={startRating3 >= 3 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating3 >= 3
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating3(4)}>
+                        <Ionicons
+                          name={startRating3 >= 4 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating3 >= 4
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating3(5)}>
+                        <Ionicons
+                          name={startRating3 >= 5 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating3 >= 5
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  {/*  */}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                      alignItems: "center",
+                      marginBottom: 10,
+                    }}
+                  >
+                    <Text>Đúng giờ</Text>
+                    <View style={{ flexDirection: "row" }}>
+                      <TouchableOpacity onPress={() => setStartRating4(1)}>
+                        <Ionicons
+                          name={startRating4 >= 1 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating4 >= 1
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating4(2)}>
+                        <Ionicons
+                          name={startRating4 >= 2 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating4 >= 2
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating4(3)}>
+                        <Ionicons
+                          name={startRating4 >= 3 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating4 >= 3
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating4(4)}>
+                        <Ionicons
+                          name={startRating4 >= 4 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating4 >= 4
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating4(5)}>
+                        <Ionicons
+                          name={startRating4 >= 5 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating4 >= 5
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  {/*  */}
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      justifyContent: "space-around",
+                      alignItems: "center",
+                      marginBottom: 10,
+                    }}
+                  >
+                    <Text>Khóa học</Text>
+                    <View style={{ flexDirection: "row" }}>
+                      <TouchableOpacity onPress={() => setStartRating5(1)}>
+                        <Ionicons
+                          name={startRating5 >= 1 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating5 >= 1
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating5(2)}>
+                        <Ionicons
+                          name={startRating5 >= 2 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating5 >= 2
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating5(3)}>
+                        <Ionicons
+                          name={startRating5 >= 3 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating5 >= 3
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating5(4)}>
+                        <Ionicons
+                          name={startRating5 >= 4 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating5 >= 4
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                      <TouchableOpacity onPress={() => setStartRating5(5)}>
+                        <Ionicons
+                          name={startRating5 >= 5 ? "star" : "star-outline"}
+                          size={35}
+                          style={
+                            startRating5 >= 5
+                              ? styles.startSelect
+                              : styles.startUnSelect
+                          }
+                        />
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+
+                  <TextInput
+                    style={styles.inputArea}
+                    value={content}
+                    multiline
+                    numberOfLines={10}
+                    onChangeText={(text) => setContent(text)}
+                    placeholder="Thông tin thêm"
+                  />
+
+                  <TouchableOpacity onPress={handleCheckout}>
+                    <View style={styles.btn}>
+                      <Text style={styles.btnText}>GỬI ĐÁNH GIÁ</Text>
+                    </View>
                   </TouchableOpacity>
                 </View>
-                <TextInput
-                  style={styles.inputArea}
-                  value={content}
-                  multiline
-                  numberOfLines={10}
-                  onChangeText={(text) => setContent(text)}
-                  placeholder="Thông tin thêm"
-                />
-                {length == item.slots ? (
-                  <TouchableOpacity onPress={handleCheckout}>
-                    <View style={styles.btn}>
-                      <Text style={styles.btnText}>
-                        Lớp học hoàn thành - Kết thúc lớp học
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ) : checkEndDate ? (
-                  <TouchableOpacity onPress={handleCheckout}>
-                    <View style={styles.btn}>
-                      <Text style={styles.btnText}>
-                        Chưa hoàn hành - Đánh giá chất lượng
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                ) : (
-                  <TouchableOpacity onPress={handleCheckout}>
-                    <View style={styles.btn}>
-                      <Text style={styles.btnText}>
-                        Yêu cầu hủy - Kết thúc lớp học
-                      </Text>
-                    </View>
-                  </TouchableOpacity>
-                )}
               </View>
             ) : (
               <View></View>
