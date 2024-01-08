@@ -253,12 +253,14 @@ const FeedbackClass = () => {
                   <View
                     style={{
                       flexDirection: "row",
-                      justifyContent: "space-around",
+                      justifyContent: "space-between",
                       alignItems: "center",
                       marginBottom: 10,
                     }}
                   >
-                    <Text>Hỗ trợ ngoài giờ</Text>
+                    <View style={{ marginLeft: 20 }}>
+                      <Text>Hỗ trợ ngoài giờ</Text>
+                    </View>
                     <View style={{ flexDirection: "row" }}>
                       <TouchableOpacity onPress={() => setStartRating1(1)}>
                         <Ionicons
@@ -322,12 +324,14 @@ const FeedbackClass = () => {
                   <View
                     style={{
                       flexDirection: "row",
-                      justifyContent: "space-around",
+                      justifyContent: "space-between",
                       alignItems: "center",
                       marginBottom: 10,
                     }}
                   >
-                    <Text>Kỹ năng</Text>
+                    <View style={{ marginLeft: 20 }}>
+                      <Text>Kỹ năng</Text>
+                    </View>
                     <View style={{ flexDirection: "row" }}>
                       <TouchableOpacity onPress={() => setStartRating2(1)}>
                         <Ionicons
@@ -391,12 +395,14 @@ const FeedbackClass = () => {
                   <View
                     style={{
                       flexDirection: "row",
-                      justifyContent: "space-around",
+                      justifyContent: "space-between",
                       alignItems: "center",
                       marginBottom: 10,
                     }}
                   >
-                    <Text>Kỹ năng dạy</Text>
+                    <View style={{ marginLeft: 20 }}>
+                      <Text>Chất lượng dạy</Text>
+                    </View>
                     <View style={{ flexDirection: "row" }}>
                       <TouchableOpacity onPress={() => setStartRating3(1)}>
                         <Ionicons
@@ -460,12 +466,14 @@ const FeedbackClass = () => {
                   <View
                     style={{
                       flexDirection: "row",
-                      justifyContent: "space-around",
+                      justifyContent: "space-between",
                       alignItems: "center",
                       marginBottom: 10,
                     }}
                   >
-                    <Text>Đúng giờ</Text>
+                    <View style={{ marginLeft: 20 }}>
+                      <Text>Đúng giờ</Text>
+                    </View>
                     <View style={{ flexDirection: "row" }}>
                       <TouchableOpacity onPress={() => setStartRating4(1)}>
                         <Ionicons
@@ -529,12 +537,14 @@ const FeedbackClass = () => {
                   <View
                     style={{
                       flexDirection: "row",
-                      justifyContent: "space-around",
+                      justifyContent: "space-between",
                       alignItems: "center",
                       marginBottom: 10,
                     }}
                   >
-                    <Text>Khóa học</Text>
+                    <View style={{ marginLeft: 20 }}>
+                      <Text>Khóa học</Text>
+                    </View>
                     <View style={{ flexDirection: "row" }}>
                       <TouchableOpacity onPress={() => setStartRating5(1)}>
                         <Ionicons

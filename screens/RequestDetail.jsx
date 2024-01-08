@@ -149,15 +149,6 @@ const RequestDetail = () => {
         <ScrollView
           style={{ marginHorizontal: 10, marginBottom: 30, marginTop: 15 }}
         >
-          <View style={styles.header}>
-            {/* <MaterialCommunityIcons
-              name="chevron-double-right"
-              size={30}
-              color={COLORS.gray}
-              style={{ marginRight: 10 }}
-            /> */}
-          </View>
-
           <View style={styles.itemContext}>
             <MaterialCommunityIcons
               name="card-account-phone"

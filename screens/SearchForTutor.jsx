@@ -27,7 +27,7 @@ const SearchForTutor = () => {
   const fetchData = async () => {
     setIsLoading(true);
     try {
-      const res = await axios.get(HOST_API.local + `/api/clazz`);
+      const res = await axios.get(HOST_API.local + `/api/clazz/recommended`);
       setClassList(res.data.data);
       setFilterData(res.data.data);
     } catch (error) {

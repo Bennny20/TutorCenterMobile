@@ -43,7 +43,7 @@ const ClassDetailForParent = () => {
       const response = await axios.get(
         HOST_API.local + `/api/clazz/${item.id}`
       );
-      console.log(response.data.data);
+      console.log("classDetail: ", response.data.data);
       setClassDetail(response.data.data);
       setLoader(false);
     } catch (error) {
@@ -169,6 +169,33 @@ const ClassDetailForParent = () => {
 
             <Text style={styles.title}>
               Số buổi: <Text style={styles.sup}> {item.slots}</Text>
+            </Text>
+          </View>
+
+          <View style={styles.itemContext}>
+            <MaterialCommunityIcons
+              name="calendar-text"
+              size={30}
+              color={COLORS.gray}
+              style={{ marginRight: 10 }}
+            />
+
+            <Text style={styles.title}>
+              Ngày học: <Text style={styles.sup}> {item.daysOfWeek}</Text>
+            </Text>
+          </View>
+
+          <View style={styles.itemContext}>
+            <MaterialCommunityIcons
+              name="calendar-clock"
+              size={30}
+              color={COLORS.gray}
+              style={{ marginRight: 10 }}
+            />
+
+            <Text style={styles.title}>
+              Giờ dạy:
+              <Text style={styles.sup}> {classDetail?.time}</Text>
             </Text>
           </View>
 

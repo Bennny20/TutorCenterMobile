@@ -93,49 +93,45 @@ const ClassItemForTutor = ({ item }) => {
         <ActivityIndicator size={500} color={COLORS.main} />
       ) : (
         <View>
-          {major.includes("Việt") || major.includes("Toán") ? (
-            <View style={styles.card_container}>
-              <View
-                style={{
-                  alignItems: "center",
-                  justifyContent: "center",
-                  width: "5%",
-                }}
-              >
-                <View style={styles.circle} />
-              </View>
-
-              <TouchableOpacity
-                style={styles.content}
-                onPress={() =>
-                  navigation.navigate("ClassDetail", {
-                    item,
-                    classDetail,
-                    user,
-                    userData,
-                  })
-                }
-              >
-                <View style={styles.title}>
-                  <Text style={styles.titleText}>{major}</Text>
-                </View>
-                <View style={styles.info}>
-                  <Text style={styles.text}>Trình đồ: {item.tutorLevel}</Text>
-                  <Text style={styles.text}> {classNo}</Text>
-                  <Text style={styles.text}>Địa chỉ: {item.address}</Text>
-                  <Text style={styles.text}>
-                    {item.address}, {item.provinceName}
-                  </Text>
-                  <Text style={styles.text}>Giới tính: {item.gender}</Text>
-                </View>
-                <View style={styles.price}>
-                  <Text style={styles.priceText}>{formattedAmount}</Text>
-                </View>
-              </TouchableOpacity>
+          <View style={styles.card_container}>
+            <View
+              style={{
+                alignItems: "center",
+                justifyContent: "center",
+                width: "5%",
+              }}
+            >
+              <View style={styles.circle} />
             </View>
-          ) : (
-            <View></View>
-          )}
+
+            <TouchableOpacity
+              style={styles.content}
+              onPress={() =>
+                navigation.navigate("ClassDetail", {
+                  item,
+                  classDetail,
+                  user,
+                  userData,
+                })
+              }
+            >
+              <View style={styles.title}>
+                <Text style={styles.titleText}>{major}</Text>
+              </View>
+              <View style={styles.info}>
+                <Text style={styles.text}>Trình đồ: {item.tutorLevel}</Text>
+                <Text style={styles.text}> {classNo}</Text>
+                <Text style={styles.text}>Địa chỉ: {item.address}</Text>
+                <Text style={styles.text}>
+                  {item.address}, {item.provinceName}
+                </Text>
+                <Text style={styles.text}>Giới tính: {item.gender}</Text>
+              </View>
+              <View style={styles.price}>
+                <Text style={styles.priceText}>{formattedAmount}</Text>
+              </View>
+            </TouchableOpacity>
+          </View>
         </View>
       )}
     </View>

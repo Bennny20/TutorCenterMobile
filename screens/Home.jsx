@@ -30,7 +30,7 @@ const Home = () => {
 
           <TouchableOpacity
             style={{ zIndex: 99 }}
-            onPressIn={() => navigation.navigate("TestTutor")}
+            onPressIn={() => navigation.navigate("TestScreen")}
           >
             <View style={{ alignItems: "flex-end" }}>
               <View style={styles.cartCount}>

@@ -36,6 +36,7 @@ import {
   ReCreateRequest,
   TestTutor,
   ClassDetailForParent,
+  TestScreen,
 } from "./screens";
 import { useEffect } from "react";
 import { LogBox } from "react-native";
@@ -231,6 +232,12 @@ export default function App() {
         <Stack.Screen
           name="ClassDetailForParent"
           component={ClassDetailForParent}
+          options={{ headerShown: false }}
+        />
+
+        <Stack.Screen
+          name="TestScreen"
+          component={TestScreen}
           options={{ headerShown: false }}
         />
       </Stack.Navigator>

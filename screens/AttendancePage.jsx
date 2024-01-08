@@ -32,8 +32,10 @@ const AttendancePage = () => {
   const { item, user } = route.params;
   useEffect(() => {
     fetchListApply();
+    fetchClassDetail();
     userRole();
   }, []);
+  console.log(item);
   let idTutor = item.tutor?.id;
   const [userData, setUserData] = useState(null);
   const userRole = async () => {
@@ -47,6 +49,7 @@ const AttendancePage = () => {
           },
         }
       );
+      console.log(currentUser.data.data);
       setUserData(currentUser.data.data);
     } catch (error) {
       console.log("error", error);
@@ -54,6 +57,24 @@ const AttendancePage = () => {
       setLoader(false);
     }
   };
+  const [classDetail, setClassDetail] = useState();
+
+  const fetchClassDetail = async () => {
+    setLoader(true);
+    try {
+      const response = await axios.get(
+        HOST_API.local + `/api/clazz/${item.id}`
+      );
+      console.log("classDetail: ", response.data.data);
+      setClassDetail(response.data.data);
+      setLoader(false);
+    } catch (error) {
+      console.log("error", error);
+    } finally {
+      setLoader(false);
+    }
+  };
+
   const fetchListApply = async () => {
     const token = await AsyncStorage.getItem("token");
     setLoader(true);

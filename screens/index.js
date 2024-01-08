@@ -35,8 +35,10 @@ import CreateDetailApply from "./CreateDetailApply";
 import ReCreateRequest from "./ReCreateRequest";
 import TestTutor from "./TestTutor";
 import ClassDetailForParent from "./ClassDetailForParent";
+import TestScreen from "./TestScreen";
 
 export {
+  TestScreen,
   ClassDetailForParent,
   TestTutor,
   ReCreateRequest,

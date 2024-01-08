@@ -8,6 +8,7 @@ import {
   FlatList,
   LogBox,
   ActivityIndicator,
+  Button,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { COLORS, SIZES, HOST_API } from "../constants";
@@ -20,12 +21,23 @@ import { Platform } from "react-native";
 import { Pressable } from "react-native";
 import { Ionicons, Fontisto } from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
+import {
+  BottomSheetModal,
+  BottomSheetModalProvider,
+} from "@gorhom/bottom-sheet";
+import { useRef } from "react";
 
 const CreateRequestPage = () => {
   useEffect(() => {
     checkExitingUser();
     LogBox.ignoreLogs(["VirtualizedLists should never be nested"]);
   }, []);
+  const snapPoints = ["25%", "48%"];
+  const bottomSheetModalRef = useRef(null);
+  const handleShowPopup = () => {
+    bottomSheetModalRef.current?.present();
+  };
 
   const [userData, setUserData] = useState(null);
   const [user, setUser] = useState(null);
@@ -168,17 +180,13 @@ const CreateRequestPage = () => {
     { label: "Khác", value: "Order" },
   ];
 
-  const [dayOfWeekOpen, setDayOfWeekOpen] = useState(false);
-  const [dayOfWeekValue, setDayOfWeekValue] = useState([]);
-  const ngayTrongTuan = [
-    { label: "Thứ 2", value: "Thứ 2" },
-    { label: "Thứ 3", value: "Thứ 3" },
-    { label: "Thứ 4", value: "Thứ 4" },
-    { label: "Thứ 5", value: "Thứ 5" },
-    { label: "Thứ 6", value: "Thứ 6" },
-    { label: "Lớp 7", value: "Thứ 7" },
-    { label: "Chủ nhật", value: "Chủ nhật" },
-  ];
+  const [mon, setMon] = useState(false);
+  const [tus, setTus] = useState(false);
+  const [wed, setWed] = useState(false);
+  const [thu, setThu] = useState(false);
+  const [fri, setFri] = useState(false);
+  const [sat, setSat] = useState(false);
+  const [sun, setSun] = useState(false);
 
   const [selectTime, setSelectTime] = useState("Chọn thời gian dạy");
   const [timeOpen, setTimeOpen] = useState(false);
@@ -285,14 +293,38 @@ const CreateRequestPage = () => {
   const onClose = () => {
     setIsClickSubject(!isClickSubject);
   };
+  const [checkBackGround, setCheckBackGround] = useState(false);
+  var dayOfWeek2 = [];
 
   const handleCreate = async () => {
+    if (mon) {
+      dayOfWeek2.push("Thứ 2");
+    }
+    if (tus) {
+      dayOfWeek2.push("Thứ 3");
+    }
+    if (wed) {
+      dayOfWeek2.push("Thứ 4");
+    }
+    if (thu) {
+      dayOfWeek2.push("Thứ 5");
+    }
+    if (fri) {
+      dayOfWeek2.push("Thứ 6");
+    }
+    if (sat) {
+      dayOfWeek2.push("Thứ 7");
+    }
+    if (sun) {
+      dayOfWeek2.push("Chủ nhật");
+    }
+
     const request = {
       phone: phone,
       address: address,
       listSubjectId: subjectValue2,
       gender: genderValue,
-      daysOfWeek: dayOfWeekValue.join(", "),
+      daysOfWeek: dayOfWeek2.join(", "),
       time: timeValue,
       slots: Number(slot),
       slotsLength: slotLength,
@@ -304,13 +336,7 @@ const CreateRequestPage = () => {
       tutorLevel: levelValue,
     };
     console.log(request);
-    // console.log(
-    //   dateStartValue.getFullYear() +
-    //     " - " +
-    //     (dateStartValue.getMonth() + 1) +
-    //     " - " +
-    //     dateStartValue.getDate()
-    // );
+
     const token = await AsyncStorage.getItem("token");
     axios
       .post(
@@ -320,7 +346,7 @@ const CreateRequestPage = () => {
           address: address,
           listSubjectId: subjectValue2,
           gender: genderValue,
-          daysOfWeek: dayOfWeekValue.join(", "),
+          daysOfWeek: dayOfWeek2.join(", "),
           time: timeValue,
           slots: Number(slot),
           slotsLength: slotLength,
@@ -338,6 +364,7 @@ const CreateRequestPage = () => {
         }
       )
       .then((response) => {
+        console.log(response.data);
         console.log(response.data);
         if (response.data.responseCode == "00") {
           setSelectProvince("Chọn tỉnh thành nơi dạy");
@@ -378,7 +405,7 @@ const CreateRequestPage = () => {
           Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
             {
               text: "Cancel",
-              onPress: () => { },
+              onPress: () => {},
             },
             {
               text: "Continue",
@@ -394,7 +421,7 @@ const CreateRequestPage = () => {
         Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
           {
             text: "Cancel",
-            onPress: () => { },
+            onPress: () => {},
           },
           {
             text: "Continue",
@@ -415,594 +442,711 @@ const CreateRequestPage = () => {
     }).format(number);
   };
 
-  const inputPrice = (text) => {
-    console.log(text);
-    if (text) {
-      setPrice(formattedAmount(text));
-      setPriceValue(text);
-    }
-  };
   return (
-    <View style={{ padding: 16, marginTop: 40, marginBottom: 80 }}>
+    <GestureHandlerRootView style={{ marginTop: 40, marginBottom: 120 }}>
       <View style={styles.title}>
         <Text style={styles.titleText}> Đăng kí tìm gia sư</Text>
       </View>
 
-      <KeyboardAwareScrollView extraScrollHeight={50}>
-        {/* Tỉnh thành */}
-        <View>
-          <Text style={styles.itemText}>Tỉnh thành</Text>
-          <TouchableOpacity
-            style={styles.dropdownSelector}
-            onPress={() => {
-              setIsClickProvince(!isClickProvince);
-            }}
-          >
-            <Text>{selectProvince}</Text>
-            {isClickProvince ? (
-              <Ionicons name="chevron-down-outline" size={24} />
-            ) : (
-              <Ionicons name="chevron-up-outline" size={24} />
-            )}
-          </TouchableOpacity>
-          {isClickProvince && (
-            <View style={styles.dropdownArea}>
-              <FlatList
-                data={province.data}
-                renderItem={({ item, index }) => {
-                  return (
-                    <TouchableOpacity
-                      style={styles.item}
-                      onPress={() => {
-                        setSelectProvince(item.name);
-                        setIsClickProvince(false);
-                        handLoadDistrict(item.id);
-                      }}
-                    >
-                      <Text>{item.name}</Text>
-                    </TouchableOpacity>
-                  );
-                }}
-              />
-            </View>
-          )}
-        </View>
-
-        {/* Quận huyện */}
-        <View>
-          <Text style={styles.itemText}>Quận huyện</Text>
-          <TouchableOpacity
-            style={styles.dropdownSelector}
-            onPress={() => {
-              setIsClickDistrict(!isClickDistrict);
-            }}
-          >
-            <Text>{selectDistrict}</Text>
-            {isClickDistrict ? (
-              <Ionicons name="chevron-down-outline" size={24} />
-            ) : (
-              <Ionicons name="chevron-up-outline" size={24} />
-            )}
-          </TouchableOpacity>
-          {isClickDistrict && (
-            <View style={styles.dropdownArea}>
-              <FlatList
-                data={district.data}
-                renderItem={({ item, index }) => {
-                  return (
-                    <TouchableOpacity
-                      style={styles.item}
-                      onPress={() => {
-                        setSelectDistrict(item.name);
-                        setIsClickDistrict(false);
-                        setDistrictValue(item.id);
-                      }}
-                    >
-                      <Text>{item.name}</Text>
-                    </TouchableOpacity>
-                  );
-                }}
-              />
-            </View>
-          )}
-        </View>
-
-        {/* Địa chỉ */}
-        <View>
-          <Text style={styles.itemText}>Địa chỉ </Text>
-          <TextInput
-            style={styles.input}
-            value={address}
-            onChangeText={(text) => setAddress(text)}
-            placeholder="Địa chỉ"
-          />
-        </View>
-
-        {/* Số điện thoại */}
-        <View>
-          <Text style={styles.itemText}>Số điện thoại </Text>
-          <TextInput
-            keyboardType="phone-pad"
-            style={styles.input}
-            value={phone}
-            onChangeText={(text) => setPhone(text)}
-            placeholder="Số điện thoại"
-          />
-        </View>
-
-        {/* Giới tính */}
-        <View>
-          <Text style={styles.itemText}>Giới tính </Text>
-          <TouchableOpacity
-            style={styles.dropdownSelector}
-            onPress={() => {
-              setIsClickGender(!isClickGender);
-            }}
-          >
-            <Text>{selectGender}</Text>
-            {isClickGender ? (
-              <Ionicons name="chevron-down-outline" size={24} />
-            ) : (
-              <Ionicons name="chevron-up-outline" size={24} />
-            )}
-          </TouchableOpacity>
-          {isClickGender && (
-            <View style={styles.dropdownArea}>
-              <FlatList
-                data={GioiTinh}
-                renderItem={({ item, index }) => {
-                  return (
-                    <TouchableOpacity
-                      style={styles.item}
-                      onPress={() => {
-                        setSelectGender(item.label);
-                        setIsClickGender(false);
-                        setGenderValue(item.value);
-                      }}
-                    >
-                      <Text>{item.label}</Text>
-                    </TouchableOpacity>
-                  );
-                }}
-              />
-            </View>
-          )}
-        </View>
-
-        {/* Trình độ */}
-        <View>
-          <Text style={styles.itemText}>Trình độ</Text>
-          <TouchableOpacity
-            style={styles.dropdownSelector}
-            onPress={() => {
-              setIsClickLevel(!isClickLevel);
-            }}
-          >
-            <Text>{selectLevel}</Text>
-            {isClickLevel ? (
-              <Ionicons name="chevron-down-outline" size={24} />
-            ) : (
-              <Ionicons name="chevron-up-outline" size={24} />
-            )}
-          </TouchableOpacity>
-          {isClickLevel && (
-            <View style={styles.dropdownArea}>
-              <FlatList
-                data={trinhDo}
-                renderItem={({ item, index }) => {
-                  return (
-                    <TouchableOpacity
-                      style={styles.item}
-                      onPress={() => {
-                        setSelectLevel(item.label);
-                        setIsClickLevel(false);
-                        setLevelValue(item.value);
-                      }}
-                    >
-                      <Text>{item.label}</Text>
-                    </TouchableOpacity>
-                  );
-                }}
-              />
-            </View>
-          )}
-        </View>
-
-        {/* Lớp */}
-        <View>
-          <Text style={styles.itemText}>Lớp học</Text>
-          <TouchableOpacity
-            style={styles.dropdownSelector}
-            onPress={() => {
-              setIsClickClass(!isClickClass);
-            }}
-          >
-            <Text>{selectClass}</Text>
-            {isClickClass ? (
-              <Ionicons name="chevron-down-outline" size={24} />
-            ) : (
-              <Ionicons name="chevron-up-outline" size={24} />
-            )}
-          </TouchableOpacity>
-          {isClickClass && (
-            <View style={styles.dropdownArea}>
-              <FlatList
-                data={lopHoc}
-                renderItem={({ item, index }) => {
-                  return (
-                    <TouchableOpacity
-                      style={styles.item}
-                      onPress={() => {
-                        setSelectClass(item.label);
-                        setIsClickClass(false);
-                        setClassValue(item.value);
-                        handLoadSubject(item.value);
-                      }}
-                    >
-                      <Text>{item.label}</Text>
-                    </TouchableOpacity>
-                  );
-                }}
-              />
-            </View>
-          )}
-        </View>
-
-        {/* Môn học */}
-        <View style={{ zIndex: 20 }}>
-          <Text style={styles.itemText}>Môn học</Text>
-          <DropDownPicker
-            style={styles.dropdownSelector}
-            items={subject2}
-            open={isOpen}
-            setOpen={() => setIsOpen(!isOpen)}
-            value={subjectValue2}
-            setValue={(val) => setSubjectValue2(val)}
-            placeholder="Chọn môn học"
-            showTickIcon={true}
-            showArrowIcon={true}
-            multiple={true}
-            min={1}
-            max={4}
-            mode="BADGE"
-            zIndex={20}
-            badgeColors={COLORS.secondMain}
-            badgeDotColors={["white"]}
-            backgroundColor=""
-          />
-        </View>
-
-        {/* Môn học */}
-        {/* <View>
-          <Text style={styles.itemText}>Môn học</Text>
-          <TouchableOpacity
-            style={styles.dropdownSelector}
-            onPress={() => {
-              setIsClickSubject(!isClickSubject);
-            }}
-          >
-            <Text>{selectSubject}</Text>
-            {isClickSubject ? (
-              <Ionicons name="chevron-down-outline" size={24} />
-            ) : (
-              <TouchableOpacity
-                onPress={() => {
-                  onClose;
-                }}
-              >
+      <View>
+        <View style={styles.container}></View>
+        <KeyboardAwareScrollView
+          style={{ marginHorizontal: 15 }}
+          extraScrollHeight={50}
+        >
+          {/* Tỉnh thành */}
+          <View>
+            <Text style={styles.itemText}>Tỉnh thành</Text>
+            <TouchableOpacity
+              style={styles.dropdownSelector}
+              onPress={() => {
+                setIsClickProvince(!isClickProvince);
+              }}
+            >
+              <Text>{selectProvince}</Text>
+              {isClickProvince ? (
+                <Ionicons name="chevron-down-outline" size={24} />
+              ) : (
                 <Ionicons name="chevron-up-outline" size={24} />
-              </TouchableOpacity>
+              )}
+            </TouchableOpacity>
+            {isClickProvince && (
+              <View style={styles.dropdownArea}>
+                <FlatList
+                  data={province.data}
+                  renderItem={({ item, index }) => {
+                    return (
+                      <TouchableOpacity
+                        style={styles.item}
+                        onPress={() => {
+                          setSelectProvince(item.name);
+                          setIsClickProvince(false);
+                          handLoadDistrict(item.id);
+                        }}
+                      >
+                        <Text>{item.name}</Text>
+                      </TouchableOpacity>
+                    );
+                  }}
+                />
+              </View>
             )}
-          </TouchableOpacity>
-          {isClickSubject && (
-            <View style={styles.dropdownArea}>
-              <FlatList
-                data={subject}
-                renderItem={({ item, index }) => {
-                  return (
-                    <TouchableOpacity
-                      style={[styles.item, { borderColor: COLORS.main }]}
-                      onPress={() => {
-                        setSelectSubject(item.name);
-                        // console.log(item);
-                        setIsClickSubject(false);
-                        setSubjectValue(item.id);
-                        getTuition(item.pricePerHour);
-                        // getTuition(item.name);
-                      }}
-                    >
-                      <Text>{item.name}</Text>
-                    </TouchableOpacity>
-                  );
-                }}
-              />
-            </View>
-          )}
-        </View> */}
+          </View>
 
-        {/* Ngày học trong tuần */}
-        <View style={{ zIndex: 18 }}>
-          <Text style={styles.itemText}>Ngày học trong tuần</Text>
-          <DropDownPicker
-            style={styles.dropdownSelector}
-            items={ngayTrongTuan}
-            open={dayOfWeekOpen}
-            setOpen={() => setDayOfWeekOpen(!dayOfWeekOpen)}
-            value={dayOfWeekValue}
-            setValue={(val) => setDayOfWeekValue(val)}
-            placeholder="Ngày học trong tuần"
-            showTickIcon={true}
-            showArrowIcon={true}
-            multiple={true}
-            min={1}
-            max={7}
-            mode="BADGE"
-            zIndex={20}
-            badgeColors={COLORS.secondMain}
-            badgeDotColors={["white"]}
-            backgroundColor=""
-          />
-        </View>
-
-        {/* Thời gian dạy */}
-        <View>
-          <Text style={styles.itemText}>Thời gian dạy</Text>
-          <TouchableOpacity
-            style={styles.dropdownSelector}
-            onPress={() => {
-              setTimeOpen(!timeOpen);
-            }}
-          >
-            <Text>{selectTime}</Text>
-            {timeOpen ? (
-              <Ionicons name="chevron-down-outline" size={24} />
-            ) : (
-              <TouchableOpacity
-                onPress={() => {
-                  onClose;
-                }}
-              >
+          {/* Quận huyện */}
+          <View>
+            <Text style={styles.itemText}>Quận huyện</Text>
+            <TouchableOpacity
+              style={styles.dropdownSelector}
+              onPress={() => {
+                setIsClickDistrict(!isClickDistrict);
+              }}
+            >
+              <Text>{selectDistrict}</Text>
+              {isClickDistrict ? (
+                <Ionicons name="chevron-down-outline" size={24} />
+              ) : (
                 <Ionicons name="chevron-up-outline" size={24} />
-              </TouchableOpacity>
+              )}
+            </TouchableOpacity>
+            {isClickDistrict && (
+              <View style={styles.dropdownArea}>
+                <FlatList
+                  data={district.data}
+                  renderItem={({ item, index }) => {
+                    return (
+                      <TouchableOpacity
+                        style={styles.item}
+                        onPress={() => {
+                          setSelectDistrict(item.name);
+                          setIsClickDistrict(false);
+                          setDistrictValue(item.id);
+                        }}
+                      >
+                        <Text>{item.name}</Text>
+                      </TouchableOpacity>
+                    );
+                  }}
+                />
+              </View>
             )}
-          </TouchableOpacity>
-          {timeOpen && (
-            <View style={styles.dropdownArea}>
-              <FlatList
-                data={time}
-                renderItem={({ item, index }) => {
-                  return (
-                    <TouchableOpacity
-                      style={[styles.item, { borderColor: COLORS.main }]}
-                      onPress={() => {
-                        setSelectTime(item.label);
-                        setTimeOpen(false);
-                        setTimeValue(item.value);
-                      }}
-                    >
-                      <Text>{item.label}</Text>
-                    </TouchableOpacity>
-                  );
-                }}
-              />
-            </View>
-          )}
-        </View>
+          </View>
 
-        {/* Số buổi */}
-        <View>
-          <Text style={styles.itemText}>Số buổi </Text>
-          <TextInput
-            keyboardType="phone-pad"
-            style={styles.input}
-            value={String(slot)}
-            onChangeText={(text) => setSlot(text)}
-            placeholder="Số buổi"
-          />
-        </View>
-
-        {/* Chi phí */}
-        <View>
-          <Text style={styles.itemText}>Chi phí khóa học </Text>
-          {isGetTuition && (
-            <Text
-              style={[
-                styles.itemText,
-                {
-                  color: COLORS.gray,
-                  fontSize: SIZES.small,
-                  padding: 0,
-                  marginHorizontal: 20,
-                },
-              ]}
-            >
-              Chi phí gợi ý cho khóa học:
-              {formattedAmount(getTuitionValue * slot)}
-            </Text>
-          )}
-
-          <TextInput
-            keyboardType="phone-pad"
-            style={styles.input}
-            value={price}
-            onChangeText={(text) => setPrice(text)}
-            placeholder="Chi phí"
-          />
-        </View>
-
-        {/* Slot lenght */}
-        <View>
-          <Text style={styles.itemText}>Thời gian dạy</Text>
-          <TouchableOpacity
-            style={styles.dropdownSelector}
-            onPress={() => {
-              setIsSlotLength(!isSlotLength);
-            }}
-          >
-            <Text>1 Giờ 30 Phút</Text>
-            {/* {isSlotLength ? (
-              <Ionicons name="chevron-down-outline" size={24} />
-            ) : (
-              <Ionicons name="chevron-up-outline" size={24} />
-            )} */}
-          </TouchableOpacity>
-          {/* {isSlotLength && (
-            <View style={styles.dropdownArea}>
-              <FlatList
-                data={thoiLuong}
-                renderItem={({ item, index }) => {
-                  return (
-                    <TouchableOpacity
-                      style={styles.item}
-                      onPress={() => {
-                        setSelectSlotLength(item.label);
-                        setIsSlotLength(false);
-                        setSlotLength(item.value);
-                      }}
-                    >
-                      <Text>{item.label}</Text>
-                    </TouchableOpacity>
-                  );
-                }}
-              />
-            </View>
-          )} */}
-        </View>
-
-        {/* Ngày bắt đầu */}
-        <View>
-          <Text style={styles.itemText}>Ngày bắt đầu</Text>
-          {showPicker && (
-            <DateTimePicker
-              mode="date"
-              display="spinner"
-              value={date}
-              onChange={onChangeStart}
-              style={{ backgroundColor: COLORS.lightWhite }}
-              minimumDate={new Date()}
+          {/* Địa chỉ */}
+          <View>
+            <Text style={styles.itemText}>Địa chỉ </Text>
+            <TextInput
+              style={styles.input}
+              value={address}
+              onChangeText={(text) => setAddress(text)}
+              placeholder="Địa chỉ"
             />
-          )}
+          </View>
 
-          {showPicker && Platform.OS === "ios" && (
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-around" }}
-            >
-              <TouchableOpacity
-                style={[
-                  styles.button,
-                  styles.picketButton,
-                  { backgroundColor: "#11182711" },
-                ]}
-                onPress={toggleDatePickerStart}
-              >
-                <Text style={[styles.buttonText, { color: "#075985" }]}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.picketButton]}
-                onPress={confirmDateStart}
-              >
-                <Text style={[styles.buttonText]}>Confirm</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          {!showPicker && (
-            <Pressable onPress={toggleDatePickerStart}>
-              <TextInput
-                style={styles.input}
-                value={dateStart}
-                onChangeText={setDateStart}
-                placeholder="Ngày bắt đầu "
-                editable={false}
-                onPressIn={toggleDatePickerStart}
-              />
-            </Pressable>
-          )}
-        </View>
-
-        {/* Ngày kết thúc */}
-        <View>
-          <Text style={styles.itemText}>Ngày kết thúc</Text>
-          {showPickerEnd && (
-            <DateTimePicker
-              mode="date"
-              display="spinner"
-              value={date}
-              onChange={onChangeEnd}
-              style={styles.datePicker}
-              minimumDate={dateStart !== null ? new Date(dateStart) : new Date()}
+          {/* Số điện thoại */}
+          <View>
+            <Text style={styles.itemText}>Số điện thoại </Text>
+            <TextInput
+              keyboardType="phone-pad"
+              style={styles.input}
+              value={phone}
+              onChangeText={(text) => setPhone(text)}
+              placeholder="Số điện thoại"
             />
-          )}
+          </View>
 
-          {showPickerEnd && Platform.OS === "ios" && (
-            <View
-              style={{ flexDirection: "row", justifyContent: "space-around" }}
+          {/* Giới tính */}
+          <View>
+            <Text style={styles.itemText}>Giới tính </Text>
+            <TouchableOpacity
+              style={styles.dropdownSelector}
+              onPress={() => {
+                setIsClickGender(!isClickGender);
+              }}
             >
-              <TouchableOpacity
+              <Text>{selectGender}</Text>
+              {isClickGender ? (
+                <Ionicons name="chevron-down-outline" size={24} />
+              ) : (
+                <Ionicons name="chevron-up-outline" size={24} />
+              )}
+            </TouchableOpacity>
+            {isClickGender && (
+              <View style={styles.dropdownArea}>
+                <FlatList
+                  data={GioiTinh}
+                  renderItem={({ item, index }) => {
+                    return (
+                      <TouchableOpacity
+                        style={styles.item}
+                        onPress={() => {
+                          setSelectGender(item.label);
+                          setIsClickGender(false);
+                          setGenderValue(item.value);
+                        }}
+                      >
+                        <Text>{item.label}</Text>
+                      </TouchableOpacity>
+                    );
+                  }}
+                />
+              </View>
+            )}
+          </View>
+
+          {/* Trình độ */}
+          <View>
+            <Text style={styles.itemText}>Trình độ</Text>
+            <TouchableOpacity
+              style={styles.dropdownSelector}
+              onPress={() => {
+                setIsClickLevel(!isClickLevel);
+              }}
+            >
+              <Text>{selectLevel}</Text>
+              {isClickLevel ? (
+                <Ionicons name="chevron-down-outline" size={24} />
+              ) : (
+                <Ionicons name="chevron-up-outline" size={24} />
+              )}
+            </TouchableOpacity>
+            {isClickLevel && (
+              <View style={styles.dropdownArea}>
+                <FlatList
+                  data={trinhDo}
+                  renderItem={({ item, index }) => {
+                    return (
+                      <TouchableOpacity
+                        style={styles.item}
+                        onPress={() => {
+                          setSelectLevel(item.label);
+                          setIsClickLevel(false);
+                          setLevelValue(item.value);
+                        }}
+                      >
+                        <Text>{item.label}</Text>
+                      </TouchableOpacity>
+                    );
+                  }}
+                />
+              </View>
+            )}
+          </View>
+
+          {/* Lớp */}
+          <View>
+            <Text style={styles.itemText}>Lớp học</Text>
+            <TouchableOpacity
+              style={styles.dropdownSelector}
+              onPress={() => {
+                setIsClickClass(!isClickClass);
+              }}
+            >
+              <Text>{selectClass}</Text>
+              {isClickClass ? (
+                <Ionicons name="chevron-down-outline" size={24} />
+              ) : (
+                <Ionicons name="chevron-up-outline" size={24} />
+              )}
+            </TouchableOpacity>
+            {isClickClass && (
+              <View style={styles.dropdownArea}>
+                <FlatList
+                  data={lopHoc}
+                  renderItem={({ item, index }) => {
+                    return (
+                      <TouchableOpacity
+                        style={styles.item}
+                        onPress={() => {
+                          setSelectClass(item.label);
+                          setIsClickClass(false);
+                          setClassValue(item.value);
+                          handLoadSubject(item.value);
+                        }}
+                      >
+                        <Text>{item.label}</Text>
+                      </TouchableOpacity>
+                    );
+                  }}
+                />
+              </View>
+            )}
+          </View>
+
+          {/* Môn học */}
+          <View style={{ zIndex: 20 }}>
+            <Text style={styles.itemText}>Môn học</Text>
+            <DropDownPicker
+              style={styles.dropdownSelector}
+              items={subject2}
+              open={isOpen}
+              setOpen={() => setIsOpen(!isOpen)}
+              value={subjectValue2}
+              setValue={(val) => setSubjectValue2(val)}
+              placeholder="Chọn môn học"
+              showTickIcon={true}
+              showArrowIcon={true}
+              multiple={true}
+              min={1}
+              max={4}
+              mode="BADGE"
+              zIndex={20}
+              badgeColors={COLORS.secondMain}
+              badgeDotColors={["white"]}
+              backgroundColor=""
+            />
+          </View>
+
+          {/* Ngày học trong tuần */}
+          <View style={{ zIndex: 18 }}>
+            <Text style={styles.itemText}>Ngày học trong tuần</Text>
+            <View style={styles.dayOfWeek}>
+              {mon ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setMon(false);
+                  }}
+                  style={styles.dayOn}
+                >
+                  <Text style={styles.titleDay}>2</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    setMon(true);
+                  }}
+                  style={styles.dayOff}
+                >
+                  <Text style={styles.titleDay}>2</Text>
+                </TouchableOpacity>
+              )}
+
+              {tus ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setTus(false);
+                  }}
+                  style={styles.dayOn}
+                >
+                  <Text style={styles.titleDay}>3</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    setTus(true);
+                  }}
+                  style={styles.dayOff}
+                >
+                  <Text style={styles.titleDay}>3</Text>
+                </TouchableOpacity>
+              )}
+
+              {wed ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setWed(false);
+                  }}
+                  style={styles.dayOn}
+                >
+                  <Text style={styles.titleDay}>4</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    setWed(true);
+                  }}
+                  style={styles.dayOff}
+                >
+                  <Text style={styles.titleDay}>4</Text>
+                </TouchableOpacity>
+              )}
+
+              {thu ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setThu(false);
+                  }}
+                  style={styles.dayOn}
+                >
+                  <Text style={styles.titleDay}>5</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    setThu(true);
+                  }}
+                  style={styles.dayOff}
+                >
+                  <Text style={styles.titleDay}>5</Text>
+                </TouchableOpacity>
+              )}
+
+              {fri ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setFri(false);
+                  }}
+                  style={styles.dayOn}
+                >
+                  <Text style={styles.titleDay}>6</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    setFri(true);
+                  }}
+                  style={styles.dayOff}
+                >
+                  <Text style={styles.titleDay}>6</Text>
+                </TouchableOpacity>
+              )}
+
+              {sat ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setSat(false);
+                  }}
+                  style={styles.dayOn}
+                >
+                  <Text style={styles.titleDay}>7</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    setSat(true);
+                  }}
+                  style={styles.dayOff}
+                >
+                  <Text style={styles.titleDay}>7</Text>
+                </TouchableOpacity>
+              )}
+
+              {sun ? (
+                <TouchableOpacity
+                  onPress={() => {
+                    setSun(false);
+                  }}
+                  style={styles.dayOn}
+                >
+                  <Text style={styles.titleDay}>CN</Text>
+                </TouchableOpacity>
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    setSun(true);
+                  }}
+                  style={styles.dayOff}
+                >
+                  <Text style={styles.titleDay}>CN</Text>
+                </TouchableOpacity>
+              )}
+            </View>
+            {/* <DropDownPicker
+                style={styles.dropdownSelector}
+                items={ngayTrongTuan}
+                open={dayOfWeekOpen}
+                setOpen={() => setDayOfWeekOpen(!dayOfWeekOpen)}
+                value={dayOfWeekValue}
+                setValue={(val) => setDayOfWeekValue(val)}
+                placeholder="Ngày học trong tuần"
+                showTickIcon={true}
+                showArrowIcon={true}
+                multiple={true}
+                min={1}
+                max={7}
+                mode="BADGE"
+                zIndex={20}
+                badgeColors={COLORS.secondMain}
+                badgeDotColors={["white"]}
+                backgroundColor=""
+              /> */}
+          </View>
+
+          {/* Thời gian dạy */}
+          <View>
+            <Text style={styles.itemText}>Thời gian dạy</Text>
+            <TouchableOpacity
+              style={styles.dropdownSelector}
+              onPress={() => {
+                setTimeOpen(!timeOpen);
+              }}
+            >
+              <Text>{selectTime}</Text>
+              {timeOpen ? (
+                <Ionicons name="chevron-down-outline" size={24} />
+              ) : (
+                <TouchableOpacity
+                  onPress={() => {
+                    onClose;
+                  }}
+                >
+                  <Ionicons name="chevron-up-outline" size={24} />
+                </TouchableOpacity>
+              )}
+            </TouchableOpacity>
+            {timeOpen && (
+              <View style={styles.dropdownArea}>
+                <FlatList
+                  data={time}
+                  renderItem={({ item, index }) => {
+                    return (
+                      <TouchableOpacity
+                        style={[styles.item, { borderColor: COLORS.main }]}
+                        onPress={() => {
+                          setSelectTime(item.label);
+                          setTimeOpen(false);
+                          setTimeValue(item.value);
+                        }}
+                      >
+                        <Text>{item.label}</Text>
+                      </TouchableOpacity>
+                    );
+                  }}
+                />
+              </View>
+            )}
+          </View>
+
+          {/* Số buổi */}
+          <View>
+            <Text style={styles.itemText}>Số buổi </Text>
+            <TextInput
+              keyboardType="phone-pad"
+              style={styles.input}
+              value={String(slot)}
+              onChangeText={(text) => setSlot(text)}
+              placeholder="Số buổi"
+            />
+          </View>
+
+          {/* Chi phí */}
+          <View>
+            <Text style={styles.itemText}>Chi phí khóa học </Text>
+            {isGetTuition && (
+              <Text
                 style={[
-                  styles.button,
-                  styles.picketButton,
-                  { backgroundColor: "#11182711" },
+                  styles.itemText,
+                  {
+                    color: COLORS.gray,
+                    fontSize: SIZES.small,
+                    padding: 0,
+                    marginHorizontal: 20,
+                  },
                 ]}
-                onPress={toggleDatePickerEnd}
               >
-                <Text style={[styles.buttonText, { color: "#075985" }]}>
-                  Cancel
-                </Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.button, styles.picketButton]}
-                onPress={confirmDateEnd}
-              >
-                <Text style={[styles.buttonText]}>Confirm</Text>
-              </TouchableOpacity>
-            </View>
-          )}
-          {!showPickerEnd && (
-            <Pressable onPress={toggleDatePickerEnd}>
-              <TextInput
-                style={styles.input}
-                value={dateEnd}
-                onChangeText={setDateEnd}
-                placeholder="Ngày kết thúc"
-                editable={false}
-                onPressIn={toggleDatePickerEnd}
+                {/* Chi phí gợi ý cho khóa học:
+                {formattedAmount(getTuitionValue * slot)} */}
+              </Text>
+            )}
+
+            <TextInput
+              keyboardType="phone-pad"
+              style={styles.input}
+              value={price}
+              onChangeText={(text) => setPrice(text)}
+              placeholder="Chi phí"
+            />
+          </View>
+
+          {/* Slot lenght */}
+          <View>
+            <Text style={styles.itemText}>Thời gian dạy</Text>
+            <TouchableOpacity
+              style={styles.dropdownSelector}
+              onPress={() => {
+                setIsSlotLength(!isSlotLength);
+              }}
+            >
+              <Text>1 Giờ 30 Phút</Text>
+            </TouchableOpacity>
+          </View>
+
+          {/* Ngày bắt đầu */}
+          <View>
+            <Text style={styles.itemText}>Ngày bắt đầu</Text>
+            {showPicker && (
+              <DateTimePicker
+                mode="date"
+                display="spinner"
+                value={date}
+                onChange={onChangeStart}
+                style={{ backgroundColor: COLORS.lightWhite }}
+                minimumDate={new Date()}
               />
-            </Pressable>
+            )}
+
+            {showPicker && Platform.OS === "ios" && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-around",
+                }}
+              >
+                <TouchableOpacity
+                  style={[
+                    styles.button,
+                    styles.picketButton,
+                    { backgroundColor: "#11182711" },
+                  ]}
+                  onPress={toggleDatePickerStart}
+                >
+                  <Text style={[styles.buttonText, { color: "#075985" }]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, styles.picketButton]}
+                  onPress={confirmDateStart}
+                >
+                  <Text style={[styles.buttonText]}>Confirm</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+            {!showPicker && (
+              <Pressable onPress={toggleDatePickerStart}>
+                <TextInput
+                  style={styles.input}
+                  value={dateStart}
+                  onChangeText={setDateStart}
+                  placeholder="Ngày bắt đầu "
+                  editable={false}
+                  onPressIn={toggleDatePickerStart}
+                />
+              </Pressable>
+            )}
+          </View>
+
+          {/* Ngày kết thúc */}
+          <View>
+            <Text style={styles.itemText}>Ngày kết thúc</Text>
+            {showPickerEnd && (
+              <DateTimePicker
+                mode="date"
+                display="spinner"
+                value={date}
+                onChange={onChangeEnd}
+                style={styles.datePicker}
+                minimumDate={
+                  dateStart !== null ? new Date(dateStart) : new Date()
+                }
+              />
+            )}
+
+            {showPickerEnd && Platform.OS === "ios" && (
+              <View
+                style={{
+                  flexDirection: "row",
+                  justifyContent: "space-around",
+                }}
+              >
+                <TouchableOpacity
+                  style={[
+                    styles.button,
+                    styles.picketButton,
+                    { backgroundColor: "#11182711" },
+                  ]}
+                  onPress={toggleDatePickerEnd}
+                >
+                  <Text style={[styles.buttonText, { color: "#075985" }]}>
+                    Cancel
+                  </Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.button, styles.picketButton]}
+                  onPress={confirmDateEnd}
+                >
+                  <Text style={[styles.buttonText]}>Confirm</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+            {!showPickerEnd && (
+              <Pressable onPress={toggleDatePickerEnd}>
+                <TextInput
+                  style={styles.input}
+                  value={dateEnd}
+                  onChangeText={setDateEnd}
+                  placeholder="Ngày kết thúc"
+                  editable={false}
+                  onPressIn={toggleDatePickerEnd}
+                />
+              </Pressable>
+            )}
+          </View>
+
+          {/* Mô tả */}
+          <View>
+            <Text style={styles.itemText}>Mô tả thêm </Text>
+            <TextInput
+              style={styles.inputArea}
+              value={description}
+              multiline
+              numberOfLines={10}
+              onChangeText={(text) => setDescription(text)}
+              placeholder="Thông tin thêm"
+            />
+          </View>
+
+          {loader ? (
+            <ActivityIndicator size={500} color={COLORS.main} />
+          ) : (
+            <TouchableOpacity onPress={handleCreate}>
+              <View style={styles.btn}>
+                <Text style={styles.btnText}>Đăng kí</Text>
+              </View>
+            </TouchableOpacity>
           )}
-        </View>
-
-        {/* Mô tả */}
-        <View>
-          <Text style={styles.itemText}>Mô tả thêm </Text>
-          <TextInput
-            style={styles.inputArea}
-            value={description}
-            multiline
-            numberOfLines={10}
-            onChangeText={(text) => setDescription(text)}
-            placeholder="Thông tin thêm"
-          />
-        </View>
-
-        {loader ? (
-          <ActivityIndicator size={500} color={COLORS.main} />
-        ) : (
-          <TouchableOpacity onPress={handleCreate}>
-            <View style={styles.btn}>
-              <Text style={styles.btnText}>Đăng kí</Text>
-            </View>
-          </TouchableOpacity>
-        )}
-      </KeyboardAwareScrollView>
-    </View>
+        </KeyboardAwareScrollView>
+      </View>
+    </GestureHandlerRootView>
   );
 };
 
 export default CreateRequestPage;
 
 const styles = StyleSheet.create({
+  titleDay: {
+    fontWeight: "900",
+    letterSpacing: 0.5,
+    fontSize: 16,
+  },
+
+  dayOff: {
+    backgroundColor: COLORS.white,
+    justifyContent: "center",
+    alignItems: "center",
+    width: 40,
+    height: 40,
+    borderRadius: 99,
+    borderWidth: 0.2,
+  },
+
+  dayOn: {
+    backgroundColor: COLORS.main,
+    justifyContent: "center",
+    alignItems: "center",
+    width: 40,
+    height: 40,
+    borderRadius: 99,
+    borderWidth: 0.2,
+  },
+
+  dayOfWeek: {
+    marginHorizontal: 30,
+    justifyContent: "space-around",
+    flexDirection: "row",
+  },
+
+  sup: {
+    color: COLORS.black,
+    fontSize: SIZES.medium,
+  },
+
+  containerContainer: {
+    flex: 1,
+    alignItems: "center",
+    paddingHorizontal: 15,
+  },
+
   buttonText: {
     fontSize: 14,
     fontWeight: "500",
