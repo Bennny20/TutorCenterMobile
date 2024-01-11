@@ -1011,7 +1011,7 @@ const RegisterTutor = () => {
               </View>
 
               <View>
-                <Text style={styles.itemText}>Trương đại học </Text>
+                <Text style={styles.itemText}>Trường đại học </Text>
                 <TextInput
                   style={styles.input}
                   value={university}

@@ -13,11 +13,13 @@ import { COLORS, HOST_API, SIZES, SUBMIT, ANSWER } from "../constants";
 import { Ionicons, Feather, MaterialCommunityIcons } from "@expo/vector-icons";
 import CountDown from "react-native-countdown-component";
 import axios from "axios";
-import { useRoute } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const TestTutor = () => {
   const route = useRoute();
+  const navigation = useNavigation();
+
   // const { userTutor } = route.params;
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState();
@@ -70,7 +72,6 @@ const TestTutor = () => {
     const value = SUBMIT;
     console.log(value);
     const token = await AsyncStorage.getItem("token");
-    console.log(token);
     axios
       .put(HOST_API.local + `/api/question/submit`, value, {
         headers: {
@@ -80,8 +81,10 @@ const TestTutor = () => {
 
       .then((response) => {
         console.log(response.data);
+        navigation.navigate("Profile");
       })
       .catch((error) => {
+        navigation.navigate("Profile");
         console.log("Create failed", error);
       });
 
@@ -162,9 +165,10 @@ const TestTutor = () => {
   };
   return (
     <SafeAreaView>
-      <View style={{ marginLeft: 20, marginTop: 10 }}>
+      {/* <View style={{ marginLeft: 20, marginTop: 10 }}>
         <Text style={styles.heading}>Bài kiểm tra chất lượng </Text>
-      </View>
+      </View> */}
+      <Heading title={"Bài kiểm tra chất lượng"} />
 
       {loader ? (
         <ActivityIndicator size={500} color={COLORS.main} />

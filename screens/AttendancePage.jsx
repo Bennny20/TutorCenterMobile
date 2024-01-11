@@ -15,6 +15,7 @@ import { RefreshControl } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useEffect } from "react";
 import { ActivityIndicator } from "react-native";
+import QRCode from "react-native-qrcode-svg";
 
 const AttendancePage = () => {
   const navigation = useNavigation();
@@ -35,7 +36,6 @@ const AttendancePage = () => {
     fetchClassDetail();
     userRole();
   }, []);
-  console.log(item);
   let idTutor = item.tutor?.id;
   const [userData, setUserData] = useState(null);
   const userRole = async () => {
@@ -57,16 +57,16 @@ const AttendancePage = () => {
       setLoader(false);
     }
   };
-  const [classDetail, setClassDetail] = useState();
+  const [tutorDetail, setTutorDetail] = useState();
 
   const fetchClassDetail = async () => {
     setLoader(true);
     try {
       const response = await axios.get(
-        HOST_API.local + `/api/clazz/${item.id}`
+        HOST_API.local + `/api/tutor/${idTutor}`
       );
-      console.log("classDetail: ", response.data.data);
-      setClassDetail(response.data.data);
+      console.log("tutorDetail: ", response.data.data);
+      setTutorDetail(response.data.data);
       setLoader(false);
     } catch (error) {
       console.log("error", error);
@@ -182,7 +182,7 @@ const AttendancePage = () => {
     return { start, end };
   };
   return (
-    <SafeAreaView style={{ marginTop: -20 }}>
+    <ScrollView style={{ marginTop: 20 }}>
       <Heading title={"Điểm danh"} />
       <View style={styles.class}>
         <View style={styles.classHeading}>
@@ -203,30 +203,52 @@ const AttendancePage = () => {
             <Text style={styles.sup}>Chi phí: {item.tuition}</Text>
           </View>
         </View>
+        {userData?.role !== "TUTOR" ? (
+          <View style={styles.infoTutor}>
+            <View style={{ alignItems: "center", marginBottom: -10 }}>
+              <Text style={styles.sup}> Thông tin gia sư</Text>
+            </View>
 
-        <View style={styles.infoTutor}>
-          <View style={{ alignItems: "center", marginBottom: -10 }}>
-            <Text style={styles.sup}> Thông tin gia sư</Text>
-          </View>
+            <View style={styles.infoDetail}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("TutorDetail", { idTutor })}
+              >
+                <Text style={styles.sup}>
+                  Gia sư: {item.tutor?.name} {item?.tutorName}
+                </Text>
+              </TouchableOpacity>
 
-          <View style={styles.infoDetail}>
-            <TouchableOpacity
-              onPress={() => navigation.navigate("TutorDetail", { idTutor })}
-            >
+              <Text style={styles.sup}>Địa chỉ: {item.tutor?.address} </Text>
               <Text style={styles.sup}>
-                Gia sư: {item.tutor?.name} {item?.tutorName}
+                {item.tutor?.districtName}, {item.tutor?.provinceName}
               </Text>
-            </TouchableOpacity>
-
-            <Text style={styles.sup}>Địa chỉ: {item.tutor?.address} </Text>
-            <Text style={styles.sup}>
-              {item.tutor?.districtName}, {item.tutor?.provinceName}
-            </Text>
-            <Text style={styles.sup}>
-              Trường đại học: {item.tutor?.university}
-            </Text>
+              <Text style={styles.sup}>
+                Trường đại học: {item.tutor?.university}
+              </Text>
+            </View>
           </View>
-        </View>
+        ) : (
+          <View style={styles.infoTutor}>
+            <View style={{ alignItems: "center", marginBottom: -10 }}>
+              <Text style={styles.sup}> Thông tin phụ huynh</Text>
+            </View>
+
+            <View style={styles.infoDetail}>
+              <TouchableOpacity
+                onPress={() => navigation.navigate("TutorDetail", { idTutor })}
+              >
+                <Text style={styles.sup}>Phụ huynh: {item.parentName}</Text>
+              </TouchableOpacity>
+
+              <Text style={styles.sup}>Địa chỉ: {item.address} </Text>
+              <Text style={styles.sup}>
+                {item.districtName}, {item.provinceName}
+              </Text>
+              <Text style={styles.sup}>S Đ T: {item.phone}</Text>
+            </View>
+          </View>
+        )}
+
         <View
           style={{
             justifyContent: "space-between",
@@ -267,7 +289,23 @@ const AttendancePage = () => {
           }}
         ></View>
       </View>
-      <View style={styles.attendance}>
+      <View>
+        {userData?.role === "TUTOR" && (
+          <View style={styles.qrCode}>
+            <Text style={styles.sup}>MÃ GIỚI THIỆU</Text>
+            <QRCode
+              value="https://www.facebook.com/"
+              logo={require("../assets/logo-no-background.png")}
+              logoSize={50}
+              size={200}
+            />
+            <Text style={[styles.sup, { fontSize: SIZES.medium - 3 }]}>
+              Sử dụng ở lần đầu gặp phụ phuynh
+            </Text>
+          </View>
+        )}
+      </View>
+      {/* <View style={styles.attendance}>
         <View style={styles.title}>
           <Text style={styles.titleText}>Danh sách điểm danh</Text>
           {length == item.slots ? (
@@ -303,19 +341,8 @@ const AttendancePage = () => {
         {data?.data?.map((item, stt = 0) => (
           <AttendanceItem item={item} stt={stt + 1} />
         ))}
-
-        {/* <FlatList
-          refreshing={refreshing}
-          onRefresh={onRefresh}
-          data={data.data}
-          style={{ marginBottom: 750 }}
-          renderItem={({ item, stt = temp++ }) => (
-            <AttendanceItem item={item} stt={stt} />
-          )}
-          keyExtractor={(item) => item.id}
-        /> */}
-      </ScrollView>
-    </SafeAreaView>
+      </ScrollView> */}
+    </ScrollView>
   );
 };
 
@@ -347,6 +374,7 @@ const styles = StyleSheet.create({
   },
   // Info class
   classHeading: {
+    justifyContent: "center",
     alignItems: "center",
     marginTop: 40,
     zIndex: 999,
@@ -365,10 +393,11 @@ const styles = StyleSheet.create({
   },
   name: {
     fontFamily: "bold",
-    fontSize: SIZES.xLarge,
+    fontSize: SIZES.large,
     color: COLORS.lightWhite,
   },
   headingName: {
+    justifyContent: "center",
     marginTop: -10,
     width: 300,
     borderColor: COLORS.main,
@@ -394,5 +423,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 20,
     marginTop: 10,
     backgroundColor: COLORS.secondMain,
+  },
+
+  qrCode: {
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 10,
   },
 });
