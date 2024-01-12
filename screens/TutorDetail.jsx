@@ -30,6 +30,7 @@ const TutorDetail = () => {
           HOST_API.local + `/api/tutor/${idTutor}`
         );
         setTutorDetail(response.data.data);
+        console.log(); (response.data.data);
       } catch (error) {
         console.log("error", error);
       } finally {
@@ -45,9 +46,9 @@ const TutorDetail = () => {
   var classNo = " ";
   for (let index = 0; index < tutorDetail?.subjects.length; index++) {
     if (index == tutorDetail?.subjects.length - 1) {
-      major += tutorDetail?.subjects[index].name;
+      major += tutorDetail?.subjects[index].name + ": " + tutorDetail?.subjects[index].latestGrade;
     } else {
-      major += tutorDetail?.subjects[index].name + ", ";
+      major += tutorDetail?.subjects[index].name + ": " + tutorDetail?.subjects[index].latestGrade + ", ";
     }
     classNo = tutorDetail?.subjects[index].level;
   }
@@ -62,7 +63,7 @@ const TutorDetail = () => {
               color={COLORS.lightWhite}
             />
           </TouchableOpacity>
-          <Text style={styles.heading}>Thông tin của gia su </Text>
+          <Text style={styles.heading}>Thông tin của gia sư </Text>
         </View>
       </View>
       <ScrollView style={{ marginBottom: 80 }}>
@@ -91,9 +92,6 @@ const TutorDetail = () => {
                       {tutorDetail?.gender}
                     </Text>
                   </Text>
-                  {/* <Text style={styles.sup}>
-                    Địa chỉ:  <Text style={[styles.sup, { color: COLORS.black }]}>{tutorDetail?.address}</Text>
-                  </Text> */}
                   <Text style={styles.sup}>
                     Khu vực:{" "}
                     <Text style={[styles.sup, { color: COLORS.black }]}>

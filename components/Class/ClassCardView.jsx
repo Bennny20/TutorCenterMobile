@@ -106,7 +106,7 @@ const ClassCardView = ({ item }) => {
                   Hôn học: {major}
                 </Text>
                 <Text style={styles.supplier} numberOfLines={1}>
-                  Địa điểm: {item.address}, {item.districtName}
+                  Địa điểm:  {item.districtName}
                 </Text>
                 <Text style={styles.supplier} numberOfLines={1}>
                   Giới tính: {item.gender}

@@ -50,6 +50,7 @@ export default function App() {
       `Each child in a list should have a unique "key" prop`,
       `Key "cancelled" in the image picker result is deprecated and will be removed in SDK 48, use "canceled" instead`,
       "Failed prop type: Invalid prop `value` of type `number` supplied to `TextInput`, expected `string`",
+      "Warning: Encountered two children with the same key, `43`. Keys should be unique so that components maintain their identity across updates. Non-unique keys may cause children to be duplicated and/or omitted — the behavior is unsupported and could change in a future version."
     ]);
   }, []);
 

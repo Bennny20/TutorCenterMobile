@@ -106,7 +106,7 @@ const ClassItem = ({ item }) => {
             <View style={styles.info}>
               <Text style={styles.text}>Trình đồ: {item.tutorLevel}</Text>
               <Text style={styles.text}> {classNo}</Text>
-              <Text style={styles.text}>Địa chỉ: {item.address}</Text>
+              {/* <Text style={styles.text}>Địa chỉ: {item.address}</Text> */}
               <Text style={styles.text}>
                 {item.districtName}, {item.provinceName}
               </Text>

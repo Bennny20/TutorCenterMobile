@@ -100,12 +100,21 @@ const RegisterTutor = () => {
   );
   const [isClickDistrict, setIsClickDistrict] = useState(false);
   const [district, setDistrict] = useState([]);
+  const [area, setArea] = useState([]);
   const [districtValue, setDistrictValue] = useState();
   async function handLoadDistrict(idProvince) {
     const response = await fetch(
       HOST_API.local + `/api/district/province/${idProvince}`
     );
+    // console.log(response.json().data);
     setDistrict(await response.json());
+    // await response.json().then((data) => {
+    //   let newArray = data.data.map((item) => {
+    //     return { label: item.name, value: item.id };
+    //   });
+    //   console.log(newArray);
+    //   setArea(newArray);
+    // });
   }
 
   //Giới tính
@@ -118,7 +127,7 @@ const RegisterTutor = () => {
   ];
 
   useEffect(() => {
-    const fetchProvince = async () => {
+    const fetchSubject = async () => {
       const response = await fetch(
         HOST_API.local + `/api/subject/level?level=Lớp 6`
       );
@@ -129,7 +138,7 @@ const RegisterTutor = () => {
         setSubject2(newArray);
       });
     };
-    fetchProvince();
+    fetchSubject();
   }, []);
   const [isOpen, setIsOpen] = useState(false);
   const [subjectValue2, setSubjectValue2] = useState([]);
@@ -306,7 +315,7 @@ const RegisterTutor = () => {
       Alert.alert("Vui lòng điền đầy đủ thông tin", "", [
         {
           text: "Cancel",
-          onPress: () => {},
+          onPress: () => { },
         },
         { defaultIndex: 1 },
       ]);
@@ -331,7 +340,7 @@ const RegisterTutor = () => {
               Alert.alert("Email này đã được đăng kí", "", [
                 {
                   text: "Cancel",
-                  onPress: () => {},
+                  onPress: () => { },
                 },
                 { defaultIndex: 1 },
               ]);
@@ -349,7 +358,7 @@ const RegisterTutor = () => {
                 Alert.alert("Vui lòng cung cấp ảnh để xác minh", "", [
                   {
                     text: "Cancel",
-                    onPress: () => {},
+                    onPress: () => { },
                   },
                   { defaultIndex: 1 },
                 ]);
@@ -403,6 +412,7 @@ const RegisterTutor = () => {
         imgIdFront: imgIdFontValue,
         imdIdBack: imgIdBackValue,
         subjects: user.subjects,
+        areas: [user.districtId],
       });
       console.log(response);
       if (response.data.responseCode === "00") {
@@ -410,7 +420,7 @@ const RegisterTutor = () => {
         Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
@@ -425,11 +435,11 @@ const RegisterTutor = () => {
         Alert.alert("Error Logging im", "Please provide all require fields", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
-            onPress: () => {},
+            onPress: () => { },
           },
           { defaultIndex: 1 },
         ]);
@@ -439,11 +449,11 @@ const RegisterTutor = () => {
       Alert.alert("Error", "error", [
         {
           text: "Cancel",
-          onPress: () => {},
+          onPress: () => { },
         },
         {
           text: "Continue",
-          onPress: () => {},
+          onPress: () => { },
         },
         { defaultIndex: 1 },
       ]);
@@ -928,6 +938,31 @@ const RegisterTutor = () => {
           </Text>
           <Pressable>
             <KeyboardAwareScrollView extraScrollHeight={-150}>
+              {/* <View style={{ zIndex: 25 }}>
+                <Text style={styles.itemText}>Khu vực dạy</Text>
+                <DropDownPicker
+                  style={styles.dropdownSelector}
+                  items={subject2}
+                  open={isOpen}
+                  setOpen={() => setIsOpen(!isOpen)}
+                  value={subjectValue2}
+                  setValue={(val) => setSubjectValue2(val)}
+                  placeholder="Chọn môn học"
+                  showTickIcon={true}
+                  showArrowIcon={true}
+                  multiple={true}
+                  min={1}
+                  max={4}
+                  mode="BADGE"
+                  zIndex={20}
+                  badgeColors={COLORS.secondMain}
+                  badgeDotColors={["white"]}
+                  backgroundColor=""
+                />
+              </View> */}
+
+
+
               <View style={{ zIndex: 20 }}>
                 <Text style={styles.itemText}>Lớp học</Text>
                 <DropDownPicker

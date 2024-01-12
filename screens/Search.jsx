@@ -246,7 +246,7 @@ const Search = () => {
                 style={styles.input}
                 value={address}
                 onChangeText={(text) => setAddress(address)}
-                placeholder="Dia chi "
+                placeholder="Địa chỉ "
               />
             </View>
           </View>

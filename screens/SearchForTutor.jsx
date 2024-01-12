@@ -16,6 +16,7 @@ import { GestureHandlerRootView } from "react-native-gesture-handler";
 import ClassItem from "../components/Class/ClassItem";
 import ClassItemForTutor from "../components/Class/ClassItemForTutor";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const SearchForTutor = () => {
   const navigation = useNavigation();
@@ -26,8 +27,16 @@ const SearchForTutor = () => {
   const [error, setError] = useState(null);
   const fetchData = async () => {
     setIsLoading(true);
+    const token = await AsyncStorage.getItem("token");
+    console.log(token);
     try {
-      const res = await axios.get(HOST_API.local + `/api/clazz/recommended`);
+      const res = await axios.get(HOST_API.local + `/api/clazz/recommended`,
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        });
+      console.log(res.data.data);
       setClassList(res.data.data);
       setFilterData(res.data.data);
     } catch (error) {

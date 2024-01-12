@@ -115,7 +115,7 @@ const ClassDetail = () => {
       try {
         const response = await axios.post(
           HOST_API.local +
-            `/api/tutorApply/create?clazzId=${classDetail.id}&tutorId=${user}`,
+          `/api/tutorApply/create?clazzId=${classDetail.id}&tutorId=${user}`,
           {},
           {
             headers: {
@@ -129,11 +129,11 @@ const ClassDetail = () => {
           Alert.alert("Chúc mừng ", "Bạn đã apply thành công", [
             {
               text: "Cancel",
-              onPress: () => {},
+              onPress: () => { },
             },
             {
               text: "Continue",
-              onPress: () => {},
+              onPress: () => { },
             },
             { defaultIndex: 1 },
           ]);
@@ -141,11 +141,11 @@ const ClassDetail = () => {
           Alert.alert("Lớp không trong trạng thái có thể đăng ký", "", [
             {
               text: "Cancel",
-              onPress: () => {},
+              onPress: () => { },
             },
             {
               text: "Continue",
-              onPress: () => {},
+              onPress: () => { },
             },
             { defaultIndex: 1 },
           ]);
@@ -155,11 +155,11 @@ const ClassDetail = () => {
         Alert.alert("Error", "error", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
-            onPress: () => {},
+            onPress: () => { },
           },
           { defaultIndex: 1 },
         ]);
@@ -280,7 +280,7 @@ const ClassDetail = () => {
                   Địa điểm:
                 </Text>
                 <Text style={styles.sup}>
-                  {item.address} , {item.provinceName}, {item.provinceName}
+                  {item.provinceName}, {item.provinceName}
                 </Text>
                 <Text style={styles.title}>
                   <Ionicons
@@ -400,8 +400,8 @@ const ClassDetail = () => {
             }}
           >
             {userData?.role === "TUTOR" &&
-            userTutor?.status == 2 &&
-            !checkApply ? (
+              userTutor?.status == 2 &&
+              !checkApply ? (
               <TouchableOpacity style={styles.btnApply} onPress={createApply}>
                 <Ionicons
                   name="receipt-outline"

@@ -87,11 +87,11 @@ const Register = () => {
     Alert.alert("Invalid form", "Please provide all require fields", [
       {
         text: "Cancel",
-        onPress: () => {},
+        onPress: () => { },
       },
       {
         text: "Continue",
-        onPress: () => {},
+        onPress: () => { },
       },
       { defaultIndex: 1 },
     ]);
@@ -129,19 +129,18 @@ const Register = () => {
       districtId: districtValue,
     };
     console.log("Value: ", user);
-
     handleCheckEmail(data.email);
     if (checkEmail.data == false) {
       setLoader(true);
       try {
         const endpoint = HOST_API.local + "/api/auth/registerParent";
-        const response = await axios.post(endpoint, {
-          email: data.email,
-          password: data.password,
-          fullname: data.fullname,
-          phone: data.phone,
-          address: data.location,
-          districtId: districtValue,
+        const response = await axios.post(HOST_API.local + '/api/auth/registerParent', {
+          email: user.email,
+          password: user.password,
+          fullname: user.fullname,
+          phone: user.phone,
+          address: user.location,
+          districtId: user.districtId,
         });
         console.log(response.data);
         if (response.data.responseCode === "00") {
@@ -149,7 +148,7 @@ const Register = () => {
           Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
             {
               text: "Cancel",
-              onPress: () => {},
+              onPress: () => { },
             },
             {
               text: "Continue",
@@ -164,11 +163,11 @@ const Register = () => {
           Alert.alert("Error Logging im", "Please provide all require fields", [
             {
               text: "Cancel",
-              onPress: () => {},
+              onPress: () => { },
             },
             {
               text: "Continue",
-              onPress: () => {},
+              onPress: () => { },
             },
             { defaultIndex: 1 },
           ]);
@@ -178,11 +177,11 @@ const Register = () => {
         Alert.alert("Error", "error", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
-            onPress: () => {},
+            onPress: () => { },
           },
           { defaultIndex: 1 },
         ]);
