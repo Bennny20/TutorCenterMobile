@@ -30,7 +30,8 @@ const TutorDetail = () => {
           HOST_API.local + `/api/tutor/${idTutor}`
         );
         setTutorDetail(response.data.data);
-        console.log(); (response.data.data);
+        console.log();
+        response.data.data;
       } catch (error) {
         console.log("error", error);
       } finally {
@@ -46,9 +47,17 @@ const TutorDetail = () => {
   var classNo = " ";
   for (let index = 0; index < tutorDetail?.subjects.length; index++) {
     if (index == tutorDetail?.subjects.length - 1) {
-      major += tutorDetail?.subjects[index].name + ": " + tutorDetail?.subjects[index].latestGrade;
+      major +=
+        tutorDetail?.subjects[index].name +
+        ": " +
+        tutorDetail?.subjects[index].latestGrade +
+        "% ";
     } else {
-      major += tutorDetail?.subjects[index].name + ": " + tutorDetail?.subjects[index].latestGrade + ", ";
+      major +=
+        tutorDetail?.subjects[index].name +
+        ": " +
+        tutorDetail?.subjects[index].latestGrade +
+        "%, ";
     }
     classNo = tutorDetail?.subjects[index].level;
   }
@@ -117,6 +126,12 @@ const TutorDetail = () => {
                     Chuyên ngành:{" "}
                     <Text style={[styles.sup, { color: COLORS.black }]}>
                       {tutorDetail?.major}
+                    </Text>
+                  </Text>
+                  <Text style={styles.sup}>
+                    Lớp dạy:{" "}
+                    <Text style={[styles.sup, { color: COLORS.black }]}>
+                      {classNo}
                     </Text>
                   </Text>
                   <Text style={styles.sup}>

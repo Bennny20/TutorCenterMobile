@@ -36,9 +36,11 @@ import ReCreateRequest from "./ReCreateRequest";
 import TestTutor from "./TestTutor";
 import ClassDetailForParent from "./ClassDetailForParent";
 import TestScreen from "./TestScreen";
+import OTPScreen from "./OTPScreen";
 
 export {
   TestScreen,
+  OTPScreen,
   ClassDetailForParent,
   TestTutor,
   ReCreateRequest,

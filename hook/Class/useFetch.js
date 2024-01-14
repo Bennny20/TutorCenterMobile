@@ -10,7 +10,7 @@ const useFetch = () => {
     setIsLoading(true);
     try {
       // ("https://tutor-center.onrender.com/class/");
-      const res = await axios.get(HOST_API.local + `/api/clazz`);
+      const res = await axios.get(HOST_API.local + `/api/clazz/status/1`);
       setData(res.data);
     } catch (error) {
       setError(error);

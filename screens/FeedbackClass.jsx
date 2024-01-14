@@ -23,6 +23,7 @@ const FeedbackClass = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { item, length, user } = route.params;
+  // console.log(item);
   const { checkEndDate, setCheckEndDate } = useState(false);
   const [content, setContent] = useState("");
   const [startRating1, setStartRating1] = useState(null);
@@ -50,7 +51,7 @@ const FeedbackClass = () => {
       courseCover: startRating5,
       content: content,
     };
-    console.log(feedback);
+    // console.log(feedback);
     axios
       .post(
         HOST_API.local + `/api/feedback/create`,
@@ -146,9 +147,10 @@ const FeedbackClass = () => {
     setLoader(true);
     try {
       const response = await axios.get(
-        HOST_API.local + `/api/feedback/clazz/${item.id}`
+        HOST_API.local + `/api/clazz/${item.id}`
       );
       setData(response.data);
+      console.log(response.data);
       if (response.data.data.length != 0) {
         setCheckFeedback(true);
       }
@@ -158,7 +160,7 @@ const FeedbackClass = () => {
       setLoader(false);
     }
   };
-  console.log(item);
+  // console.log(item);
   return (
     <SafeAreaView>
       <Heading title={"Đánh giá chất lượng"} />
@@ -228,22 +230,81 @@ const FeedbackClass = () => {
                   }}
                 >
                   <Text style={[styles.itemText, { color: COLORS.primary }]}>
-                    {data.data[0].parentName}
+                    Nngười đánh giá: {data.data.parentName}
                   </Text>
-                  <Text style={[styles.itemText, { color: COLORS.primary }]}>
+                  {/* <Text style={[styles.itemText, { color: COLORS.primary }]}>
                     {data.data[0].dateCreate}
-                  </Text>
+                  </Text> */}
                 </View>
                 <View
                   style={{
                     marginHorizontal: 20,
                   }}
                 >
-                  <Text style={[styles.itemText, { color: COLORS.primary }]}>
-                    {data.data[0].tutorName}
+                  <Text
+                    style={[
+                      styles.itemText,
+                      { fontFamily: "regular", color: COLORS.primary },
+                    ]}
+                  >
+                    Chất lượng dạy: {data.data.pedagogicalSkill}{" "}
+                    <Ionicons
+                      name={"star"}
+                      size={24}
+                      style={styles.startSelect}
+                    />
                   </Text>
-                  <Text style={[styles.itemText, { color: COLORS.primary }]}>
-                    {data.data[0].content}
+                  <Text
+                    style={[
+                      styles.itemText,
+                      { fontFamily: "regular", color: COLORS.primary },
+                    ]}
+                  >
+                    Tác phong: {data.data.professionalSkill}{" "}
+                    <Ionicons
+                      name={"star"}
+                      size={24}
+                      style={styles.startSelect}
+                    />
+                  </Text>
+                  <Text
+                    style={[
+                      styles.itemText,
+                      { fontFamily: "regular", color: COLORS.primary },
+                    ]}
+                  >
+                    Kỹ năng {data.data.workingStyle}{" "}
+                    <Ionicons
+                      name={"star"}
+                      size={24}
+                      style={styles.startSelect}
+                    />
+                  </Text>
+                  <Text
+                    style={[
+                      styles.itemText,
+                      { fontFamily: "regular", color: COLORS.primary },
+                    ]}
+                  >
+                    Khóa học: {data.data.courseCover}{" "}
+                    <Ionicons
+                      name={"star"}
+                      size={24}
+                      style={styles.startSelect}
+                    />
+                  </Text>
+                  <Text
+                    style={[
+                      styles.itemText,
+                      { fontFamily: "regular", color: COLORS.primary },
+                    ]}
+                  >
+                    Hỗ trợ ngoài giờ: {data.data.supportOt}{" "}
+                    <Ionicons
+                      name={"star"}
+                      size={24}
+                      style={styles.startSelect}
+                    />
                   </Text>
                 </View>
               </View>

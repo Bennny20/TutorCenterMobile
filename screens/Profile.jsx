@@ -65,7 +65,7 @@ const Profile = () => {
             }
           }
         }
-        setLoader(false)
+        setLoader(false);
       } catch (error) {
         console.log("error", error);
       } finally {
@@ -134,7 +134,6 @@ const Profile = () => {
               )}
             </View>
             <View style={styles.info}>
-
               {userLogin === false ? (
                 <Image
                   source={require("../assets/images/profile.jpeg")}
@@ -143,20 +142,20 @@ const Profile = () => {
               ) : userData?.role === "TUTOR" ? (
                 <Image
                   source={{
-                    uri: HOST_API.local + "/api/user/image/" + userTutor.imgAvatar,
-                  }} style={styles.profileImg}
+                    uri:
+                      HOST_API.local + "/api/user/image/" + userTutor.imgAvatar,
+                  }}
+                  style={styles.profileImg}
                 />
-              ): (
+              ) : (
                 <Image
-                source={require("../assets/images/profile.jpeg")}
-                style={styles.profileImg}
-              /> 
+                  source={require("../assets/images/profile.jpeg")}
+                  style={styles.profileImg}
+                />
               )}
 
               <Text style={styles.name}>
-                {userLogin === true
-                  ? userData?.fullName
-                  : ""}
+                {userLogin === true ? userData?.fullName : ""}
               </Text>
               {userLogin === false ? (
                 <TouchableOpacity
@@ -276,9 +275,7 @@ const Profile = () => {
                           size={30}
                           color={COLORS.main}
                         />
-                        <Text style={styles.menuItemText}>
-                          Quản lý lớp & Điêm danh gia sư
-                        </Text>
+                        <Text style={styles.menuItemText}>Quản lý lớp</Text>
                       </View>
                     </TouchableOpacity>
                   ) : (

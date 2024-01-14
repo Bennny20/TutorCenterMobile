@@ -87,11 +87,11 @@ const Register = () => {
     Alert.alert("Invalid form", "Please provide all require fields", [
       {
         text: "Cancel",
-        onPress: () => { },
+        onPress: () => {},
       },
       {
         text: "Continue",
-        onPress: () => { },
+        onPress: () => {},
       },
       { defaultIndex: 1 },
     ]);
@@ -119,72 +119,41 @@ const Register = () => {
       });
   };
   //register
-  const register = async (data) => {
-    const user = {
-      email: data.email,
-      password: data.password,
-      fullname: data.fullname,
-      phone: data.phone,
-      address: data.location,
-      districtId: districtValue,
-    };
-    console.log("Value: ", user);
+  const [codeOTP, setCodeOTP] = useState(123456);
+
+  const randomOTP = () => {
+    var digits = "0123456789";
+    let OTP = "";
+    for (let index = 0; index < 6; index++) {
+      OTP += digits[Math.floor(Math.random() * 10)];
+    }
+    return OTP;
+  };
+  const sendOTP = async (data) => {
+    setCodeOTP(randomOTP());
+    console.log(codeOTP);
+    // console.log(data);
+
     handleCheckEmail(data.email);
     if (checkEmail.data == false) {
-      setLoader(true);
       try {
-        const endpoint = HOST_API.local + "/api/auth/registerParent";
-        const response = await axios.post(HOST_API.local + '/api/auth/registerParent', {
-          email: user.email,
-          password: user.password,
-          fullname: user.fullname,
-          phone: user.phone,
-          address: user.location,
-          districtId: user.districtId,
-        });
-        console.log(response.data);
+        setLoader(true);
+        const response = await axios.post(
+          HOST_API.local +
+            `/api/auth/send-code?code=${codeOTP}&email=${data.email}`,
+          {}
+        );
+        console.log("code", response.data);
         if (response.data.responseCode === "00") {
-          console.log(response.data);
-          Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
-            {
-              text: "Cancel",
-              onPress: () => { },
-            },
-            {
-              text: "Continue",
-              onPress: () => {
-                navigation.replace("Login");
-              },
-            },
-            { defaultIndex: 1 },
-          ]);
-          setLoader(false);
+          navigation.replace("OTPScreen", {
+            codeOTP,
+            data,
+            districtValue,
+          });
         } else {
-          Alert.alert("Error Logging im", "Please provide all require fields", [
-            {
-              text: "Cancel",
-              onPress: () => { },
-            },
-            {
-              text: "Continue",
-              onPress: () => { },
-            },
-            { defaultIndex: 1 },
-          ]);
         }
       } catch (error) {
-        console.log(error.message);
-        Alert.alert("Error", "error", [
-          {
-            text: "Cancel",
-            onPress: () => { },
-          },
-          {
-            text: "Continue",
-            onPress: () => { },
-          },
-          { defaultIndex: 1 },
-        ]);
+        console.log(error);
       } finally {
         setLoader(false);
       }
@@ -219,7 +188,7 @@ const Register = () => {
               fullname: "",
             }}
             validationSchema={validationSchema}
-            onSubmit={(data) => register(data)}
+            onSubmit={(data) => sendOTP(data)}
           >
             {({
               handleChange,
