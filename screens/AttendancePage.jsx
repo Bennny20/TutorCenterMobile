@@ -217,7 +217,7 @@ const AttendancePage = () => {
                   Gia sư: {item.tutor?.name} {item?.tutorName}
                 </Text>
               </TouchableOpacity>
-
+              <Text style={styles.sup}>SĐT: {item.tutor?.phone} </Text>
               <Text style={styles.sup}>Địa chỉ: {item.tutor?.address} </Text>
               <Text style={styles.sup}>
                 {item.tutor?.districtName}, {item.tutor?.provinceName}

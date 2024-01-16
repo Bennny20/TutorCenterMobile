@@ -142,12 +142,12 @@ const History = () => {
           borderRadius: 99,
         }}
       >
-        <View style={styles.btn}>
+        <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("Profile")}>
           <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
             <Text style={styles.amount}>Trang cá nhân</Text>
           </TouchableOpacity>
-        </View>
-        <View
+        </TouchableOpacity>
+        <TouchableOpacity
           style={[
             styles.btn,
             {
@@ -156,13 +156,14 @@ const History = () => {
               borderColor: COLORS.secondMain,
             },
           ]}
+          onPress={() => navigation.replace("Bottom Navigation")}
         >
           <TouchableOpacity
             onPress={() => navigation.replace("Bottom Navigation")}
           >
             <Text style={styles.amount}>Màn hình chính</Text>
           </TouchableOpacity>
-        </View>
+        </TouchableOpacity>
       </View>
     </View>
   );

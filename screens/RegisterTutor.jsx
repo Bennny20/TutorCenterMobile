@@ -72,7 +72,7 @@ const RegisterTutor = () => {
 
   //Tỉnh thành
   const [selectProvince, setSelectProvince] = useState(
-    "Chọn tỉnh thành nơi dậy"
+    "Chọn tỉnh thành"
   );
   const [isClickProvince, setIsClickProvince] = useState(false);
   const [province, setProvince] = useState([]);
@@ -96,7 +96,7 @@ const RegisterTutor = () => {
 
   //Quận huyện
   const [selectDistrict, setSelectDistrict] = useState(
-    "Chọn quận/huyện nơi dậy"
+    "Chọn quận/huyện"
   );
   const [isClickDistrict, setIsClickDistrict] = useState(false);
   const [district, setDistrict] = useState([]);

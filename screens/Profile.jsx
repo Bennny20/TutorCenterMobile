@@ -102,12 +102,12 @@ const Profile = () => {
       <View style={styles.heading}>
         <Text style={styles.headingText}> Thông tin cá nhân</Text>
         <View style={{ alignItems: "flex-end", marginRight: 10 }}>
-          <View style={styles.cartCount}>
+          {/* <View style={styles.cartCount}>
             <Text style={styles.cartNumber}>8</Text>
           </View>
           <TouchableOpacity>
             <Ionicons name="notifications-circle" size={45} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
       {loader ? (
@@ -122,12 +122,14 @@ const Profile = () => {
                   onPressIn={() =>
                     navigation.navigate("EditProfile", { userData })
                   }
+                  style={{ marginTop: 40 }}
                 >
-                  <Ionicons
+
+                  {/* <Ionicons
                     name="create-outline"
                     size={40}
                     color={COLORS.main}
-                  />
+                  /> */}
                 </TouchableOpacity>
               ) : (
                 <Text style={{ marginBottom: 30 }}></Text>
@@ -279,36 +281,42 @@ const Profile = () => {
                       </View>
                     </TouchableOpacity>
                   ) : (
-                    <TouchableOpacity
-                      onPressIn={() =>
-                        navigation.navigate("ManageClass", { user })
-                      }
-                    >
-                      <View style={styles.menuItem(0.5)}>
-                        <MaterialCommunityIcons
-                          name="clipboard-text-clock"
-                          size={30}
-                          color={COLORS.main}
-                        />
-                        <Text style={styles.menuItemText}>
-                          Quản lý lớp
-                        </Text>
-                      </View>
-                    </TouchableOpacity>
+                    <View>
+                      <TouchableOpacity
+                        onPressIn={() =>
+                          navigation.navigate("ManageClass", { user })
+                        }
+                      >
+                        <View style={styles.menuItem(0.5)}>
+                          <MaterialCommunityIcons
+                            name="clipboard-text-clock"
+                            size={30}
+                            color={COLORS.main}
+                          />
+                          <Text style={styles.menuItemText}>
+                            Quản lý lớp
+                          </Text>
+                        </View>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        onPressIn={() => navigation.navigate("Order")}
+                      >
+                        <View style={styles.menuItem(0.5)}>
+                          <MaterialCommunityIcons
+                            name="perspective-more"
+                            size={30}
+                            color={COLORS.main}
+                          />
+                          <Text style={styles.menuItemText}> Order </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+
+
+
                   )}
 
-                  <TouchableOpacity
-                    onPressIn={() => navigation.navigate("Order")}
-                  >
-                    <View style={styles.menuItem(0.5)}>
-                      <MaterialCommunityIcons
-                        name="perspective-more"
-                        size={30}
-                        color={COLORS.main}
-                      />
-                      <Text style={styles.menuItemText}> Order </Text>
-                    </View>
-                  </TouchableOpacity>
+
 
                   <TouchableOpacity onPress={() => logout()}>
                     <View style={styles.menuItem(0.5)}>

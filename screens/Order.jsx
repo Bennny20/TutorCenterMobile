@@ -84,7 +84,7 @@ const Order = () => {
           {/* <Text style={styles.requestSup}>{majors(item).major}</Text> */}
         </View>
       </TouchableOpacity>
-      <TouchableOpacity
+      <View
         onPress={() => navigation.navigate("AttendancePage", { item })}
         style={styles.requestStatus}
       >
@@ -125,7 +125,7 @@ const Order = () => {
             <Text style={styles.requestStatusBtn}>Nhận tiền</Text>
           </View>
         )}
-      </TouchableOpacity>
+      </View>
     </View>
   );
 

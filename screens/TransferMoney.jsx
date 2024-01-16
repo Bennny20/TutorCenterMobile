@@ -65,7 +65,7 @@ const TransferMoney = () => {
   }, []);
 
   const [checkPayment, setCheckPayment] = useState(false);
-  const tuition = classID.tuition * 0.1;
+  const tuition = classID.tuition * 0.3;
 
   const createOrder = async () => {
     const token = await AsyncStorage.getItem("token");
@@ -80,11 +80,6 @@ const TransferMoney = () => {
         HOST_API.local + "/api/order/create",
         {
           clazzId: classID.id,
-          amount: new Intl.NumberFormat("vi-VN", {
-            style: "currency",
-            currency: "VND",
-          }).format(tuition),
-          type: 1,
         },
         {
           headers: {

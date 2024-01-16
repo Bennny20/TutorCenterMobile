@@ -23,7 +23,7 @@ const Wallet = () => {
   const { userData } = route.params;
   const [searchKey, setSearchKey] = useState("");
   const [searchResult, setSearchResult] = useState([]);
-  const [obscureText, setObscureText] = useState(false);
+  const [obscureText, setObscureText] = useState(true);
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState();
   const [currentStep, setCurrentStep] = useState(0);

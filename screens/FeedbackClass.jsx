@@ -198,11 +198,11 @@ const FeedbackClass = () => {
             marginHorizontal: 10,
           }}
         >
-          <View style={styles.createAttendance}>
+          {/* <View style={styles.createAttendance}>
             <Text style={styles.titleText}>
               Số buổi: {length}/ {item.slots}
             </Text>
-          </View>
+          </View> */}
         </View>
         <View
           style={{
