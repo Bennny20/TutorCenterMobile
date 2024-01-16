@@ -160,7 +160,7 @@ const History = () => {
           <TouchableOpacity
             onPress={() => navigation.replace("Bottom Navigation")}
           >
-            <Text style={styles.amount}>Home</Text>
+            <Text style={styles.amount}>Màn hình chính</Text>
           </TouchableOpacity>
         </View>
       </View>

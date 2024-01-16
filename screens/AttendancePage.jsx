@@ -145,7 +145,7 @@ const AttendancePage = () => {
         Alert.alert("Tạo điểm danh không thành công", "Quản lý lớp", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
@@ -175,7 +175,7 @@ const AttendancePage = () => {
       { defaultIndex: 1 },
     ]);
   };
-  console.log(item);
+  console.log("Deatil: ", item);
   const day = ({ item }) => {
     const start = item?.dateStart.split("T");
     const end = item?.dateEnd.split("T");
@@ -183,7 +183,7 @@ const AttendancePage = () => {
   };
   return (
     <ScrollView style={{ marginTop: 20 }}>
-      <Heading title={"Điểm danh"} />
+      <Heading title={"Thông tin của lớp "} />
       <View style={styles.class}>
         <View style={styles.classHeading}>
           <View style={styles.headingName}>
@@ -261,12 +261,14 @@ const AttendancePage = () => {
         >
           {loader ? (
             <ActivityIndicator size={500} color={COLORS.main} />
-          ) : (
-            <TouchableOpacity style={styles.createAttendance}>
+          ) : (<View>
+            {/* <TouchableOpacity style={styles.createAttendance}>
               <Text style={styles.titleText}>
                 Số buổi: {length}/{item.slots}
               </Text>
-            </TouchableOpacity>
+            </TouchableOpacity> */}
+          </View>
+
           )}
           {userData?.role !== "TUTOR" && (
             <TouchableOpacity

@@ -68,7 +68,7 @@ const TutorItemApply = ({ item, classID }) => {
         { defaultIndex: 1 },
       ]);
     } else {
-      Alert.alert("Chọn gia sư khoong thành công", "Quản lý lớp", [
+      Alert.alert("Chọn gia sư không thành công", "Quản lý lớp", [
         {
           text: "Cancel",
           onPress: () => {},

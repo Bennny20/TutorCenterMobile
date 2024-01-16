@@ -34,7 +34,7 @@ const Home = () => {
           >
             <View style={{ alignItems: "flex-end" }}>
               <View style={styles.cartCount}>
-                <Text style={styles.cartNumber}>8</Text>
+                {/* <Text style={styles.cartNumber}>8</Text> */}
               </View>
               <TouchableOpacity>
                 <Ionicons name="notifications-circle" size={35} />

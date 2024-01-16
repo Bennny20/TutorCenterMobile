@@ -52,11 +52,6 @@ const ClassDetailApply = () => {
     currency: "VND",
   }).format(item.tuition);
 
-
-  console.log(start);
-
-  console.log(end);
-
   return (
     <SafeAreaView>
       <Heading title={"Thông tin lớp chi tiết "} />
@@ -224,7 +219,7 @@ const ClassDetailApply = () => {
               <View
                 style={[styles.status, { backgroundColor: COLORS.secondMain }]}
               >
-                <Text style={styles.sup}>Đã apply</Text>
+                <Text style={styles.sup}>Đã đăng ký</Text>
               </View>
             </View>
           ) : item.status == 1 ? (

@@ -88,7 +88,7 @@ const FeedbackTutor = () => {
 
       <View style={styles.info}>
         <View>
-          <Text style={styles.sup}>Name: {tutorDetail.tutorName}</Text>
+          <Text style={styles.sup}>Tên gia sư: {tutorDetail.tutorName}</Text>
           <Text style={styles.sup}>Giới tính: {tutorDetail.gender}</Text>
           <Text style={styles.sup}>
             Địa chi: {tutorDetail.districtName}, {tutorDetail.provinceName}
@@ -96,7 +96,7 @@ const FeedbackTutor = () => {
         </View>
       </View>
       <View style={{ marginTop: 20, marginHorizontal: 20 }}>
-        <Text style={styles.title}>Đáng gia chất lượng</Text>
+        <Text style={styles.title}>Đánh giá chất lượng</Text>
       </View>
 
       {loader ? (

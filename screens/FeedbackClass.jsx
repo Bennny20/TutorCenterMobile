@@ -23,7 +23,6 @@ const FeedbackClass = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { item, length, user } = route.params;
-  // console.log(item);
   const { checkEndDate, setCheckEndDate } = useState(false);
   const [content, setContent] = useState("");
   const [startRating1, setStartRating1] = useState(null);
@@ -73,27 +72,27 @@ const FeedbackClass = () => {
       )
       .then((response) => {
         console.log(response.data);
-        Alert.alert("Tạo điểm danh thành công", "Quản lý lớp", [
+        Alert.alert("Gửi đánh giá thành công", "Quản lý lớp", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
-            onPress: () => {},
+            onPress: () => { },
           },
           { defaultIndex: 1 },
         ]);
       })
       .catch((error) => {
-        Alert.alert("Tạo điểm danh không thành công", "Quản lý lớp", [
+        Alert.alert("Gửi đánh giá không thành công", "Quản lý lớp", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
-            onPress: () => {},
+            onPress: () => { },
           },
           { defaultIndex: 1 },
         ]);
@@ -105,7 +104,7 @@ const FeedbackClass = () => {
     Alert.alert("Bạn có muốn gửi đánh giá ", " ", [
       {
         text: "Cancel",
-        onPress: () => {},
+        onPress: () => { },
       },
       {
         text: "Continue",
@@ -137,21 +136,26 @@ const FeedbackClass = () => {
   const [checkFeedback, setCheckFeedback] = useState(false);
   const [loader, setLoader] = useState(false);
   const [data, setData] = useState([]);
+  const [classDetail, setClassDetail] = useState();
 
   useEffect(() => {
     fetchFeedback();
   }, []);
+
   const fetchFeedback = async () => {
     const token = await AsyncStorage.getItem("token");
 
     setLoader(true);
     try {
       const response = await axios.get(
+        HOST_API.local + `/api/feedback/clazz/${item.id}`
+      );
+      const classDeatil = await axios.get(
         HOST_API.local + `/api/clazz/${item.id}`
       );
-      setData(response.data);
-      console.log(response.data);
-      if (response.data.data.length != 0) {
+      setData(response.data); console.log("classDeatil: ", classDeatil.data);
+      setClassDetail(classDeatil.data)
+      if (response.data.data.length > 0) {
         setCheckFeedback(true);
       }
     } catch (error) {
@@ -160,7 +164,6 @@ const FeedbackClass = () => {
       setLoader(false);
     }
   };
-  // console.log(item);
   return (
     <SafeAreaView>
       <Heading title={"Đánh giá chất lượng"} />
@@ -230,7 +233,7 @@ const FeedbackClass = () => {
                   }}
                 >
                   <Text style={[styles.itemText, { color: COLORS.primary }]}>
-                    Nngười đánh giá: {data.data.parentName}
+                    Nngười đánh giá: {classDetail.data.parentName}
                   </Text>
                   {/* <Text style={[styles.itemText, { color: COLORS.primary }]}>
                     {data.data[0].dateCreate}
@@ -247,7 +250,7 @@ const FeedbackClass = () => {
                       { fontFamily: "regular", color: COLORS.primary },
                     ]}
                   >
-                    Chất lượng dạy: {data.data.pedagogicalSkill}{" "}
+                    Chất lượng dạy: {classDetail.data.pedagogicalSkill}/5{" "}
                     <Ionicons
                       name={"star"}
                       size={24}
@@ -260,7 +263,7 @@ const FeedbackClass = () => {
                       { fontFamily: "regular", color: COLORS.primary },
                     ]}
                   >
-                    Tác phong: {data.data.professionalSkill}{" "}
+                    Tác phong: {classDetail.data.professionalSkill}/5{" "}
                     <Ionicons
                       name={"star"}
                       size={24}
@@ -273,7 +276,7 @@ const FeedbackClass = () => {
                       { fontFamily: "regular", color: COLORS.primary },
                     ]}
                   >
-                    Kỹ năng {data.data.workingStyle}{" "}
+                    Kỹ năng {classDetail.data.workingStyle}/5{" "}
                     <Ionicons
                       name={"star"}
                       size={24}
@@ -286,7 +289,7 @@ const FeedbackClass = () => {
                       { fontFamily: "regular", color: COLORS.primary },
                     ]}
                   >
-                    Khóa học: {data.data.courseCover}{" "}
+                    Khóa học: {classDetail.data.courseCover}/5{" "}
                     <Ionicons
                       name={"star"}
                       size={24}
@@ -299,7 +302,7 @@ const FeedbackClass = () => {
                       { fontFamily: "regular", color: COLORS.primary },
                     ]}
                   >
-                    Hỗ trợ ngoài giờ: {data.data.supportOt}{" "}
+                    Hỗ trợ ngoài giờ: {classDetail.data.supportOt}/5{" "}
                     <Ionicons
                       name={"star"}
                       size={24}

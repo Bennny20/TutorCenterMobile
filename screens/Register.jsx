@@ -23,20 +23,20 @@ import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view
 
 const validationSchema = Yup.object().shape({
   password: Yup.string()
-    .min(1, "Password must be at least 8 characters")
+    .min(1, "Mật khẩu tối thiểu 8 kí tự")
     .required("Required"),
   email: Yup.string()
-    .email("Provide a valid email address")
+    .email("Cung cấp địa chỉ email")
     .required("Required"),
   location: Yup.string()
-    .min(5, "Provide a valid location address")
+    .min(5, "Cung cấp địa chỉ của bạn")
     .required("Required"),
   phone: Yup.string()
-    .min(10, "Provide a valid phone number")
-    .max(10, "Provide a valid phone number")
+    .min(10, "Không đúng định dạng")
+    .max(10, "Không đúng định dạng")
     .required("Required"),
   fullname: Yup.string()
-    .min(5, "Provide a valid your fullname")
+    .min(5, "Cung cấp họ và tên của bạn")
     .required("Required"),
 });
 const Register = () => {
@@ -238,7 +238,7 @@ const Register = () => {
 
                 {/* Password */}
                 <View style={{ marginBottom: 20 }}>
-                  <Text style={styles.label}>Password</Text>
+                  <Text style={styles.label}>Mật khẩu</Text>
                   <View
                     style={styles.inputWrapper(
                       touched.password ? COLORS.main : COLORS.offwhite
@@ -283,7 +283,7 @@ const Register = () => {
 
                 {/* Fullname */}
                 <View style={{ marginBottom: 20 }}>
-                  <Text style={styles.label}>Fullname</Text>
+                  <Text style={styles.label}>Họ và tên</Text>
                   <View
                     style={styles.inputWrapper(
                       touched.fullname ? COLORS.main : COLORS.offwhite
@@ -430,7 +430,7 @@ const Register = () => {
 
                 {/* Location */}
                 <View style={{ marginBottom: 20 }}>
-                  <Text style={styles.label}>Location</Text>
+                  <Text style={styles.label}>Địa chỉ</Text>
                   <View
                     style={styles.inputWrapper(
                       touched.location ? COLORS.main : COLORS.offwhite

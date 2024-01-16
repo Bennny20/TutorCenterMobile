@@ -415,7 +415,7 @@ const ClassDetail = () => {
                     fontSize: SIZES.large,
                   }}
                 >
-                  Apply
+                  Đăng ký
                 </Text>
               </TouchableOpacity>
             ) : checkApply ? (
@@ -432,7 +432,7 @@ const ClassDetail = () => {
                     fontSize: SIZES.large,
                   }}
                 >
-                  Đã apply
+                  Đã đăng ký
                 </Text>
               </View>
             ) : (

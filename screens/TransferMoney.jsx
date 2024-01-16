@@ -197,7 +197,7 @@ const TransferMoney = () => {
                 }}
               >
                 <Text style={styles.warring}>
-                  Tài khoản không đủ vui lòng nạp thêm thêm
+                  Tài khoản không đủ. Vui lòng nạp thêm thêm
                 </Text>
                 <View
                   style={{ justifyContent: "center", alignItems: "center" }}

@@ -74,11 +74,10 @@ const ApplyPage = () => {
       <View style={styles.info}>
         <View style={styles.infoDetail}>
           <Text style={styles.sup}>
-            Mon hoc: {major} - {classNo}
-          </Text>
-          <Text style={styles.sup}>Gioi tinh:{item.gender}</Text>
+            Môn học: {major} - {classNo} </Text>
+          <Text style={styles.sup}>Giới tính:{item.gender}</Text>
           <Text style={styles.sup}>
-            Dia diem: {item.address}, {item.provinceName}
+            Địa điểm: {item.address}, {item.provinceName}
           </Text>
           {/* <Text style={styles.sup}>Ngay hoc: {item.dateStart}</Text> */}
           {/* <Text style={styles.sup}>Ngay kết thúc: {item.dateEnd}</Text> */}
@@ -106,8 +105,8 @@ const ApplyPage = () => {
 
       <View style={{ marginTop: 5 }}>
         <View style={styles.title}>
-          <Text style={styles.titleText}> Thong tin gia su</Text>
-          <Text style={styles.titleText}>Trang thai</Text>
+          <Text style={styles.titleText}> Thông tin gia sư</Text>
+          <Text style={styles.titleText}>Trạng thái</Text>
         </View>
       </View>
 

@@ -34,7 +34,7 @@ const Profile = () => {
 
   const checkExitingUser = async () => {
     const token = await AsyncStorage.getItem("token");
-    console.log(token);
+    // console.log(token);
     if (token != null) {
       setLoader(true);
       try {
@@ -85,13 +85,13 @@ const Profile = () => {
   };
 
   const logout = () => {
-    Alert.alert("logout", "Are you sure you want to logout", [
+    Alert.alert("ĐĂNG XUẤT", "Bạn có muốn đăng xuất", [
       {
-        text: "Cancel",
+        text: "HỦY",
         onPress: () => console.log("cancel pressed"),
       },
       {
-        text: "Continue",
+        text: "ĐỒNG Ý",
         onPress: () => userLogout(),
       },
     ]);
@@ -291,7 +291,7 @@ const Profile = () => {
                           color={COLORS.main}
                         />
                         <Text style={styles.menuItemText}>
-                          Quản lý lớp & Điêm danh
+                          Quản lý lớp
                         </Text>
                       </View>
                     </TouchableOpacity>

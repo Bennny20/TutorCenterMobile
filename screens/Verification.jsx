@@ -66,7 +66,7 @@ const Verification = () => {
         Alert.alert("Xác nhận tài khoản không thành công", "", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
@@ -255,17 +255,17 @@ const Verification = () => {
                 <Text style={[styles.txtTest, { color: COLORS.main }]}>
                   {data[0]?.latestGrade >= 80 &&
                     " PASS: " +
-                      data[0]?.latestGrade +
-                      "% Số lần : " +
-                      data[0]?.times}
+                    data[0]?.latestGrade +
+                    "% Số lần : " +
+                    data[0]?.times}
                 </Text>
                 <Text style={[styles.txtTest, { color: COLORS.red }]}>
                   {data[0]?.latestGrade < 80 &&
                     data[0]?.latestGrade > 0 &&
                     " NOT PASS:  " +
-                      data[0]?.latestGrade +
-                      "% Số lần : " +
-                      data[0]?.times}
+                    data[0]?.latestGrade +
+                    "% Số lần : " +
+                    data[0]?.times}
                 </Text>
               </Text>
             </TouchableOpacity>
@@ -276,9 +276,25 @@ const Verification = () => {
                 onPressIn={() => navigation.navigate("TestTutor")}
               >
                 <Text style={styles.txtTest}>
-                  Bài test môn {userTutor.subjects[1].name}{" "}
-                  {userTutor.subjects[1].level}
-                  <Text style={{ color: COLORS.main }}>{"   "}Làm ngay</Text>
+                  Môn {data[1]?.name} {data[1]?.level}
+                  <Text style={[styles.txtTest, { color: COLORS.main }]}>
+                    {data[1]?.latestGrade == 0 && " Làm ngay"}
+                  </Text>
+                  <Text style={[styles.txtTest, { color: COLORS.main }]}>
+                    {data[1]?.latestGrade >= 80 &&
+                      " PASS: " +
+                      data[1]?.latestGrade +
+                      "% Số lần : " +
+                      data[1]?.times}
+                  </Text>
+                  <Text style={[styles.txtTest, { color: COLORS.red }]}>
+                    {data[1]?.latestGrade < 80 &&
+                      data[1]?.latestGrade > 0 &&
+                      " NOT PASS:  " +
+                      data[1]?.latestGrade +
+                      "% Số lần : " +
+                      data[1]?.times}
+                  </Text>
                 </Text>
               </TouchableOpacity>
             )}
@@ -289,15 +305,93 @@ const Verification = () => {
                 onPressIn={() => navigation.navigate("TestTutor")}
               >
                 <Text style={styles.txtTest}>
-                  Bài test môn {userTutor.subjects[2].name}{" "}
-                  {userTutor.subjects[2].level}
-                  <Text style={{ color: COLORS.main }}>{"   "}Làm ngay</Text>
+                  Môn {data[2]?.name} {data[2]?.level}
+                  <Text style={[styles.txtTest, { color: COLORS.main }]}>
+                    {data[2]?.latestGrade == 0 && " Làm ngay"}
+                  </Text>
+                  <Text style={[styles.txtTest, { color: COLORS.main }]}>
+                    {data[2]?.latestGrade >= 80 &&
+                      " PASS: " +
+                      data[2]?.latestGrade +
+                      "% Số lần : " +
+                      data[2]?.times}
+                  </Text>
+                  <Text style={[styles.txtTest, { color: COLORS.red }]}>
+                    {data[2]?.latestGrade < 80 &&
+                      data[2]?.latestGrade > 0 &&
+                      " NOT PASS:  " +
+                      data[2]?.latestGrade +
+                      "% Số lần : " +
+                      data[2]?.times}
+                  </Text>
                 </Text>
               </TouchableOpacity>
             )}
-            <TouchableOpacity style={styles.btn} onPress={createAttendance}>
-              <Text>Xác minh tài khoản</Text>
-            </TouchableOpacity>
+
+
+            {data[0]?.latestGrade < 80 && data[1] === undefined && (
+              <View>
+                <View style={{ justifyContent: "center", alignItems: "center" }}>
+                  <Text style={{ color: COLORS.red, fontSize: SIZES.medium }}>Tất cả bài test cần phải trên 80%</Text>
+                </View>
+
+
+                <View style={styles.btnDisable} onPress={createAttendance}>
+                  <Text>Xác minh tài khoản</Text>
+                </View>
+              </View>
+
+            )}
+
+
+            {data[0]?.latestGrade < 80 && data[1]?.latestGrade < 80 && data[2] === undefined(
+              <View>
+                <View style={{ justifyContent: "center", alignItems: "center" }}>
+                  <Text style={{ color: COLORS.red, fontSize: SIZES.medium }}>Tất cả bài test cần phải trên 80%</Text>
+                </View>
+
+
+                <View style={styles.btnDisable} onPress={createAttendance}>
+                  <Text>Xác minh tài khoản</Text>
+                </View>
+              </View>
+            )}
+
+
+            {data[0]?.latestGrade < 80 && data[1]?.latestGrade < 80 && data[2]?.latestGrade < 80(
+              <View>
+                <View style={{ justifyContent: "center", alignItems: "center" }}>
+                  <Text style={{ color: COLORS.red, fontSize: SIZES.medium }}>Tất cả bài test cần phải trên 80%</Text>
+                </View>
+
+
+                <View style={styles.btnDisable} onPress={createAttendance}>
+                  <Text>Xác minh tài khoản</Text>
+                </View>
+              </View>
+            )}
+
+
+
+            {data[0]?.latestGrade > 79 && data[1] === undefined && (
+              <TouchableOpacity style={styles.btn} onPress={createAttendance}>
+                <Text>Xác minh tài khoản</Text>
+              </TouchableOpacity>
+            )}
+
+
+            {data[0]?.latestGrade > 79 && data[1]?.latestGrade && data[2] === undefined(
+              <TouchableOpacity style={styles.btn} onPress={createAttendance}>
+                <Text>Xác minh tài khoản</Text>
+              </TouchableOpacity>
+            )}
+
+
+            {data[0]?.latestGrade > 79 && data[1]?.latestGrade && data[2]?.latestGrade(
+              <TouchableOpacity style={styles.btn} onPress={createAttendance}>
+                <Text>Xác minh tài khoản</Text>
+              </TouchableOpacity>
+            )}
           </View>
         ) : (
           <View>
@@ -322,17 +416,17 @@ const Verification = () => {
                   <Text style={[styles.txtTest, { color: COLORS.main }]}>
                     {data[0]?.latestGrade >= 80 &&
                       " PASS: " +
-                        data[0]?.latestGrade +
-                        "% Số lần : " +
-                        data[0]?.times}
+                      data[0]?.latestGrade +
+                      "% Số lần : " +
+                      data[0]?.times}
                   </Text>
                   <Text style={[styles.txtTest, { color: COLORS.red }]}>
                     {data[0]?.latestGrade < 80 &&
                       data[0]?.latestGrade > 0 &&
                       " NOT PASS:  " +
-                        data[0]?.latestGrade +
-                        "% Số lần : " +
-                        data[0]?.times}
+                      data[0]?.latestGrade +
+                      "% Số lần : " +
+                      data[0]?.times}
                   </Text>
                 </Text>
               </View>
@@ -356,17 +450,17 @@ const Verification = () => {
                     <Text style={[styles.txtTest, { color: COLORS.main }]}>
                       {data[1]?.latestGrade >= 80 &&
                         " PASS: " +
-                          data[1]?.latestGrade +
-                          "% Số lần : " +
-                          data[1]?.times}
+                        data[1]?.latestGrade +
+                        "% Số lần : " +
+                        data[1]?.times}
                     </Text>
                     <Text style={[styles.txtTest, { color: COLORS.red }]}>
                       {data[1]?.latestGrade < 80 &&
                         data[1]?.latestGrade > 0 &&
                         " NOT PASS:  " +
-                          data[1]?.latestGrade +
-                          "% Số lần : " +
-                          data[1]?.times}
+                        data[1]?.latestGrade +
+                        "% Số lần : " +
+                        data[1]?.times}
                     </Text>
                   </Text>
                 </View>
@@ -386,17 +480,17 @@ const Verification = () => {
                   <Text style={[styles.txtTest, { color: COLORS.main }]}>
                     {data[2]?.latestGrade >= 80 &&
                       " PASS: " +
-                        data[2]?.latestGrade +
-                        "% Số lần : " +
-                        data[2]?.times}
+                      data[2]?.latestGrade +
+                      "% Số lần : " +
+                      data[2]?.times}
                   </Text>
                   <Text style={[styles.txtTest, { color: COLORS.red }]}>
                     {data[2]?.latestGrade < 80 &&
                       data[2]?.latestGrade > 0 &&
                       " NOT PASS:  " +
-                        data[2]?.latestGrade +
-                        "% Số lần : " +
-                        data[2]?.times}
+                      data[2]?.latestGrade +
+                      "% Số lần : " +
+                      data[2]?.times}
                   </Text>
                 </Text>
               </View>
@@ -414,17 +508,17 @@ const Verification = () => {
                   <Text style={[styles.txtTest, { color: COLORS.main }]}>
                     {data[3]?.latestGrade >= 80 &&
                       " PASS: " +
-                        data[3]?.latestGrade +
-                        "% Số lần : " +
-                        data[3]?.times}
+                      data[3]?.latestGrade +
+                      "% Số lần : " +
+                      data[3]?.times}
                   </Text>
                   <Text style={[styles.txtTest, { color: COLORS.red }]}>
                     {data[3]?.latestGrade < 80 &&
                       data[3]?.latestGrade > 0 &&
                       " NOT PASS:  " +
-                        data[3]?.latestGrade +
-                        "% Số lần : " +
-                        data[3]?.times}
+                      data[3]?.latestGrade +
+                      "% Số lần : " +
+                      data[3]?.times}
                   </Text>
                 </Text>
               </View>
@@ -493,6 +587,18 @@ const styles = StyleSheet.create({
     marginHorizontal: 30,
     borderRadius: 10,
     backgroundColor: COLORS.secondMain,
+    marginTop: 10,
+  },
+
+  btnDisable: {
+    marginVertical: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingVertical: 10,
+    borderWidth: 2,
+    marginHorizontal: 30,
+    borderRadius: 10,
+    backgroundColor: COLORS.gray,
     marginTop: 10,
   },
 

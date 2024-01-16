@@ -80,7 +80,7 @@ const OTPScreen = () => {
         Alert.alert("Chúc mừng ", "Đăng kí tài khoản thành công", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
@@ -95,11 +95,11 @@ const OTPScreen = () => {
         Alert.alert("Error Logging im", "Please provide all require fields", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
-            onPress: () => {},
+            onPress: () => { },
           },
           { defaultIndex: 1 },
         ]);
@@ -109,11 +109,11 @@ const OTPScreen = () => {
       Alert.alert("Error", "error", [
         {
           text: "Cancel",
-          onPress: () => {},
+          onPress: () => { },
         },
         {
           text: "Continue",
-          onPress: () => {},
+          onPress: () => { },
         },
         { defaultIndex: 1 },
       ]);
@@ -168,6 +168,8 @@ const OTPScreen = () => {
         </View>
 
         <View style={styles.btnView}>
+
+      
           <TouchableOpacity onPress={register}>
             <View style={styles.btnChange}>
               <Text style={styles.txtChange}>Đăng ký</Text>

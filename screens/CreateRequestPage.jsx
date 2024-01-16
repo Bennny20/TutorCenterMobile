@@ -327,7 +327,7 @@ const CreateRequestPage = () => {
       daysOfWeek: dayOfWeek2.join(", "),
       time: timeValue,
       slots: Number(slot),
-      slotsLength: slotLength,
+      slotsLength: 1,
       tuition: Number(price),
       notes: description,
       dateStart: dateStartValue,
@@ -349,7 +349,7 @@ const CreateRequestPage = () => {
           daysOfWeek: dayOfWeek2.join(", "),
           time: timeValue,
           slots: Number(slot),
-          slotsLength: slotLength,
+          slotsLength: 1,
           tuition: Number(price),
           notes: description,
           dateStart: dateStartValue,
@@ -841,25 +841,6 @@ const CreateRequestPage = () => {
                 </TouchableOpacity>
               )}
             </View>
-            {/* <DropDownPicker
-                style={styles.dropdownSelector}
-                items={ngayTrongTuan}
-                open={dayOfWeekOpen}
-                setOpen={() => setDayOfWeekOpen(!dayOfWeekOpen)}
-                value={dayOfWeekValue}
-                setValue={(val) => setDayOfWeekValue(val)}
-                placeholder="Ngày học trong tuần"
-                showTickIcon={true}
-                showArrowIcon={true}
-                multiple={true}
-                min={1}
-                max={7}
-                mode="BADGE"
-                zIndex={20}
-                badgeColors={COLORS.secondMain}
-                badgeDotColors={["white"]}
-                backgroundColor=""
-              /> */}
           </View>
 
           {/* Thời gian dạy */}

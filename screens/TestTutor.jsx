@@ -70,7 +70,6 @@ const TestTutor = () => {
 
   const submit = async () => {
     const value = SUBMIT;
-    console.log(value);
     const token = await AsyncStorage.getItem("token");
     axios
       .put(HOST_API.local + `/api/question/submit`, value, {
