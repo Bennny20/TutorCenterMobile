@@ -52,6 +52,12 @@ export default function App() {
       `Key "cancelled" in the image picker result is deprecated and will be removed in SDK 48, use "canceled" instead`,
       "Failed prop type: Invalid prop `value` of type `number` supplied to `TextInput`, expected `string`",
       "Possible Unhandled Promise Rejection (id: 0):",
+      "Possible Unhandled Promise Rejection (id: 1):",
+      "Possible Unhandled Promise Rejection (id: 2):",
+      "Possible Unhandled Promise Rejection (id: 3):",
+      "Possible Unhandled Promise Rejection (id: 4):",
+      "Possible Unhandled Promise Rejection (id: 5):",
+      "Possible Unhandled Promise Rejection (id: 6):",
     ]);
   }, []);
 

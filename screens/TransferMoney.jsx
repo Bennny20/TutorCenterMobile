@@ -21,7 +21,6 @@ import { Alert } from "react-native";
 
 const TransferMoney = () => {
   const navigation = useNavigation();
-
   const route = useRoute();
   const { item, userData, classID } = route.params;
   const [loader, setLoader] = useState(false);
@@ -34,6 +33,8 @@ const TransferMoney = () => {
   );
   const [data, setData] = useState();
   const [temp, setTemp] = useState();
+  const [revenueValue, setRevenueValue] = useState();
+  const [tuitionValue, setTuitionValue] = useState();
   const fetchBalance = async () => {
     const token = await AsyncStorage.getItem("token");
     setLoader(true);
@@ -46,7 +47,14 @@ const TransferMoney = () => {
           },
         }
       );
+
+      const revenue = await axios.get(
+        HOST_API.local + `/api/systemVariable/revenue`
+      );
+      setRevenueValue(revenue.data.data);
       setTemp(response.data);
+      setTuitionValue(classID.tuition * revenue.data.data.value);
+      console.log(classID.tuition * revenue.data.data.value);
       setData(
         Intl.NumberFormat("vi-VN", {
           style: "currency",
@@ -65,13 +73,13 @@ const TransferMoney = () => {
   }, []);
 
   const [checkPayment, setCheckPayment] = useState(false);
-  const tuition = classID.tuition * 0.3;
+  // const tuition = classID.tuition * 0.3;
 
   const createOrder = async () => {
     const token = await AsyncStorage.getItem("token");
     const order = {
       clazzId: classID.id,
-      amount: tuition,
+      amount: tuitionValue,
       type: "Chuyển",
     };
     setLoader(true);
@@ -158,7 +166,7 @@ const TransferMoney = () => {
         <View>
           <Text style={styles.itemText}>Số tiền </Text>
           <View style={styles.input}>
-            <CurrencyFormatter amount={tuition} />
+            <CurrencyFormatter amount={tuitionValue} />
           </View>
         </View>
 
@@ -183,7 +191,7 @@ const TransferMoney = () => {
           <ActivityIndicator size={50} color={COLORS.main} />
         ) : (
           <View>
-            {temp?.data.balance < tuition ? (
+            {temp?.data.balance < tuitionValue ? (
               <View
                 style={{
                   marginTop: 10,

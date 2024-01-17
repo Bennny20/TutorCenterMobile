@@ -14,6 +14,11 @@ const History = () => {
     style: "currency",
     currency: "VND",
   }).format(item.amount);
+
+  const formattedOrder = new Intl.NumberFormat("vi-VN", {
+    style: "currency",
+    currency: "VND",
+  }).format(order.amount);
   return (
     <View>
       <View style={styles.header}>
@@ -114,7 +119,7 @@ const History = () => {
             <Text style={styles.amount}>Thanh toán khóa học</Text>
             <Text style={styles.amount}>Chuyển tiền thành công</Text>
             <Text style={[styles.amount, { fontSize: SIZES.large }]}>
-              - {order.amount}
+              - {formattedOrder}
             </Text>
           </View>
 
@@ -125,7 +130,7 @@ const History = () => {
             </View>
             <View style={styles.info}>
               <Text style={styles.title}>Số tiền chuyển khoản</Text>
-              <Text style={styles.amount}> - {order.amount}</Text>
+              <Text style={styles.amount}> - {formattedOrder}</Text>
             </View>
             <View style={styles.info}>
               <Text style={styles.title}>Phí giao dịch</Text>
@@ -142,7 +147,10 @@ const History = () => {
           borderRadius: 99,
         }}
       >
-        <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate("Profile")}>
+        <TouchableOpacity
+          style={styles.btn}
+          onPress={() => navigation.navigate("Profile")}
+        >
           <TouchableOpacity onPress={() => navigation.navigate("Profile")}>
             <Text style={styles.amount}>Trang cá nhân</Text>
           </TouchableOpacity>
