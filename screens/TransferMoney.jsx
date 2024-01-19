@@ -22,15 +22,20 @@ import { Alert } from "react-native";
 const TransferMoney = () => {
   const navigation = useNavigation();
   const route = useRoute();
-  const { item, userData, classID } = route.params;
+  const { item, userData, classID, userTutor } = route.params;
   const [loader, setLoader] = useState(false);
-  const [money, setMoney] = useState(classID.tuition);
+  const [money, setMoney] = useState(500000);
   const [content, setContent] = useState(
     "Thanh toán chi phí class: " +
-      classID.id +
+      classID?.id +
       " của phụ huynh " +
       userData?.fullName
   );
+
+  const [contentPremium, setContentPremium] = useState(
+    "Nâng cấp tài khoản: " + userTutor.fullName
+  );
+
   const [data, setData] = useState();
   const [temp, setTemp] = useState();
   const [revenueValue, setRevenueValue] = useState();
@@ -53,8 +58,7 @@ const TransferMoney = () => {
       );
       setRevenueValue(revenue.data.data);
       setTemp(response.data);
-      setTuitionValue(classID.tuition * revenue.data.data.value);
-      console.log(classID.tuition * revenue.data.data.value);
+      setTuitionValue(classID?.tuition * revenue.data.data.value);
       setData(
         Intl.NumberFormat("vi-VN", {
           style: "currency",
@@ -73,7 +77,6 @@ const TransferMoney = () => {
   }, []);
 
   const [checkPayment, setCheckPayment] = useState(false);
-  // const tuition = classID.tuition * 0.3;
 
   const createOrder = async () => {
     const token = await AsyncStorage.getItem("token");
@@ -99,19 +102,57 @@ const TransferMoney = () => {
       if (response.data.responseCode === "00") {
         setLoader(false);
         navigation.navigate("History", { item, order });
-        // Alert.alert("Thanh toán thành công", "", [
-        //   {
-        //     text: "Cancel",
-        //     onPress: () => {},
-        //   },
-        //   {
-        //     text: "Continue",
-        //     onPress: () => {
-        //       navigation.navigate("History", { item, order });
-        //     },
-        //   },
-        //   { defaultIndex: 1 },
-        // ]);
+      } else {
+        Alert.alert("Thanh toán không thành công", "", [
+          {
+            text: "Cancel",
+            onPress: () => {},
+          },
+          {
+            text: "Continue",
+            onPress: () => {},
+          },
+          { defaultIndex: 1 },
+        ]);
+      }
+    } catch (error) {
+      console.log(error.message);
+      Alert.alert("Error", "error", [
+        {
+          text: "Cancel",
+          onPress: () => {},
+        },
+        {
+          text: "Continue",
+          onPress: () => {},
+        },
+        { defaultIndex: 1 },
+      ]);
+    } finally {
+      setLoader(false);
+    }
+  };
+
+  const createPremium = async () => {
+    const token = await AsyncStorage.getItem("token");
+    const order = {
+      amount: money,
+      type: "Chuyển",
+    };
+    setLoader(true);
+    try {
+      const response = await axios.post(
+        HOST_API.local + "/api/userWallet/buy-premium",
+        {
+          headers: {
+            Authorization: "Bearer " + token,
+          },
+        }
+      );
+      console.log(response.data);
+      if (response.data.responseCode === "00") {
+        setLoader(false);
+        navigation.navigate("History", { item, order });
       } else {
         Alert.alert("Thanh toán không thành công", "", [
           {
@@ -162,70 +203,143 @@ const TransferMoney = () => {
             Thông tin chuyển tiền
           </Text>
         </View>
+        {userTutor !== undefined ? (
+          <View>
+            <View>
+              <Text style={styles.itemText}>Số tiền </Text>
+              <View style={styles.input}>
+                <CurrencyFormatter amount={money} />
+              </View>
+            </View>
+            <View>
+              <Text style={styles.itemText}>Thông tin người nhận </Text>
+              <View style={styles.input}>
+                <Text>Trung tâm giá sư - Tutor Center</Text>
+              </View>
+            </View>
 
-        <View>
-          <Text style={styles.itemText}>Số tiền </Text>
-          <View style={styles.input}>
-            <CurrencyFormatter amount={tuitionValue} />
+            <View>
+              <Text style={styles.itemText}>Nội dung chuyển khoản </Text>
+              <TextInput
+                style={styles.inputArea}
+                multiline
+                value={contentPremium}
+                onChangeText={(text) => setContent(text)}
+                placeholder="Số tiền"
+              />
+            </View>
+
+            {loader ? (
+              <ActivityIndicator size={50} color={COLORS.main} />
+            ) : (
+              <View>
+                {temp?.data.balance < money ? (
+                  <View
+                    style={{
+                      marginTop: 10,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text style={styles.warring}>
+                      Tài khoản không đủ. Vui lòng nạp thêm thêm
+                    </Text>
+                    <View
+                      style={{ justifyContent: "center", alignItems: "center" }}
+                    >
+                      <TouchableOpacity
+                        onPressIn={() =>
+                          navigation.navigate("DepositAndWithdrawMoney", {
+                            userData,
+                            data,
+                          })
+                        }
+                      >
+                        <View style={[styles.btn(COLORS.secondMain)]}>
+                          <Text style={styles.btnText}>Nạp tiền vào ví </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ) : (
+                  <Button
+                    loader={loader}
+                    title={"Thanh toán"}
+                    onPress={createPremium}
+                    isValid={{}}
+                  />
+                )}
+              </View>
+            )}
           </View>
-        </View>
-
-        <View>
-          <Text style={styles.itemText}>Thông tin người nhận </Text>
-          <View style={styles.input}>
-            <Text>Trung tâm giá sư - Tutor Center</Text>
-          </View>
-        </View>
-
-        <View>
-          <Text style={styles.itemText}>Nội dung chuyển khoản </Text>
-          <TextInput
-            style={styles.inputArea}
-            multiline
-            value={content}
-            onChangeText={(text) => setContent(text)}
-            placeholder="Số tiền"
-          />
-        </View>
-        {loader ? (
-          <ActivityIndicator size={50} color={COLORS.main} />
         ) : (
           <View>
-            {temp?.data.balance < tuitionValue ? (
-              <View
-                style={{
-                  marginTop: 10,
-                  justifyContent: "center",
-                  alignItems: "center",
-                }}
-              >
-                <Text style={styles.warring}>
-                  Tài khoản không đủ. Vui lòng nạp thêm thêm
-                </Text>
-                <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
-                >
-                  <TouchableOpacity
-                    onPressIn={() =>
-                      navigation.navigate("DepositAndWithdrawMoney", {
-                        userData,
-                        data,
-                      })
-                    }
-                  >
-                    <View style={[styles.btn(COLORS.secondMain)]}>
-                      <Text style={styles.btnText}>Nạp tiền vào ví </Text>
-                    </View>
-                  </TouchableOpacity>
-                </View>
+            <View>
+              <Text style={styles.itemText}>Số tiền </Text>
+              <View style={styles.input}>
+                <CurrencyFormatter amount={tuitionValue} />
               </View>
-            ) : (
-              <Button
-                loader={loader}
-                title={"Thanh toán"}
-                onPress={createOrder}
-                isValid={{}}
+            </View>
+
+            <View>
+              <Text style={styles.itemText}>Thông tin người nhận </Text>
+              <View style={styles.input}>
+                <Text>Trung tâm giá sư - Tutor Center</Text>
+              </View>
+            </View>
+
+            <View>
+              <Text style={styles.itemText}>Nội dung chuyển khoản </Text>
+              <TextInput
+                style={styles.inputArea}
+                multiline
+                value={content}
+                onChangeText={(text) => setContent(text)}
+                placeholder="Số tiền"
               />
+            </View>
+
+            {loader ? (
+              <ActivityIndicator size={50} color={COLORS.main} />
+            ) : (
+              <View>
+                {temp?.data.balance < tuitionValue ? (
+                  <View
+                    style={{
+                      marginTop: 10,
+                      justifyContent: "center",
+                      alignItems: "center",
+                    }}
+                  >
+                    <Text style={styles.warring}>
+                      Tài khoản không đủ. Vui lòng nạp thêm thêm
+                    </Text>
+                    <View
+                      style={{ justifyContent: "center", alignItems: "center" }}
+                    >
+                      <TouchableOpacity
+                        onPressIn={() =>
+                          navigation.navigate("DepositAndWithdrawMoney", {
+                            userData,
+                            data,
+                          })
+                        }
+                      >
+                        <View style={[styles.btn(COLORS.secondMain)]}>
+                          <Text style={styles.btnText}>Nạp tiền vào ví </Text>
+                        </View>
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ) : (
+                  <Button
+                    loader={loader}
+                    title={"Thanh toán"}
+                    onPress={createOrder}
+                    isValid={{}}
+                  />
+                )}
+              </View>
             )}
           </View>
         )}

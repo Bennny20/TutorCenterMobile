@@ -271,10 +271,20 @@ const Wallet = () => {
         </View>
       </View>
       <View style={styles.profile}>
-        <Image
-          source={require("../assets/images/profile.jpeg")}
-          style={styles.profileImg}
-        />
+        {userData?.imgAvatar === undefined ? (
+          <Image
+            source={require("../assets/images/profile.jpeg")}
+            style={styles.profileImg}
+          />
+        ) : (
+          <Image
+            source={{
+              uri: HOST_API.local + "/api/user/image/" + userData.imgAvatar,
+            }}
+            style={styles.profileImg}
+          />
+        )}
+
         <Text style={styles.textHeading}>{userData.fullName}</Text>
       </View>
       <View style={{ marginTop: 10, marginHorizontal: 30 }}>

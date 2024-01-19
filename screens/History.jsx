@@ -9,16 +9,15 @@ const History = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { item, order } = route.params;
-
   const formattedAmount = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
-  }).format(item.amount);
+  }).format(item?.amount);
 
   const formattedOrder = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
-  }).format(order.amount);
+  }).format(order?.amount);
   return (
     <View>
       <View style={styles.header}>

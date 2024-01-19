@@ -38,7 +38,7 @@ const ClassRow = () => {
           <FlatList
             data={data.data}
             keyExtractor={(item) => item.id}
-            renderItem={({ item }) => item.status === 0 && <ClassCardView item={item} />}
+            renderItem={({ item }) => <ClassCardView item={item} />}
             horizontal
             contentContainerStyle={{ columnGap: SIZES.medium }}
           />

@@ -19,7 +19,6 @@ const Verification = () => {
   const navigation = useNavigation();
   const route = useRoute();
   const { userData, userTutor } = route.params;
-  console.log(userData);
   const imageID = userTutor.imgId.split("~");
   var major = " ";
   var classNo = " ";
@@ -44,7 +43,7 @@ const Verification = () => {
         }
       )
       .then((response) => {
-        console.log(response.data);
+        // console.log(response.data);
         Alert.alert("Xác nhận tài khoản thành công", "", [
           {
             text: "Cancel",
@@ -92,7 +91,6 @@ const Verification = () => {
       const response = await axios.get(
         HOST_API.local + `/api/tutor/test/${userData.id}`
       );
-      console.log(response.data);
       setData(response.data.data);
     } catch (error) {
       console.log("error", error);
@@ -243,167 +241,172 @@ const Verification = () => {
 
         {userTutor.status == 0 ? (
           <View>
-            <TouchableOpacity
-              style={styles.btnTest}
-              onPressIn={() => navigation.navigate("TestTutor", { userTutor })}
+            <Text
+              style={[
+                styles.txtTest,
+                { marginLeft: 20, fontSize: SIZES.medium + 5 },
+              ]}
             >
-              <Text style={styles.txtTest}>
-                Môn {data[0]?.name} {data[0]?.level}
-                <Text style={[styles.txtTest, { color: COLORS.main }]}>
-                  {data[0]?.latestGrade == 0 && " Làm ngay"}
-                </Text>
-                <Text style={[styles.txtTest, { color: COLORS.main }]}>
-                  {data[0]?.latestGrade >= 80 &&
-                    " PASS: " +
-                      data[0]?.latestGrade +
-                      "% Số lần : " +
-                      data[0]?.times}
-                </Text>
-                <Text style={[styles.txtTest, { color: COLORS.red }]}>
-                  {data[0]?.latestGrade < 80 &&
-                    data[0]?.latestGrade > 0 &&
-                    " NOT PASS:  " +
-                      data[0]?.latestGrade +
-                      "% Số lần : " +
-                      data[0]?.times}
-                </Text>
-              </Text>
-            </TouchableOpacity>
-
-            {userTutor.subjects[1] !== undefined && (
-              <TouchableOpacity
-                style={styles.btnTest}
-                onPressIn={() => navigation.navigate("TestTutor")}
-              >
-                <Text style={styles.txtTest}>
-                  Môn {data[1]?.name} {data[1]?.level}
-                  <Text style={[styles.txtTest, { color: COLORS.main }]}>
-                    {data[1]?.latestGrade == 0 && " Làm ngay"}
-                  </Text>
-                  <Text style={[styles.txtTest, { color: COLORS.main }]}>
-                    {data[1]?.latestGrade >= 80 &&
-                      " PASS: " +
-                        data[1]?.latestGrade +
-                        "% Số lần : " +
-                        data[1]?.times}
-                  </Text>
-                  <Text style={[styles.txtTest, { color: COLORS.red }]}>
-                    {data[1]?.latestGrade < 80 &&
-                      data[1]?.latestGrade > 0 &&
-                      " NOT PASS:  " +
-                        data[1]?.latestGrade +
-                        "% Số lần : " +
-                        data[1]?.times}
-                  </Text>
-                </Text>
-              </TouchableOpacity>
-            )}
-
-            {userTutor.subjects[2] !== undefined && (
-              <TouchableOpacity
-                style={styles.btnTest}
-                onPressIn={() => navigation.navigate("TestTutor")}
-              >
-                <Text style={styles.txtTest}>
-                  Môn {data[2]?.name} {data[2]?.level}
-                  <Text style={[styles.txtTest, { color: COLORS.main }]}>
-                    {data[2]?.latestGrade == 0 && " Làm ngay"}
-                  </Text>
-                  <Text style={[styles.txtTest, { color: COLORS.main }]}>
-                    {data[2]?.latestGrade >= 80 &&
-                      " PASS: " +
-                        data[2]?.latestGrade +
-                        "% Số lần : " +
-                        data[2]?.times}
-                  </Text>
-                  <Text style={[styles.txtTest, { color: COLORS.red }]}>
-                    {data[2]?.latestGrade < 80 &&
-                      data[2]?.latestGrade > 0 &&
-                      " NOT PASS:  " +
-                        data[2]?.latestGrade +
-                        "% Số lần : " +
-                        data[2]?.times}
-                  </Text>
-                </Text>
-              </TouchableOpacity>
-            )}
-
-            {data[0]?.latestGrade < 80 && data[1] === undefined && (
+              Test chuyên môn
+            </Text>
+            {userTutor.premium === false ? (
               <View>
-                <View
-                  style={{ justifyContent: "center", alignItems: "center" }}
+                <Text
+                  style={[
+                    styles.txtTest,
+                    {
+                      marginLeft: 20,
+                      fontSize: SIZES.small,
+                      color: COLORS.main,
+                    },
+                  ]}
                 >
-                  <Text style={{ color: COLORS.red, fontSize: SIZES.medium }}>
-                    Tất cả bài test cần phải trên 80%
-                  </Text>
-                </View>
+                  "Chỉ được làm 3 lần. Cần nâng cấp để thêm số lần làm"
+                </Text>
+                {data?.map((item, stt = 0) => (
+                  <View>
+                    <View style={styles.btnTest}>
+                      <View style={styles.itemTest}>
+                        <Text style={styles.txtTest}>
+                          {stt + 1} {"  "}
+                        </Text>
+                        <Text style={styles.txtTest}>
+                          {item.name} {item.level}
+                        </Text>
+                      </View>
 
-                <View style={styles.btnDisable} onPress={createAttendance}>
-                  <Text>Xác minh tài khoản</Text>
-                </View>
+                      {item.latestGrade == 0 && (
+                        <TouchableOpacity
+                          onPressIn={() =>
+                            navigation.navigate("TestTutor", { userTutor })
+                          }
+                        >
+                          <Text
+                            style={[styles.txtTest, { color: COLORS.main }]}
+                          >
+                            Làm ngay
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+
+                      {item.times < 3 && (
+                        <TouchableOpacity
+                          onPressIn={() =>
+                            navigation.navigate("TestTutor", { userTutor })
+                          }
+                        >
+                          {item.latestGrade > 80 && (
+                            <Text
+                              style={[styles.txtTest, { color: COLORS.main }]}
+                            >
+                              PASS {item.latestGrade}
+                              {"% Số lần: "} {item.times} {" [Làm lại]"}
+                            </Text>
+                          )}
+
+                          {item.latestGrade < 80 && item.latestGrade > 0 && (
+                            <Text
+                              style={[styles.txtTest, { color: COLORS.red }]}
+                            >
+                              NOT PASS {item.latestGrade}
+                              {"% Số lần: "}
+                              {item.times} {" [Làm lại]"}
+                            </Text>
+                          )}
+                        </TouchableOpacity>
+                      )}
+
+                      {item.times == 3 && (
+                        <TouchableOpacity
+                          onPress={() =>
+                            navigation.navigate("TransferMoney", {
+                              userTutor,
+                              userData,
+                            })
+                          }
+                        >
+                          {item.latestGrade > 80 && (
+                            <Text
+                              style={[styles.txtTest, { color: COLORS.main }]}
+                            >
+                              PASS {item.latestGrade}
+                              {"% Số lần: "} {item.times} {" [Nâng cấp]"}
+                            </Text>
+                          )}
+                          {item.latestGrade < 80 && item.latestGrade > 0 && (
+                            <Text
+                              style={[styles.txtTest, { color: COLORS.red }]}
+                            >
+                              NOT PASS {item.latestGrade}
+                              {"% Số lần: "}
+                              {item.times} {" [Nâng cấp]"}
+                            </Text>
+                          )}
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  </View>
+                ))}
+              </View>
+            ) : (
+              <View>
+                {data?.map((item, stt = 0) => (
+                  <View>
+                    <View style={styles.btnTest}>
+                      <View style={styles.itemTest}>
+                        <Text style={styles.txtTest}>
+                          {stt + 1} {"  "}
+                        </Text>
+                        <Text style={styles.txtTest}>
+                          {item.name} {item.level}
+                        </Text>
+                      </View>
+
+                      {item.latestGrade == 0 && (
+                        <TouchableOpacity
+                          onPressIn={() =>
+                            navigation.navigate("TestTutor", { userTutor })
+                          }
+                        >
+                          <Text
+                            style={[styles.txtTest, { color: COLORS.main }]}
+                          >
+                            Làm ngay
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+
+                      <TouchableOpacity
+                        onPressIn={() =>
+                          navigation.navigate("TestTutor", { userTutor })
+                        }
+                      >
+                        {item.latestGrade > 80 && (
+                          <Text
+                            style={[styles.txtTest, { color: COLORS.main }]}
+                          >
+                            PASS {item.latestGrade}
+                            {"% Số lần: "} {item.times} {" [Làm lại]"}
+                          </Text>
+                        )}
+
+                        {item.latestGrade < 80 && item.latestGrade > 0 && (
+                          <Text style={[styles.txtTest, { color: COLORS.red }]}>
+                            NOT PASS {item.latestGrade}
+                            {"% Số lần: "}
+                            {item.times} {" [Làm lại]"}
+                          </Text>
+                        )}
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
               </View>
             )}
 
-            {data[0]?.latestGrade < 80 &&
-              data[1]?.latestGrade < 80 &&
-              data[2] ===
-                undefined(
-                  <View>
-                    <View
-                      style={{ justifyContent: "center", alignItems: "center" }}
-                    >
-                      <Text
-                        style={{ color: COLORS.red, fontSize: SIZES.medium }}
-                      >
-                        Tất cả bài test cần phải trên 80%
-                      </Text>
-                    </View>
-
-                    <View style={styles.btnDisable} onPress={createAttendance}>
-                      <Text>Xác minh tài khoản</Text>
-                    </View>
-                  </View>
-                )}
-
-            {data[0]?.latestGrade < 80 &&
-              data[1]?.latestGrade < 80 &&
-              data[2]?.latestGrade < 80 && (
-                <View>
-                  <View
-                    style={{ justifyContent: "center", alignItems: "center" }}
-                  >
-                    <Text style={{ color: COLORS.red, fontSize: SIZES.medium }}>
-                      Tất cả bài test cần phải trên 80%
-                    </Text>
-                  </View>
-
-                  <View style={styles.btnDisable} onPress={createAttendance}>
-                    <Text>Xác minh tài khoản</Text>
-                  </View>
-                </View>
-              )}
-
-            {data[0]?.latestGrade > 79 && data[1] === undefined && (
-              <TouchableOpacity style={styles.btn} onPress={createAttendance}>
-                <Text>Xác minh tài khoản</Text>
-              </TouchableOpacity>
-            )}
-
-            {data[0]?.latestGrade > 79 &&
-              data[1]?.latestGrade &&
-              data[2] === undefined && (
-                <TouchableOpacity style={styles.btn} onPress={createAttendance}>
-                  <Text>Xác minh tài khoản</Text>
-                </TouchableOpacity>
-              )}
-
-            {data[0]?.latestGrade > 79 &&
-              data[1]?.latestGrade > 79 &&
-              data[2]?.latestGrade > 79 && (
-                <TouchableOpacity style={styles.btn} onPress={createAttendance}>
-                  <Text>Xác minh tài khoản</Text>
-                </TouchableOpacity>
-              )}
+            <TouchableOpacity style={styles.btn} onPress={createAttendance}>
+              <Text>Xác minh tài khoản</Text>
+            </TouchableOpacity>
           </View>
         ) : (
           <View>
@@ -413,128 +416,163 @@ const Verification = () => {
                 { marginLeft: 20, fontSize: SIZES.medium + 5 },
               ]}
             >
-              Chuyên môn
+              Test chuyên môn
             </Text>
-            <View
-              style={styles.btnTest}
-              onPressIn={() => navigation.navigate("TestTutor", { userTutor })}
-            >
-              <View style={{ justifyContent: "center" }}>
-                <Text style={styles.txtTest}>
-                  Môn {data[0]?.name} {data[0]?.level}
-                  <Text style={[styles.txtTest, { color: COLORS.main }]}>
-                    {data[0]?.latestGrade == 0 && " Làm ngay"}
-                  </Text>
-                  <Text style={[styles.txtTest, { color: COLORS.main }]}>
-                    {data[0]?.latestGrade >= 80 &&
-                      " PASS: " +
-                        data[0]?.latestGrade +
-                        "% Số lần : " +
-                        data[0]?.times}
-                  </Text>
-                  <Text style={[styles.txtTest, { color: COLORS.red }]}>
-                    {data[0]?.latestGrade < 80 &&
-                      data[0]?.latestGrade > 0 &&
-                      " NOT PASS:  " +
-                        data[0]?.latestGrade +
-                        "% Số lần : " +
-                        data[0]?.times}
-                  </Text>
+            {userTutor.premium === false ? (
+              <View>
+                <Text
+                  style={[
+                    styles.txtTest,
+                    {
+                      marginLeft: 20,
+                      fontSize: SIZES.small,
+                      color: COLORS.main,
+                    },
+                  ]}
+                >
+                  "Chỉ được làm 3 lần. Cần nâng cấp để thêm số lần làm"
                 </Text>
+                {data?.map((item, stt = 0) => (
+                  <View>
+                    <View style={styles.btnTest}>
+                      <View style={styles.itemTest}>
+                        <Text style={styles.txtTest}>
+                          {stt + 1} {"  "}
+                        </Text>
+                        <Text style={styles.txtTest}>
+                          {item.name} {item.level}
+                        </Text>
+                      </View>
+
+                      {item.latestGrade == 0 && (
+                        <TouchableOpacity
+                          onPressIn={() =>
+                            navigation.navigate("TestTutor", { userTutor })
+                          }
+                        >
+                          <Text
+                            style={[styles.txtTest, { color: COLORS.main }]}
+                          >
+                            Làm ngay
+                          </Text>
+                        </TouchableOpacity>
+                      )}
+
+                      {item.times < 3 && (
+                        <TouchableOpacity
+                          onPressIn={() =>
+                            navigation.navigate("TestTutor", { userTutor })
+                          }
+                        >
+                          {item.latestGrade > 80 && (
+                            <Text
+                              style={[styles.txtTest, { color: COLORS.main }]}
+                            >
+                              PASS {item.latestGrade}
+                              {"% Số lần: "} {item.times} {" [Làm lại]"}
+                            </Text>
+                          )}
+
+                          {item.latestGrade < 80 && item.latestGrade > 0 && (
+                            <Text
+                              style={[styles.txtTest, { color: COLORS.red }]}
+                            >
+                              NOT PASS {item.latestGrade}
+                              {"% Số lần: "}
+                              {item.times} {" [Làm lại]"}
+                            </Text>
+                          )}
+                        </TouchableOpacity>
+                      )}
+
+                      {item.times == 3 && (
+                        <TouchableOpacity
+                          onPress={() =>
+                            navigation.navigate("TransferMoney", {
+                              userTutor,
+                              userData,
+                            })
+                          }
+                        >
+                          {item.latestGrade > 80 && (
+                            <Text
+                              style={[styles.txtTest, { color: COLORS.main }]}
+                            >
+                              PASS {item.latestGrade}
+                              {"% Số lần: "} {item.times} {" [Nâng cấp]"}
+                            </Text>
+                          )}
+                          {item.latestGrade < 80 && item.latestGrade > 0 && (
+                            <Text
+                              style={[styles.txtTest, { color: COLORS.red }]}
+                            >
+                              NOT PASS {item.latestGrade}
+                              {"% Số lần: "}
+                              {item.times} {" [Nâng cấp]"}
+                            </Text>
+                          )}
+                        </TouchableOpacity>
+                      )}
+                    </View>
+                  </View>
+                ))}
               </View>
+            ) : (
+              <View>
+                {data?.map((item, stt = 0) => (
+                  <View>
+                    <View style={styles.btnTest}>
+                      <View style={styles.itemTest}>
+                        <Text style={styles.txtTest}>
+                          {stt + 1} {"  "}
+                        </Text>
+                        <Text style={styles.txtTest}>
+                          {item.name} {item.level}
+                        </Text>
+                      </View>
 
-              <View
-                style={{ justifyContent: "center", alignItems: "center" }}
-              ></View>
-            </View>
+                      {item.latestGrade == 0 && (
+                        <TouchableOpacity
+                          onPressIn={() =>
+                            navigation.navigate("TestTutor", { userTutor })
+                          }
+                        >
+                          <Text
+                            style={[styles.txtTest, { color: COLORS.main }]}
+                          >
+                            Làm ngay
+                          </Text>
+                        </TouchableOpacity>
+                      )}
 
-            {userTutor.subjects[1] !== undefined && (
-              <TouchableOpacity
-                style={styles.btnTest}
-                onPressIn={() => navigation.navigate("TestTutor")}
-              >
-                <View style={{ justifyContent: "center" }}>
-                  <Text style={styles.txtTest}>
-                    Môn {data[1]?.name} {data[1]?.level}
-                    <Text style={[styles.txtTest, { color: COLORS.main }]}>
-                      {data[1]?.latestGrade == 0 && " Làm ngay"}
-                    </Text>
-                    <Text style={[styles.txtTest, { color: COLORS.main }]}>
-                      {data[1]?.latestGrade >= 80 &&
-                        " PASS: " +
-                          data[1]?.latestGrade +
-                          "% Số lần : " +
-                          data[1]?.times}
-                    </Text>
-                    <Text style={[styles.txtTest, { color: COLORS.red }]}>
-                      {data[1]?.latestGrade < 80 &&
-                        data[1]?.latestGrade > 0 &&
-                        " NOT PASS:  " +
-                          data[1]?.latestGrade +
-                          "% Số lần : " +
-                          data[1]?.times}
-                    </Text>
-                  </Text>
-                </View>
-              </TouchableOpacity>
+                      <TouchableOpacity
+                        onPressIn={() =>
+                          navigation.navigate("TestTutor", { userTutor })
+                        }
+                      >
+                        {item.latestGrade > 80 && (
+                          <Text
+                            style={[styles.txtTest, { color: COLORS.main }]}
+                          >
+                            PASS {item.latestGrade}
+                            {"% Số lần: "} {item.times} {" [Làm lại]"}
+                          </Text>
+                        )}
+
+                        {item.latestGrade < 80 && item.latestGrade > 0 && (
+                          <Text style={[styles.txtTest, { color: COLORS.red }]}>
+                            NOT PASS {item.latestGrade}
+                            {"% Số lần: "}
+                            {item.times} {" [Làm lại]"}
+                          </Text>
+                        )}
+                      </TouchableOpacity>
+                    </View>
+                  </View>
+                ))}
+              </View>
             )}
 
-            {data[2] !== undefined && (
-              <TouchableOpacity
-                style={styles.btnTest}
-                onPressIn={() => navigation.navigate("TestTutor")}
-              >
-                <Text style={styles.txtTest}>
-                  Môn {data[2]?.name} {data[2]?.level}
-                  <Text style={[styles.txtTest, { color: COLORS.main }]}>
-                    {data[2]?.latestGrade == 0 && " Làm ngay"}
-                  </Text>
-                  <Text style={[styles.txtTest, { color: COLORS.main }]}>
-                    {data[2]?.latestGrade >= 80 &&
-                      " PASS: " +
-                        data[2]?.latestGrade +
-                        "% Số lần : " +
-                        data[2]?.times}
-                  </Text>
-                  <Text style={[styles.txtTest, { color: COLORS.red }]}>
-                    {data[2]?.latestGrade < 80 &&
-                      data[2]?.latestGrade > 0 &&
-                      " NOT PASS:  " +
-                        data[2]?.latestGrade +
-                        "% Số lần : " +
-                        data[2]?.times}
-                  </Text>
-                </Text>
-              </TouchableOpacity>
-            )}
-            {data[3] !== undefined && (
-              <TouchableOpacity
-                style={styles.btnTest}
-                onPressIn={() => navigation.navigate("TestTutor")}
-              >
-                <Text style={styles.txtTest}>
-                  Môn {data[3]?.name} {data[3]?.level}
-                  <Text style={[styles.txtTest, { color: COLORS.main }]}>
-                    {data[3]?.latestGrade == 0 && " Làm ngay"}
-                  </Text>
-                  <Text style={[styles.txtTest, { color: COLORS.main }]}>
-                    {data[3]?.latestGrade >= 80 &&
-                      " PASS: " +
-                        data[3]?.latestGrade +
-                        "% Số lần : " +
-                        data[3]?.times}
-                  </Text>
-                  <Text style={[styles.txtTest, { color: COLORS.red }]}>
-                    {data[3]?.latestGrade < 80 &&
-                      data[3]?.latestGrade > 0 &&
-                      " NOT PASS:  " +
-                        data[3]?.latestGrade +
-                        "% Số lần : " +
-                        data[3]?.times}
-                  </Text>
-                </Text>
-              </TouchableOpacity>
-            )}
             <View style={styles.btn}>
               <Text>Đã xác thực tài khoản</Text>
             </View>
@@ -628,5 +666,9 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     resizeMode: "cover",
     marginTop: -20,
+  },
+
+  itemTest: {
+    flexDirection: "row",
   },
 });
