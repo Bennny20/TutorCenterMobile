@@ -108,13 +108,13 @@ const RegisterTutor = () => {
     );
     // console.log(response.json().data);
     setDistrict(await response.json());
-    // await response.json().then((data) => {
-    //   let newArray = data.data.map((item) => {
-    //     return { label: item.name, value: item.id };
-    //   });
-    //   console.log(newArray);
-    //   setArea(newArray);
-    // });
+    await response.json().then((data) => {
+      let newArray = data.data.map((item) => {
+        return { label: item.name, value: item.id };
+      });
+      console.log(newArray);
+      setArea(newArray);
+    });
   }
 
   //Giới tính

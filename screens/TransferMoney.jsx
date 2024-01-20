@@ -27,13 +27,13 @@ const TransferMoney = () => {
   const [money, setMoney] = useState(500000);
   const [content, setContent] = useState(
     "Thanh toán chi phí class: " +
-      classID?.id +
-      " của phụ huynh " +
-      userData?.fullName
+    classID?.id +
+    " của phụ huynh " +
+    userData?.fullName
   );
 
   const [contentPremium, setContentPremium] = useState(
-    "Nâng cấp tài khoản: " + userTutor.fullName
+    "Nâng cấp tài khoản: " + userTutor?.fullName
   );
 
   const [data, setData] = useState();
@@ -58,7 +58,12 @@ const TransferMoney = () => {
       );
       setRevenueValue(revenue.data.data);
       setTemp(response.data);
-      setTuitionValue(classID?.tuition * revenue.data.data.value);
+      if (classID?.tuition * revenue.data.data.value < 200000) {
+        setTuitionValue(200000);
+
+      } else {
+        setTuitionValue(classID?.tuition * revenue.data.data.value);
+      }
       setData(
         Intl.NumberFormat("vi-VN", {
           style: "currency",
@@ -106,11 +111,11 @@ const TransferMoney = () => {
         Alert.alert("Thanh toán không thành công", "", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
-            onPress: () => {},
+            onPress: () => { },
           },
           { defaultIndex: 1 },
         ]);
@@ -120,11 +125,11 @@ const TransferMoney = () => {
       Alert.alert("Error", "error", [
         {
           text: "Cancel",
-          onPress: () => {},
+          onPress: () => { },
         },
         {
           text: "Continue",
-          onPress: () => {},
+          onPress: () => { },
         },
         { defaultIndex: 1 },
       ]);
@@ -157,11 +162,11 @@ const TransferMoney = () => {
         Alert.alert("Thanh toán không thành công", "", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
-            onPress: () => {},
+            onPress: () => { },
           },
           { defaultIndex: 1 },
         ]);
@@ -171,11 +176,11 @@ const TransferMoney = () => {
       Alert.alert("Error", "error", [
         {
           text: "Cancel",
-          onPress: () => {},
+          onPress: () => { },
         },
         {
           text: "Continue",
-          onPress: () => {},
+          onPress: () => { },
         },
         { defaultIndex: 1 },
       ]);

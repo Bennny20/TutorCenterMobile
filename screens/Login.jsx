@@ -170,6 +170,7 @@ const Login = () => {
                       autoCapitalize="none"
                       autoCorrect={false}
                       style={{ flex: 1 }}
+                      keyboardType="email-address"
                     />
                   </View>
                   {touched.email && errors.email && (

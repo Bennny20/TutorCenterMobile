@@ -96,14 +96,14 @@ const TutorItemApply = ({ item, classID }) => {
         style={styles.container}
         onPress={() => navigation.navigate("TutorDetail", { idTutor })}
       >
-        <View style={styles.image}>
+        {/* <View style={styles.image}>
           <Image
             source={{
               uri: "https://img.freepik.com/premium-photo/blue-white-sign-with-man-white-shirt-blue-circle-with-man-front-it_745528-3249.jpg?w=2000",
             }}
             style={styles.productImg}
           />
-        </View>
+        </View> */}
         <View style={styles.textContent}>
           <Text style={styles.name}>{item.tutorName}</Text>
           <Text style={styles.supplier}>{item.tutorUniversity}</Text>

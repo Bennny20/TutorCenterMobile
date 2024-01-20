@@ -232,8 +232,8 @@ const FeedbackClass = () => {
                     marginHorizontal: 20,
                   }}
                 >
-                  <Text style={[styles.itemText, { color: COLORS.primary }]}>
-                    Nngười đánh giá: {classDetail.data.parentName}
+                  <Text style={[styles.itemText, { color: COLORS.primary , fontFamily: "regular"}]}>
+                    Người đánh giá: {classDetail.data.parentName}
                   </Text>
                   {/* <Text style={[styles.itemText, { color: COLORS.primary }]}>
                     {data.data[0].dateCreate}

@@ -280,7 +280,7 @@ const ClassDetail = () => {
                   Địa điểm:
                 </Text>
                 <Text style={styles.sup}>
-                  {item.provinceName}, {item.provinceName}
+                {item.districtName}, {item.provinceName}
                 </Text>
                 <Text style={styles.title}>
                   <Ionicons
