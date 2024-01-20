@@ -191,6 +191,7 @@ const RegisterTutor = () => {
       quality: 1,
     });
     if (!result2.canceled) {
+      console.log(result2.assets[0].uri);
       setIsImage(true);
       setImgIdFont(result2.assets[0].uri);
       const formData = new FormData();
@@ -346,23 +347,12 @@ const RegisterTutor = () => {
               ]);
               setEmail();
             } else {
-              if (imgIdFontValue !== null && imgIdBackValue !== null) {
-                console.log(profile?.data.lenght);
-                if (profile !== null) {
-                  console.log(profile.data[0]);
-                  setIdNumber(profile.data[0].id);
-                  setName(profile.data[0].name);
-                }
-                setCurrentStep(1);
-              } else {
-                Alert.alert("Vui lòng cung cấp ảnh để xác minh", "", [
-                  {
-                    text: "Cancel",
-                    onPress: () => { },
-                  },
-                  { defaultIndex: 1 },
-                ]);
+              if (profile !== null) {
+                setIdNumber(profile.data[0].id);
+                setName(profile.data[0].name);
               }
+              setCurrentStep(1);
+
             }
           });
       }

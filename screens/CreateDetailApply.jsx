@@ -1,4 +1,4 @@
-import { ActivityIndicator, StyleSheet, Text, View } from "react-native";
+import { ActivityIndicator, Alert, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import React, { useEffect, useState } from "react";
 import { useRoute } from "@react-navigation/native";
 import { SafeAreaView } from "react-native";
@@ -6,25 +6,24 @@ import Heading from "../components/Heading";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { COLORS, HOST_API, SIZES } from "../constants";
 import axios from "axios";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const ClassDetailApply = () => {
   const route = useRoute();
   const { item } = route.params;
-
+  console.log(item);
   var major = "";
   var classNo = "";
 
   for (let index = 0; index < item.subjects.length; index++) {
     if (index == item.subjects.length - 1) {
-      major += item.subjects[index].name;
+      major += item.subjects[index].subjectName;
     } else {
-      major += item.subjects[index].name + ", ";
+      major += item.subjects[index].subjectName + ", ";
     }
     classNo = item.subjects[index].level;
   }
   const [classDetail, setClassDetail] = useState();
-  const [start, setStart] = useState();
-  const [end, setEnd] = useState();
   const [loader, setLoader] = useState(false);
 
   useEffect(() => {
@@ -37,8 +36,6 @@ const ClassDetailApply = () => {
         HOST_API.local + `/api/clazz/${item.clazzId}`
       );
       setClassDetail(response.data.data);
-      setStart(response.data.data.dateStart.split("T"));
-      setEnd(response.data.data.dateStart.split("T"));
       setLoader(false);
     } catch (error) {
       console.log("error", error);
@@ -46,11 +43,90 @@ const ClassDetailApply = () => {
       setLoader(false);
     }
   };
-  console.log(classDetail);
+  console.log("=========");
   const formattedAmount = new Intl.NumberFormat("vi-VN", {
     style: "currency",
     currency: "VND",
   }).format(item.tuition);
+
+
+  const cancel = async () => {
+    const token = await AsyncStorage.getItem("token");
+    console.log(token);
+    console.log(item.id);
+    axios
+      .put(HOST_API.local + `/api/tutorApply/delete/${item.id}`, {}, {
+        headers: {
+          Authorization: " Bearer " + token,
+        },
+      })
+      .then((response) => {
+        console.log(response.data);
+        if (response.data.responseCode == "00") {
+          Alert.alert("Hủy thành công", "Quản lý yêu cầu", [
+            {
+              text: "Cancel",
+              onPress: () => {
+                // navigation.navigate("ManasgeRequest");
+              },
+            },
+            {
+              text: "Continue",
+              onPress: () => {
+                // navigation.navigate("ManageRequest", {
+                //   user,
+                //   userData,
+                // });
+              },
+            },
+            { defaultIndex: 1 },
+          ]);
+        } else {
+          Alert.alert("Tạo đăng ký không thành công", "Quản lý yêu cầu", [
+            {
+              text: "Cancel",
+              onPress: () => { },
+            },
+            {
+              text: "Continue",
+              onPress: () => {
+              },
+            },
+            { defaultIndex: 1 },
+          ]);
+        }
+      })
+      .catch((error) => {
+        Alert.alert("Hủy không thành công", "Quản lý yêu cầu", [
+          {
+            text: "Cancel",
+            onPress: () => { },
+          },
+          {
+            text: "Continue",
+            onPress: () => {
+            },
+          },
+          { defaultIndex: 1 },
+        ]);
+        console.log("Create failed", error);
+      });
+  };
+
+
+  const check = () => {
+    Alert.alert("Bạn có muốn hủy đăng ký", " ", [
+      {
+        text: "Cancel",
+        onPress: () => { },
+      },
+      {
+        text: "Continue",
+        onPress: () => cancel(),
+      },
+      { defaultIndex: 1 },
+    ]);
+  };
 
   return (
     <SafeAreaView>
@@ -61,17 +137,7 @@ const ClassDetailApply = () => {
       ) : (
         <View style={{ marginHorizontal: 10, marginTop: 30 }}>
           <View style={styles.itemContext}>
-            <MaterialCommunityIcons
-              name="account"
-              size={30}
-              color={COLORS.gray}
-              style={{ marginRight: 10 }}
-            />
 
-            <Text style={styles.title}>
-              Phụ huynh{" "}
-              <Text style={styles.sup}> {classDetail?.parentName}</Text>
-            </Text>
           </View>
 
           <View style={styles.itemContext}>
@@ -216,6 +282,12 @@ const ClassDetailApply = () => {
           </View>
           {item.status == 0 ? (
             <View style={{ alignItems: "center" }}>
+              <TouchableOpacity
+                onPress={check}
+                style={[styles.status, { backgroundColor: COLORS.red, marginBottom: 20 }]}
+              >
+                <Text style={styles.sup}>Hủy đăng ký</Text>
+              </TouchableOpacity>
               <View
                 style={[styles.status, { backgroundColor: COLORS.secondMain }]}
               >
