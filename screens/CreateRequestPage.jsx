@@ -8,7 +8,6 @@ import {
   FlatList,
   LogBox,
   ActivityIndicator,
-  Button,
 } from "react-native";
 import DropDownPicker from "react-native-dropdown-picker";
 import { COLORS, SIZES, HOST_API } from "../constants";
@@ -27,6 +26,7 @@ import {
   BottomSheetModalProvider,
 } from "@gorhom/bottom-sheet";
 import { useRef } from "react";
+import Button from "../components/Button";
 
 const CreateRequestPage = () => {
   useEffect(() => {
@@ -336,7 +336,7 @@ const CreateRequestPage = () => {
       tutorLevel: levelValue,
     };
     console.log(request);
-
+    setLoader(true);
     const token = await AsyncStorage.getItem("token");
     axios
       .post(
@@ -365,7 +365,7 @@ const CreateRequestPage = () => {
       )
       .then((response) => {
         console.log(response.data);
-        console.log(response.data);
+        setLoader(false);
         if (response.data.responseCode == "00") {
           setSelectProvince("Chọn tỉnh thành nơi dạy");
           setSelectDistrict("Chọn quận/huyên nơi dạy");
@@ -382,7 +382,6 @@ const CreateRequestPage = () => {
           setDateEnd("");
           setAddress("");
           setDescription("");
-
           Alert.alert("Tạo yêu cầu thành công", "Quản lý yêu cầu", [
             {
               text: "Cancel",
@@ -405,7 +404,7 @@ const CreateRequestPage = () => {
           Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
             {
               text: "Cancel",
-              onPress: () => {},
+              onPress: () => { },
             },
             {
               text: "Continue",
@@ -418,10 +417,11 @@ const CreateRequestPage = () => {
         }
       })
       .catch((error) => {
+        setLoader(false);
         Alert.alert("Tạo yêu cầu không thành công", "Quản lý yêu cầu", [
           {
             text: "Cancel",
-            onPress: () => {},
+            onPress: () => { },
           },
           {
             text: "Continue",
@@ -902,7 +902,7 @@ const CreateRequestPage = () => {
 
           {/* Chi phí */}
           <View>
-            <Text style={styles.itemText}>Chi phí khóa học </Text>
+            <Text style={styles.itemText}>Chi phí khóa học theo tháng</Text>
             {isGetTuition && (
               <Text
                 style={[
@@ -1070,11 +1070,22 @@ const CreateRequestPage = () => {
           {loader ? (
             <ActivityIndicator size={500} color={COLORS.main} />
           ) : (
-            <TouchableOpacity onPress={handleCreate}>
-              <View style={styles.btn}>
-                <Text style={styles.btnText}>Đăng kí</Text>
-              </View>
-            </TouchableOpacity>
+            <View style={{ marginTop: -10, marginBottom: 20, }}>
+              {/* <TouchableOpacity onPress={handleCreate}>
+                <View style={styles.btn}>
+                  <Text style={styles.btnText}>Đăng kí</Text>
+                </View>
+
+
+              </TouchableOpacity> */}
+              <Button
+                loader={loader}
+                title={"Đăng kí"}
+                onPress={handleCreate}
+                isValid={true}
+              />
+            </View>
+
           )}
         </KeyboardAwareScrollView>
       </View>

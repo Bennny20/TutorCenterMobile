@@ -154,7 +154,6 @@ const RegisterTutor = () => {
       aspect: [4, 3],
       quality: 1,
     });
-    console.log(result);
     if (!result.canceled) {
       setIsImage(true);
       setImageProfile(result.assets[0].uri);
@@ -1079,106 +1078,6 @@ const RegisterTutor = () => {
           </Text>
           <Pressable>
             <KeyboardAwareScrollView extraScrollHeight={-150}>
-              {/* <View>
-                {isImage === false ? (
-                  <View style={{ alignItems: "center" }}>
-                    <Image
-                      source={require("../assets/images/userDefault.png")}
-                      style={styles.certificate}
-                    />
-                    <TouchableOpacity
-                      onPress={() => pickerIDFont()}
-                      style={{
-                        marginTop: 20,
-                        height: 50,
-                        width: "60%",
-                        backgroundColor: "skyblue",
-                        borderRadius: 20,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        alignSelf: "center",
-                      }}
-                    >
-                      <Text style={styles.itemText}>Mặt trước CCCD</Text>
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <View style={{ alignItems: "center" }}>
-                    {imgIdFont && (
-                      <Image
-                        source={{ uri: imgIdFont }}
-                        style={styles.certificate}
-                      />
-                    )}
-                    <TouchableOpacity
-                      onPress={() => pickerIDFont()}
-                      style={{
-                        marginTop: 20,
-                        height: 50,
-                        width: "60%",
-                        backgroundColor: "skyblue",
-                        borderRadius: 20,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        alignSelf: "center",
-                      }}
-                    >
-                      <Text style={styles.itemText}>Mặt trước CCCD</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </View>
-
-              <View>
-                {isImage === false ? (
-                  <View style={{ alignItems: "center" }}>
-                    <Image
-                      source={require("../assets/images/userDefault.png")}
-                      style={styles.certificate}
-                    />
-                    <TouchableOpacity
-                      onPress={() => pickerIDBack()}
-                      style={{
-                        marginTop: 20,
-                        height: 50,
-                        width: "60%",
-                        backgroundColor: "skyblue",
-                        borderRadius: 20,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        alignSelf: "center",
-                      }}
-                    >
-                      <Text style={styles.itemText}>Mặt sau CCCD</Text>
-                    </TouchableOpacity>
-                  </View>
-                ) : (
-                  <View style={{ alignItems: "center" }}>
-                    {imgIdBack && (
-                      <Image
-                        source={{ uri: imgIdBack }}
-                        style={styles.certificate}
-                      />
-                    )}
-                    <TouchableOpacity
-                      onPress={() => pickerIDBack()}
-                      style={{
-                        marginTop: 20,
-                        height: 50,
-                        width: "60%",
-                        backgroundColor: "skyblue",
-                        borderRadius: 20,
-                        justifyContent: "center",
-                        alignItems: "center",
-                        alignSelf: "center",
-                      }}
-                    >
-                      <Text style={styles.itemText}>Mặt sau CCCD</Text>
-                    </TouchableOpacity>
-                  </View>
-                )}
-              </View> */}
-
               {/* certificate */}
               <View>
                 {isImage === false ? (
@@ -1241,8 +1140,8 @@ const RegisterTutor = () => {
           <Button
             title={"Đăng kí"}
             onPress={() => register()}
-            isValid={name}
-            loader={false}
+            isValid={true}
+            loader={loader}
           />
         </ScrollView>
       )}

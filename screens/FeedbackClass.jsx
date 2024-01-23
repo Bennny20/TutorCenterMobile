@@ -79,7 +79,9 @@ const FeedbackClass = () => {
           },
           {
             text: "Continue",
-            onPress: () => { },
+            onPress: () => {
+              navigation.navigate("Profile")
+            },
           },
           { defaultIndex: 1 },
         ]);
@@ -88,10 +90,6 @@ const FeedbackClass = () => {
         Alert.alert("Gửi đánh giá không thành công", "Quản lý lớp", [
           {
             text: "Cancel",
-            onPress: () => { },
-          },
-          {
-            text: "Continue",
             onPress: () => { },
           },
           { defaultIndex: 1 },
@@ -232,7 +230,7 @@ const FeedbackClass = () => {
                     marginHorizontal: 20,
                   }}
                 >
-                  <Text style={[styles.itemText, { color: COLORS.primary , fontFamily: "regular"}]}>
+                  <Text style={[styles.itemText, { color: COLORS.primary, fontFamily: "regular" }]}>
                     Người đánh giá: {classDetail.data.parentName}
                   </Text>
                   {/* <Text style={[styles.itemText, { color: COLORS.primary }]}>

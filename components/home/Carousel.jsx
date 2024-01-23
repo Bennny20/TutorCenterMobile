@@ -6,9 +6,11 @@ import { StyleSheet } from "react-native";
 
 const Carousel = () => {
   const slides = [
-    require("../../assets/images/pin1.png"),
-    require("../../assets/images/fn2.jpg"),
-    require("../../assets/images/fn3.jpg"),
+    require("../../assets/images/fn6.jpg"),
+    require("../../assets/images/fn7.jpg"),
+    require("../../assets/images/fn8.jpg"),
+    require("../../assets/images/fn9.jpg"),
+    require("../../assets/images/fn10.jpg"),
   ];
   return (
     <View style={styles.carouselContainer}>

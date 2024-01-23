@@ -16,7 +16,6 @@ import axios from "axios";
 import { useEffect } from "react";
 import { ActivityIndicator } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-
 const ClassDetail = () => {
   const navigation = useNavigation();
 
@@ -123,7 +122,6 @@ const ClassDetail = () => {
             },
           }
         );
-        console.log(response.data);
         if (response.data.responseCode === "00") {
           setLoader(false);
           Alert.alert("Chúc mừng ", "Bạn đã apply thành công", [
@@ -133,7 +131,9 @@ const ClassDetail = () => {
             },
             {
               text: "Continue",
-              onPress: () => { },
+              onPress: () => {
+                navigation.navigate("Profile")
+              },
             },
             { defaultIndex: 1 },
           ]);
@@ -280,7 +280,7 @@ const ClassDetail = () => {
                   Địa điểm:
                 </Text>
                 <Text style={styles.sup}>
-                {item.districtName}, {item.provinceName}
+                  {item.districtName}, {item.provinceName}
                 </Text>
                 <Text style={styles.title}>
                   <Ionicons
